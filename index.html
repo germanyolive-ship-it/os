@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>OS Midterm Rescue 🚨</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -26,6 +26,7 @@
     color: var(--text);
     scroll-behavior: smooth;
     overflow-x: hidden;
+    font-size: 15px;
   }
   body.light {
     --bg: #f0f2f8;
@@ -36,22 +37,74 @@
     --muted: #555577;
   }
   .mono { font-family: 'JetBrains Mono', monospace; }
-  /* Navbar */
+
+  /* ===== NAVBAR ===== */
   #navbar {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(10,10,15,0.85);
+    background: rgba(10,10,15,0.92);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
     transition: background 0.3s;
   }
-  body.light #navbar { background: rgba(240,242,248,0.9); }
+  body.light #navbar { background: rgba(240,242,248,0.95); }
+
+  .nav-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 10px 16px 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: auto;
+    flex: 1;
+    min-width: 0;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .nav-links::-webkit-scrollbar { display: none; }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
   .nav-link {
-    color: var(--muted); text-decoration: none; padding: 6px 12px;
-    border-radius: 8px; font-size: 13px; font-weight: 600;
+    color: var(--muted); text-decoration: none; padding: 5px 10px;
+    border-radius: 8px; font-size: 12px; font-weight: 600;
     transition: all 0.2s; white-space: nowrap;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
   }
   .nav-link:hover { color: var(--accent); background: rgba(108,99,255,0.1); }
-  /* Hero */
+
+  .progress-bar {
+    height: 3px; background: var(--border); margin: 0 16px 0;
+    border-radius: 10px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 10px; transition: width 0.5s ease;
+  }
+
+  /* ===== HERO ===== */
   .hero-bg {
     background: radial-gradient(ellipse at 20% 50%, rgba(108,99,255,0.18) 0%, transparent 60%),
                 radial-gradient(ellipse at 80% 20%, rgba(0,212,170,0.12) 0%, transparent 50%),
@@ -59,40 +112,52 @@
   }
   .glow { box-shadow: 0 0 30px rgba(108,99,255,0.3); }
   .glow-red { box-shadow: 0 0 30px rgba(255,69,96,0.4); }
-  /* Cards */
+
+  /* ===== CARDS ===== */
   .card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px;
+    border-radius: 14px;
+    padding: 18px;
     transition: all 0.3s;
   }
+  @media(min-width:768px) { .card { padding: 24px; border-radius: 16px; } }
   .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
   .card-red {
     background: linear-gradient(135deg, #1a0810 0%, #1f0f14 100%);
     border: 1px solid rgba(255,69,96,0.4);
-    border-radius: 16px;
-    padding: 20px;
+    border-radius: 14px;
+    padding: 16px;
   }
+  @media(min-width:768px) { .card-red { padding: 20px; border-radius: 16px; } }
+
   .tag {
     display: inline-block;
     padding: 3px 10px; border-radius: 20px;
-    font-size: 12px; font-weight: 700;
+    font-size: 11px; font-weight: 700;
     background: rgba(108,99,255,0.15);
     color: var(--accent);
     border: 1px solid rgba(108,99,255,0.3);
+    white-space: nowrap;
   }
   .tag-red { background: rgba(255,69,96,0.15); color: var(--red); border-color: rgba(255,69,96,0.3); }
   .tag-green { background: rgba(0,212,170,0.15); color: var(--accent2); border-color: rgba(0,212,170,0.3); }
   .tag-yellow { background: rgba(255,215,0,0.15); color: var(--yellow); border-color: rgba(255,215,0,0.3); }
-  /* Buttons */
+
+  /* ===== BUTTONS ===== */
   .btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 12px 24px; border-radius: 12px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 10px 18px; border-radius: 10px;
     font-family: 'Cairo', sans-serif;
-    font-weight: 700; font-size: 14px;
+    font-weight: 700; font-size: 13px;
     cursor: pointer; border: none; text-decoration: none;
     transition: all 0.2s;
+    min-height: 40px;
+    touch-action: manipulation;
+  }
+  @media(min-width:768px) {
+    .btn { padding: 12px 24px; font-size: 14px; border-radius: 12px; }
   }
   .btn-primary {
     background: linear-gradient(135deg, var(--accent), #9f7aea);
@@ -109,24 +174,29 @@
     border: 1px solid var(--border);
   }
   .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-  /* Section titles */
+
+  /* ===== SECTION TITLES ===== */
   .section-title {
-    font-size: 28px; font-weight: 900;
+    font-size: 22px; font-weight: 900;
     background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    line-height: 1.2;
   }
+  @media(min-width:768px) { .section-title { font-size: 28px; } }
   body.light .section-title {
     background: linear-gradient(135deg, #1a1a2e 0%, var(--accent) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
-  /* Quick Rescue */
+
+  /* ===== QUICK RESCUE ===== */
   .rescue-section {
     background: linear-gradient(135deg, #150509 0%, #0f0515 50%, #0a0f15 100%);
     border: 2px solid rgba(255,69,96,0.5);
-    border-radius: 24px;
+    border-radius: 20px;
     position: relative;
     overflow: hidden;
   }
+  @media(min-width:768px) { .rescue-section { border-radius: 24px; } }
   .rescue-section::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -135,125 +205,310 @@
     animation: shimmer 2s linear infinite;
   }
   @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-  /* MCQ */
+
+  /* ===== MCQ ===== */
   .mcq-option {
-    padding: 12px 16px; border-radius: 10px;
+    padding: 12px 14px; border-radius: 10px;
     background: var(--card2); border: 1px solid var(--border);
-    cursor: pointer; transition: all 0.2s; font-size: 14px;
+    cursor: pointer; transition: all 0.2s; font-size: 13px;
     text-align: right;
+    width: 100%;
+    min-height: 44px;
+    touch-action: manipulation;
+    font-family: 'Cairo', sans-serif;
+    line-height: 1.4;
   }
+  @media(min-width:768px) { .mcq-option { font-size: 14px; } }
   .mcq-option:hover { border-color: var(--accent); }
   .mcq-option.correct { background: rgba(0,212,170,0.1); border-color: var(--accent2); color: var(--accent2); }
   .mcq-option.wrong { background: rgba(255,69,96,0.1); border-color: var(--red); color: var(--red); }
-  /* Gantt */
+
+  /* ===== GANTT ===== */
   .gantt-bar {
     height: 40px; display: flex; align-items: center;
-    justify-content: center; font-weight: 700; font-size: 13px;
+    justify-content: center; font-weight: 700; font-size: 12px;
     border-radius: 6px; color: white;
     transition: all 0.5s ease;
+    flex-shrink: 0;
   }
-  /* Progress */
-  .progress-bar {
-    height: 6px; background: var(--border); border-radius: 10px; overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
-    border-radius: 10px; transition: width 0.5s ease;
-  }
-  /* Tabs */
-  .tab-btn {
-    padding: 8px 20px; border-radius: 10px;
-    font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 13px;
-    cursor: pointer; border: 1px solid var(--border);
-    background: transparent; color: var(--muted);
-    transition: all 0.2s;
-  }
-  .tab-btn.active {
-    background: var(--accent); color: white; border-color: var(--accent);
-  }
-  /* Code block */
-  .code {
-    background: #0d1117; border: 1px solid #30363d;
-    border-radius: 10px; padding: 16px;
-    font-family: 'JetBrains Mono', monospace; font-size: 13px;
-    color: #e6edf3; overflow-x: auto;
-    text-align: left; direction: ltr;
-  }
-  /* Concept card */
+
+  /* ===== CONCEPT CARDS ===== */
   .concept {
     background: var(--card2); border-right: 4px solid var(--accent);
-    border-radius: 12px; padding: 16px 20px; margin: 12px 0;
+    border-radius: 10px; padding: 12px 16px; margin: 10px 0;
+    font-size: 13px;
   }
+  @media(min-width:768px) { .concept { padding: 16px 20px; font-size: 14px; } }
   .concept-red { border-right-color: var(--red); }
   .concept-green { border-right-color: var(--accent2); }
   .concept-yellow { border-right-color: var(--yellow); }
-  /* Table */
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { background: rgba(108,99,255,0.2); color: var(--accent); padding: 10px 14px; text-align: right; }
-  td { padding: 9px 14px; border-bottom: 1px solid var(--border); }
+
+  /* ===== TABLES ===== */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 480px; }
+  @media(min-width:768px) { table { font-size: 13px; } }
+  th { background: rgba(108,99,255,0.2); color: var(--accent); padding: 10px 12px; text-align: right; white-space: nowrap; }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 12px; }
+  @media(min-width:768px) { td { padding: 9px 14px; font-size: 13px; } }
   tr:hover td { background: rgba(108,99,255,0.05); }
-  /* Accordion */
+
+  /* ===== ACCORDION ===== */
   .acc-btn {
-    width: 100%; text-align: right; padding: 14px 18px;
+    width: 100%; text-align: right; padding: 14px 16px;
     background: var(--card); border: 1px solid var(--border);
     border-radius: 10px; color: var(--text);
-    font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 14px;
+    font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 13px;
     cursor: pointer; transition: all 0.2s;
     display: flex; justify-content: space-between; align-items: center;
+    min-height: 48px;
+    gap: 8px;
+    touch-action: manipulation;
   }
+  @media(min-width:768px) { .acc-btn { padding: 14px 18px; font-size: 14px; } }
   .acc-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .acc-content { display: none; padding: 16px 18px; }
+  .acc-content { display: none; padding: 14px 16px; }
+  @media(min-width:768px) { .acc-content { padding: 16px 18px; } }
   .acc-content.open { display: block; }
-  /* Timer */
+
+  /* ===== TIMER ===== */
   .timer-display {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 48px; font-weight: 700;
+    font-size: 32px; font-weight: 700;
     color: var(--accent2);
     text-align: center;
   }
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; }
+  @media(min-width:768px) { .timer-display { font-size: 48px; } }
+
+  /* ===== CODE ===== */
+  .code {
+    background: #0d1117; border: 1px solid #30363d;
+    border-radius: 10px; padding: 14px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: #e6edf3; overflow-x: auto;
+    text-align: left; direction: ltr;
+    -webkit-overflow-scrolling: touch;
+    line-height: 1.6;
+  }
+  @media(min-width:768px) { .code { font-size: 13px; padding: 16px; } }
+
+  /* ===== STATE NODES ===== */
+  .state-node {
+    width: 75px; height: 75px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 11px; cursor: pointer;
+    transition: all 0.3s; border: 3px solid;
+    text-align: center; line-height: 1.2;
+    touch-action: manipulation;
+    flex-shrink: 0;
+  }
+  @media(min-width:480px) { .state-node { width: 85px; height: 85px; font-size: 12px; } }
+  @media(min-width:768px) { .state-node { width: 90px; height: 90px; font-size: 13px; } }
+  .state-node:hover { transform: scale(1.1); }
+
+  /* ===== STATE DIAGRAM WRAPPER ===== */
+  .state-diagram-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+  }
+  .state-diagram-inner {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 8px;
+    min-width: max-content;
+    padding: 8px 4px;
+    justify-content: center;
+  }
+
+  /* ===== PAGE STATE INFO ===== */
+  #state-info {
+    min-height: 60px; background: var(--card2);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 16px; font-size: 13px;
+    transition: all 0.3s;
+  }
+  @media(min-width:768px) { #state-info { font-size: 14px; } }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-  /* Animations */
+
+  /* ===== ANIMATIONS ===== */
   @keyframes pulse-red { 0%,100%{box-shadow:0 0 20px rgba(255,69,96,0.3)} 50%{box-shadow:0 0 40px rgba(255,69,96,0.6)} }
   .pulse-red { animation: pulse-red 2s infinite; }
   @keyframes fadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
   .fade-in { animation: fadeIn 0.5s ease forwards; }
-  /* State diagram */
-  .state-node {
-    width: 90px; height: 90px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 13px; cursor: pointer;
-    transition: all 0.3s; border: 3px solid;
-    text-align: center; line-height: 1.2;
+
+  /* ===== INPUTS ===== */
+  .inp {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-family: 'Cairo', sans-serif;
+    min-height: 42px;
+    touch-action: manipulation;
+    width: 100%;
   }
-  .state-node:hover { transform: scale(1.1); }
-  /* Responsive */
-  @media(max-width:768px) {
-    .section-title { font-size: 22px; }
-    .timer-display { font-size: 36px; }
+  .inp:focus { outline: none; border-color: var(--accent); }
+  .inp.mono-inp { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+  /* ===== SECTION SPACING ===== */
+  .section-pad { padding: 48px 16px; }
+  @media(min-width:640px) { .section-pad { padding: 56px 24px; } }
+  @media(min-width:768px) { .section-pad { padding: 64px 32px; } }
+
+  .section-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
   }
-  /* Page state info */
-  #state-info {
-    min-height: 60px; background: var(--card2);
-    border: 1px solid var(--border); border-radius: 10px;
-    padding: 12px 16px; font-size: 14px;
-    transition: all 0.3s;
+  @media(min-width:768px) { .section-header { margin-bottom: 32px; gap: 12px; } }
+
+  /* ===== HERO RESPONSIVE ===== */
+  .hero-title-main {
+    font-size: 42px;
+    line-height: 1.1;
   }
+  @media(min-width:480px) { .hero-title-main { font-size: 52px; } }
+  @media(min-width:768px) { .hero-title-main { font-size: 70px; } }
+
+  /* ===== HERO BUTTONS ===== */
+  .hero-btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    max-width: 340px;
+    margin: 0 auto 40px;
+  }
+  @media(min-width:480px) {
+    .hero-btn-group {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: none;
+    }
+  }
+
+  /* ===== MEMORY HOLES ===== */
+  #mem-holes { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+
+  /* ===== GANTT WRAPPER ===== */
+  .gantt-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+  .gantt-inner {
+    display: flex;
+    gap: 0;
+    min-width: max-content;
+    direction: ltr;
+  }
+  .gantt-times-inner {
+    display: flex;
+    gap: 0;
+    min-width: max-content;
+    direction: ltr;
+    padding-top: 4px;
+  }
+
+  /* ===== SCHEDULING INPUT GROUP ===== */
+  .sched-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  @media(min-width:480px) {
+    .sched-input-group {
+      flex-direction: row;
+      align-items: center;
+    }
+    .sched-input-group .inp { flex: 1; }
+  }
+
+  /* ===== SCHED BUTTONS ===== */
+  .sched-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  /* ===== MOCK TIMER BAR ===== */
+  .mock-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  /* ===== ALGO TABS ===== */
+  .tab-btn {
+    padding: 8px 16px; border-radius: 10px;
+    font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 12px;
+    cursor: pointer; border: 1px solid var(--border);
+    background: transparent; color: var(--muted);
+    transition: all 0.2s;
+    min-height: 38px;
+    touch-action: manipulation;
+    white-space: nowrap;
+  }
+  @media(min-width:768px) { .tab-btn { font-size: 13px; padding: 8px 20px; } }
+  .tab-btn.active {
+    background: var(--accent); color: white; border-color: var(--accent);
+  }
+
+  /* ===== EAT GRID ===== */
+  .eat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* ===== PAGING RESULT ===== */
+  #paging-result, #mem-result {
+    min-height: 120px;
+    word-break: break-word;
+    font-size: 13px;
+  }
+
+  /* Utility */
+  .max-w-content { max-width: 1280px; margin: 0 auto; }
+  .w-full-mobile { width: 100%; }
+  @media(min-width:480px) { .w-full-mobile { width: auto; } }
+
+  .text-overflow-safe {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Spacing helpers */
+  .gap-section { gap: 16px; }
+  @media(min-width:768px) { .gap-section { gap: 20px; } }
+  @media(min-width:1024px) { .gap-section { gap: 24px; } }
+
 </style>
 </head>
 <body>
 
 <!-- NAVBAR -->
 <nav id="navbar">
-  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2 overflow-x-auto">
-    <div class="flex items-center gap-2 flex-shrink-0">
-      <span class="text-red-400 text-xl">🚨</span>
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="text-red-400 text-lg">🚨</span>
       <span class="font-black text-sm" style="color:var(--accent)">OS Rescue</span>
     </div>
-    <div class="flex items-center gap-1 overflow-x-auto pb-1">
+    <div class="nav-links">
       <a href="#quick-rescue" class="nav-link">🔴 Quick Rescue</a>
       <a href="#overview" class="nav-link">📖 Overview</a>
       <a href="#os-types" class="nav-link">🖥️ OS Types</a>
@@ -265,56 +520,57 @@
       <a href="#problems" class="nav-link">🧮 Problems</a>
       <a href="#mock" class="nav-link">📝 Mock</a>
     </div>
-    <div class="flex items-center gap-2 flex-shrink-0">
-      <div class="text-xs text-center" style="color:var(--muted)">
-        <div id="progress-pct" class="font-bold" style="color:var(--accent2)">0%</div>
-        <div>تقدمك</div>
+    <div class="nav-right">
+      <div class="text-center hidden sm:block">
+        <div id="progress-pct" class="text-xs font-black" style="color:var(--accent2)">0%</div>
+        <div class="text-xs" style="color:var(--muted)">تقدمك</div>
       </div>
-      <button onclick="toggleDark()" class="btn btn-outline text-xs px-3 py-2">🌙</button>
+      <button onclick="toggleDark()" class="btn btn-outline" style="padding:8px 10px;font-size:16px;min-width:38px;">🌙</button>
     </div>
   </div>
-  <div class="progress-bar mx-4 mb-2">
+  <div class="progress-bar" style="margin-bottom:2px;">
     <div class="progress-fill" id="progress-bar-fill" style="width:0%"></div>
   </div>
 </nav>
 
 <!-- HERO -->
-<section class="hero-bg min-h-screen flex items-center pt-20 pb-16" id="top">
-  <div class="max-w-5xl mx-auto px-6 text-center">
+<section class="hero-bg min-h-screen flex items-center" style="padding-top:80px;padding-bottom:48px;" id="top">
+  <div class="max-w-content w-full px-4 sm:px-6 text-center">
     <div class="inline-block mb-4">
-      <span class="tag tag-red text-base px-4 py-2 pulse-red">🚨 امتحان قرب - الإنقاذ جاهز</span>
+      <span class="tag tag-red pulse-red" style="font-size:12px;padding:6px 14px;">🚨 امتحان قرب - الإنقاذ جاهز</span>
     </div>
-    <h1 class="text-5xl md:text-7xl font-black mb-6" style="line-height:1.1">
-      <span style="background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent">OS</span>
-      <br>
-      <span style="background:linear-gradient(135deg,var(--red),#ff6b35);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Midterm Rescue</span>
+    <h1 class="hero-title-main font-black mb-5">
+      <span style="background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block;">OS</span>
+      <span style="background:linear-gradient(135deg,var(--red),#ff6b35);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block;">Midterm Rescue</span>
     </h1>
-    <p class="text-lg md:text-xl mb-4" style="color:var(--muted); max-width:600px; margin:0 auto 16px">
+    <p class="text-sm sm:text-base md:text-lg mb-3 px-4" style="color:var(--muted); max-width:560px; margin:0 auto 12px">
       الموقع ده مبني <span class="font-bold" style="color:var(--accent2)">بالضبط</span> على Lect 1, 2, 3, و Lect 5 لحد Slide 40 بس
     </p>
-    <p class="text-sm mb-8" style="color:var(--red)">⛔ Lecture 4 مش موجود | ⛔ Lect 5 بعد Slide 40 مش موجود</p>
-    <div class="flex flex-wrap justify-center gap-3 mb-12">
-      <a href="#quick-rescue" class="btn btn-red text-base px-6 py-3">🔴 Quick Rescue — لو معندكش وقت</a>
+    <p class="text-xs sm:text-sm mb-6" style="color:var(--red)">⛔ Lecture 4 مش موجود | ⛔ Lect 5 بعد Slide 40 مش موجود</p>
+
+    <div class="hero-btn-group">
+      <a href="#quick-rescue" class="btn btn-red" style="font-size:13px;padding:12px 20px;">🔴 Quick Rescue — لو معندكش وقت</a>
       <a href="#scheduling" class="btn btn-primary">📊 Scheduling Visualizer</a>
       <a href="#mock" class="btn btn-primary">📝 Mock Exam</a>
       <a href="#mcq" class="btn btn-outline">❓ MCQ Practice</a>
     </div>
+
     <!-- Stats -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-      <div class="card text-center py-4">
-        <div class="text-3xl font-black" style="color:var(--accent)">40+</div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-lg mx-auto px-4">
+      <div class="card text-center py-3 px-2">
+        <div class="text-2xl sm:text-3xl font-black" style="color:var(--accent)">40+</div>
         <div class="text-xs mt-1" style="color:var(--muted)">MCQ سؤال</div>
       </div>
-      <div class="card text-center py-4">
-        <div class="text-3xl font-black" style="color:var(--accent2)">4</div>
+      <div class="card text-center py-3 px-2">
+        <div class="text-2xl sm:text-3xl font-black" style="color:var(--accent2)">4</div>
         <div class="text-xs mt-1" style="color:var(--muted)">Scheduling Algos</div>
       </div>
-      <div class="card text-center py-4">
-        <div class="text-3xl font-black" style="color:var(--yellow)">5</div>
+      <div class="card text-center py-3 px-2">
+        <div class="text-2xl sm:text-3xl font-black" style="color:var(--yellow)">5</div>
         <div class="text-xs mt-1" style="color:var(--muted)">Tools تفاعلية</div>
       </div>
-      <div class="card text-center py-4">
-        <div class="text-3xl font-black" style="color:var(--red)">∞</div>
+      <div class="card text-center py-3 px-2">
+        <div class="text-2xl sm:text-3xl font-black" style="color:var(--red)">∞</div>
         <div class="text-xs mt-1" style="color:var(--muted)">نجاح إن شاء الله</div>
       </div>
     </div>
@@ -322,22 +578,24 @@
 </section>
 
 <!-- ==================== QUICK RESCUE ==================== -->
-<section id="quick-rescue" class="py-16 px-4 md:px-6">
-  <div class="max-w-6xl mx-auto">
-    <div class="rescue-section p-6 md:p-10 pulse-red">
-      <div class="text-center mb-8">
-        <div class="text-4xl mb-3">🚨🔴🚨</div>
-        <h2 class="text-3xl md:text-4xl font-black" style="color:var(--red)">QUICK RESCUE</h2>
-        <p class="text-lg mt-2 font-bold" style="color:var(--yellow)">لو معندكش وقت — اقرأ الجزء ده بس وهتعدي إن شاء الله</p>
-        <p class="text-sm mt-1" style="color:var(--muted)">كل حاجة هنا منتقاة بعناية من اللي بيجي في الامتحان</p>
+<section id="quick-rescue" class="section-pad">
+  <div class="max-w-content mx-auto">
+    <div class="rescue-section pulse-red" style="padding:20px 16px;">
+      <div class="sm:p-6 md:p-8">
+
+      <div class="text-center mb-6">
+        <div class="text-3xl mb-2">🚨🔴🚨</div>
+        <h2 class="text-2xl sm:text-3xl font-black" style="color:var(--red)">QUICK RESCUE</h2>
+        <p class="text-sm sm:text-base mt-2 font-bold" style="color:var(--yellow)">لو معندكش وقت — اقرأ الجزء ده بس وهتعدي إن شاء الله</p>
+        <p class="text-xs mt-1" style="color:var(--muted)">كل حاجة هنا منتقاة بعناية من اللي بيجي في الامتحان</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
 
         <!-- Card 1: OS Basics -->
         <div class="card-red">
-          <div class="flex items-center gap-2 mb-3"><span class="text-xl">📖</span><span class="font-black text-base" style="color:var(--red)">OS Basics — أهم تعريفات</span></div>
-          <ul class="text-sm space-y-2" style="color:var(--text)">
+          <div class="flex items-center gap-2 mb-3"><span class="text-xl">📖</span><span class="font-black text-sm" style="color:var(--red)">OS Basics — أهم تعريفات</span></div>
+          <ul class="text-xs sm:text-sm space-y-2" style="color:var(--text)">
             <li>🔸 <b>OS</b> = intermediary بين user وال hardware</li>
             <li>🔸 <b>Kernel</b> = القلب الحقيقي لل OS، اللي بيتحمل في memory طول الوقت</li>
             <li>🔸 <b>OS ≠ Kernel</b> — OS أكبر، Kernel جزء منه</li>
@@ -350,21 +608,21 @@
 
         <!-- Card 2: OS Types -->
         <div class="card-red">
-          <div class="flex items-center gap-2 mb-3"><span class="text-xl">🖥️</span><span class="font-black text-base" style="color:var(--red)">OS Types — مقارنة سريعة</span></div>
-          <div class="text-sm space-y-1" style="color:var(--text)">
-            <div class="flex gap-2"><span style="color:var(--yellow)">Batch:</span><span>job واحد جري ورا التاني — مفيش interaction</span></div>
-            <div class="flex gap-2"><span style="color:var(--yellow)">Multiprogramming:</span><span>أكتر من process في memory — CPU ما بتقفلش</span></div>
-            <div class="flex gap-2"><span style="color:var(--yellow)">Time-Sharing:</span><span>كل process بتاخد وقت صغير — الكل حاسس إنه شغال</span></div>
-            <div class="flex gap-2"><span style="color:var(--yellow)">Real-Time:</span><span>deadline لازم تتحقق — mission critical</span></div>
-            <div class="flex gap-2"><span style="color:var(--yellow)">Distributed:</span><span>أكتر من جهاز = نظام واحد</span></div>
-            <div class="flex gap-2"><span style="color:var(--yellow)">Embedded:</span><span>kernel صغير لجهاز محدد (مثل موبايل)</span></div>
+          <div class="flex items-center gap-2 mb-3"><span class="text-xl">🖥️</span><span class="font-black text-sm" style="color:var(--red)">OS Types — مقارنة سريعة</span></div>
+          <div class="text-xs sm:text-sm space-y-1" style="color:var(--text)">
+            <div class="flex gap-2"><span style="color:var(--yellow);flex-shrink:0">Batch:</span><span>job واحد جري ورا التاني — مفيش interaction</span></div>
+            <div class="flex gap-2"><span style="color:var(--yellow);flex-shrink:0">Multiprogramming:</span><span>أكتر من process في memory — CPU ما بتقفلش</span></div>
+            <div class="flex gap-2"><span style="color:var(--yellow);flex-shrink:0">Time-Sharing:</span><span>كل process بتاخد وقت صغير — الكل حاسس إنه شغال</span></div>
+            <div class="flex gap-2"><span style="color:var(--yellow);flex-shrink:0">Real-Time:</span><span>deadline لازم تتحقق — mission critical</span></div>
+            <div class="flex gap-2"><span style="color:var(--yellow);flex-shrink:0">Distributed:</span><span>أكتر من جهاز = نظام واحد</span></div>
+            <div class="flex gap-2"><span style="color:var(--yellow);flex-shrink:0">Embedded:</span><span>kernel صغير لجهاز محدد (مثل موبايل)</span></div>
           </div>
         </div>
 
         <!-- Card 3: Process -->
         <div class="card-red">
-          <div class="flex items-center gap-2 mb-3"><span class="text-xl">⚙️</span><span class="font-black text-base" style="color:var(--red)">Process — أهم نقاط</span></div>
-          <ul class="text-sm space-y-2" style="color:var(--text)">
+          <div class="flex items-center gap-2 mb-3"><span class="text-xl">⚙️</span><span class="font-black text-sm" style="color:var(--red)">Process — أهم نقاط</span></div>
+          <ul class="text-xs sm:text-sm space-y-2" style="color:var(--text)">
             <li>🔸 <b>Process</b> = program قيد التنفيذ (active) | <b>Program</b> = ملف ساكن (passive)</li>
             <li>🔸 States: <b>New → Ready → Running → Waiting → Terminated</b></li>
             <li>🔸 <b>PCB</b> = Process Control Block — فيه كل info عن الـ process</li>
@@ -376,8 +634,8 @@
 
         <!-- Card 4: Scheduling Formulas -->
         <div class="card-red">
-          <div class="flex items-center gap-2 mb-3"><span class="text-xl">📊</span><span class="font-black text-base" style="color:var(--red)">Scheduling Formulas 🔢</span></div>
-          <div class="text-sm space-y-2 mono" style="color:var(--text)">
+          <div class="flex items-center gap-2 mb-3"><span class="text-xl">📊</span><span class="font-black text-sm" style="color:var(--red)">Scheduling Formulas 🔢</span></div>
+          <div class="text-xs sm:text-sm space-y-2 mono" style="color:var(--text)">
             <div style="background:rgba(0,0,0,0.3);padding:8px;border-radius:8px">
               <div style="color:var(--accent2)">Turnaround Time (TAT):</div>
               <div>= Completion Time − Arrival Time</div>
@@ -398,8 +656,8 @@
 
         <!-- Card 5: Memory -->
         <div class="card-red">
-          <div class="flex items-center gap-2 mb-3"><span class="text-xl">🧠</span><span class="font-black text-base" style="color:var(--red)">Memory — نقاط المفيدة</span></div>
-          <ul class="text-sm space-y-2" style="color:var(--text)">
+          <div class="flex items-center gap-2 mb-3"><span class="text-xl">🧠</span><span class="font-black text-sm" style="color:var(--red)">Memory — نقاط المفيدة</span></div>
+          <ul class="text-xs sm:text-sm space-y-2" style="color:var(--text)">
             <li>🔸 <b>Logical address</b> = بيولده الـ CPU | <b>Physical</b> = الحقيقي في RAM</li>
             <li>🔸 <b>MMU</b> = Hardware بيحول logical → physical</li>
             <li>🔸 <b>Paging</b>: memory → frames | process → pages — بتحل External Fragmentation</li>
@@ -412,8 +670,8 @@
 
         <!-- Card 6: Exam Expected -->
         <div class="card-red">
-          <div class="flex items-center gap-2 mb-3"><span class="text-xl">🎯</span><span class="font-black text-base" style="color:var(--red)">الامتحان هيجيب إيه؟</span></div>
-          <ul class="text-sm space-y-2" style="color:var(--text)">
+          <div class="flex items-center gap-2 mb-3"><span class="text-xl">🎯</span><span class="font-black text-sm" style="color:var(--red)">الامتحان هيجيب إيه؟</span></div>
+          <ul class="text-xs sm:text-sm space-y-2" style="color:var(--text)">
             <li>✅ حساب WT وTAT وaverage</li>
             <li>✅ رسم Gantt Chart لـ FCFS/SJF/RR</li>
             <li>✅ الفرق بين Interrupt وTrap</li>
@@ -430,9 +688,9 @@
       </div>
 
       <!-- Scheduling Quick Ref -->
-      <div class="mt-6 p-4 rounded-xl" style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,215,0,0.3)">
-        <p class="font-black text-center mb-3" style="color:var(--yellow)">⚡ Scheduling Algorithms — جدول سريع</p>
-        <div class="overflow-x-auto">
+      <div class="mt-5 p-4 rounded-xl" style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,215,0,0.3)">
+        <p class="font-black text-center mb-3 text-sm" style="color:var(--yellow)">⚡ Scheduling Algorithms — جدول سريع</p>
+        <div class="table-wrap">
           <table>
             <tr>
               <th>Algorithm</th><th>نوعه</th><th>Starvation؟</th><th>أفضل في إيه</th>
@@ -444,41 +702,43 @@
           </table>
         </div>
       </div>
+
+      </div>
     </div>
   </div>
 </section>
 
 <!-- ==================== OVERVIEW ==================== -->
-<section id="overview" class="py-16 px-4 md:px-6">
-  <div class="max-w-6xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <span class="text-3xl">📖</span>
+<section id="overview" class="section-pad">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">📖</span>
       <h2 class="section-title">Overview — أساسيات OS</h2>
-      <button onclick="markDone('overview')" id="done-overview" class="btn btn-outline text-xs px-3 py-1 mr-auto">✓ تمت المراجعة</button>
+      <button onclick="markDone('overview')" id="done-overview" class="btn btn-outline" style="font-size:12px;padding:8px 14px;margin-right:auto;">✓ تمت المراجعة</button>
     </div>
 
     <!-- What is OS -->
-    <div class="card mb-6">
-      <h3 class="text-xl font-black mb-4" style="color:var(--accent)">ما هو الـ Operating System؟</h3>
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-base sm:text-xl font-black mb-4" style="color:var(--accent)">ما هو الـ Operating System؟</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <div class="concept">
             <div class="text-xs mb-1" style="color:var(--muted)">يعني إيه؟</div>
-            <p class="text-sm">الـ OS هو برنامج بيعمل كـ intermediary (وسيط) بين الـ user والـ hardware — بيسهل الاستخدام وبيدير الموارد</p>
+            <p class="text-xs sm:text-sm">الـ OS هو برنامج بيعمل كـ intermediary (وسيط) بين الـ user والـ hardware — بيسهل الاستخدام وبيدير الموارد</p>
           </div>
           <div class="concept concept-green">
             <div class="text-xs mb-1" style="color:var(--muted)">كـ Resource Allocator</div>
-            <p class="text-sm">بيوزع موارد الكمبيوتر (CPU، memory، I/O) بشكل عادل وكفء بين البرامج</p>
+            <p class="text-xs sm:text-sm">بيوزع موارد الكمبيوتر (CPU، memory، I/O) بشكل عادل وكفء بين البرامج</p>
           </div>
           <div class="concept concept-red">
             <div class="text-xs mb-1" style="color:var(--muted)">كـ Control Program</div>
-            <p class="text-sm">بيتحكم في تنفيذ البرامج عشان يمنع الأخطاء وسوء الاستخدام</p>
+            <p class="text-xs sm:text-sm">بيتحكم في تنفيذ البرامج عشان يمنع الأخطاء وسوء الاستخدام</p>
           </div>
         </div>
         <div>
           <div class="card" style="background:var(--card2)">
-            <p class="font-bold mb-3" style="color:var(--accent2)">🎯 Goals of OS</p>
-            <ul class="text-sm space-y-2">
+            <p class="font-bold mb-3 text-sm" style="color:var(--accent2)">🎯 Goals of OS</p>
+            <ul class="text-xs sm:text-sm space-y-2">
               <li>✅ تنفيذ برامج الـ user وحل مشاكله</li>
               <li>✅ الكمبيوتر يكون سهل الاستخدام</li>
               <li>✅ استخدام الـ hardware بكفاءة</li>
@@ -491,16 +751,16 @@
     </div>
 
     <!-- Kernel -->
-    <div class="card mb-6">
-      <h3 class="text-xl font-black mb-4" style="color:var(--accent)">الـ Kernel 🔑</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-base sm:text-xl font-black mb-4" style="color:var(--accent)">الـ Kernel 🔑</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         <div class="concept concept-yellow">
-          <div class="font-bold mb-2" style="color:var(--yellow)">ما هو الـ Kernel؟</div>
-          <p class="text-sm">هو القلب الحقيقي لل OS — أول حاجة بتتحمل في memory وقت الـ Boot وبيفضل موجود طول الجلسة</p>
+          <div class="font-bold mb-2 text-sm" style="color:var(--yellow)">ما هو الـ Kernel؟</div>
+          <p class="text-xs sm:text-sm">هو القلب الحقيقي لل OS — أول حاجة بتتحمل في memory وقت الـ Boot وبيفضل موجود طول الجلسة</p>
         </div>
         <div class="concept">
-          <div class="font-bold mb-2" style="color:var(--accent)">وظائفه:</div>
-          <ul class="text-sm space-y-1">
+          <div class="font-bold mb-2 text-sm" style="color:var(--accent)">وظائفه:</div>
+          <ul class="text-xs sm:text-sm space-y-1">
             <li>• <b>Scheduler:</b> بيوزع وقت CPU</li>
             <li>• <b>Memory Manager:</b> بيدير الـ RAM</li>
             <li>• <b>Interrupt Handler:</b> بيعالج الـ interrupts</li>
@@ -508,30 +768,30 @@
           </ul>
         </div>
         <div class="concept concept-red">
-          <div class="font-bold mb-2" style="color:var(--red)">⚠️ مش نفس الـ OS!</div>
-          <p class="text-sm">الـ OS أكبر — بيشمل Kernel + Utilities + Drivers + User Interface</p>
-          <p class="text-sm mt-2">الـ Kernel بس هو اللي بيشتغل في Kernel Mode</p>
+          <div class="font-bold mb-2 text-sm" style="color:var(--red)">⚠️ مش نفس الـ OS!</div>
+          <p class="text-xs sm:text-sm">الـ OS أكبر — بيشمل Kernel + Utilities + Drivers + User Interface</p>
+          <p class="text-xs sm:text-sm mt-2">الـ Kernel بس هو اللي بيشتغل في Kernel Mode</p>
         </div>
       </div>
     </div>
 
     <!-- System Calls & Modes -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
       <div class="card">
-        <h3 class="text-lg font-black mb-4" style="color:var(--accent)">System Calls 📞</h3>
+        <h3 class="text-sm sm:text-lg font-black mb-3" style="color:var(--accent)">System Calls 📞</h3>
         <div class="concept concept-green">
-          <p class="text-sm font-bold mb-1">يعني إيه؟</p>
-          <p class="text-sm">الطريقة الوحيدة اللي الـ user program بيستخدمها عشان يطلب خدمة من الـ Kernel (زي فتح ملف، عمل process جديد، إلخ)</p>
+          <p class="text-xs sm:text-sm font-bold mb-1">يعني إيه؟</p>
+          <p class="text-xs sm:text-sm">الطريقة الوحيدة اللي الـ user program بيستخدمها عشان يطلب خدمة من الـ Kernel (زي فتح ملف، عمل process جديد، إلخ)</p>
         </div>
-        <div class="text-sm mt-3 space-y-2">
+        <div class="text-xs sm:text-sm mt-3 space-y-2">
           <p>🔸 بيتسمى كمان <b>software interrupt</b></p>
           <p>🔸 لما الـ system call بيتنادى → الـ mode بيتغير من <b>User → Kernel</b></p>
           <p>🔸 بعد ما الـ Kernel ينهي الخدمة → بيرجع <b>Kernel → User Mode</b></p>
         </div>
       </div>
       <div class="card">
-        <h3 class="text-lg font-black mb-4" style="color:var(--accent)">User Mode vs Kernel Mode 🔐</h3>
-        <div class="overflow-x-auto">
+        <h3 class="text-sm sm:text-lg font-black mb-3" style="color:var(--accent)">User Mode vs Kernel Mode 🔐</h3>
+        <div class="table-wrap">
           <table>
             <tr><th>الخاصية</th><th>User Mode</th><th>Kernel Mode</th></tr>
             <tr><td>الصلاحيات</td><td>محدودة</td><td>كاملة</td></tr>
@@ -544,12 +804,12 @@
     </div>
 
     <!-- Interrupt vs Trap -->
-    <div class="card mb-6">
-      <h3 class="text-lg font-black mb-4" style="color:var(--red)">⚡ Interrupt vs Trap — فرق مهم جداً</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--red)">⚡ Interrupt vs Trap — فرق مهم جداً</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="concept concept-yellow">
-          <div class="font-black text-base mb-2" style="color:var(--yellow)">Interrupt (Hardware Interrupt)</div>
-          <ul class="text-sm space-y-1">
+          <div class="font-black text-sm mb-2" style="color:var(--yellow)">Interrupt (Hardware Interrupt)</div>
+          <ul class="text-xs sm:text-sm space-y-1">
             <li>✅ مصدره: الـ Hardware (keyboard, disk, timer)</li>
             <li>✅ خارجي — من جهاز</li>
             <li>✅ بيحصل في أي وقت (asynchronous)</li>
@@ -557,8 +817,8 @@
           </ul>
         </div>
         <div class="concept concept-red">
-          <div class="font-black text-base mb-2" style="color:var(--red)">Trap (Software Interrupt)</div>
-          <ul class="text-sm space-y-1">
+          <div class="font-black text-sm mb-2" style="color:var(--red)">Trap (Software Interrupt)</div>
+          <ul class="text-xs sm:text-sm space-y-1">
             <li>✅ مصدره: الـ Software (برنامج المستخدم)</li>
             <li>✅ داخلي — من instruction</li>
             <li>✅ بيحصل بشكل متعمد أو بسبب خطأ</li>
@@ -567,15 +827,15 @@
         </div>
       </div>
       <div class="mt-3 p-3 rounded-lg" style="background:rgba(255,215,0,0.08); border:1px solid rgba(255,215,0,0.2)">
-        <p class="text-sm font-bold" style="color:var(--yellow)">🎯 امتحانياً: كلاهما بيخلي الـ CPU يتحول لـ Kernel Mode ويشغل handler معين</p>
+        <p class="text-xs sm:text-sm font-bold" style="color:var(--yellow)">🎯 امتحانياً: كلاهما بيخلي الـ CPU يتحول لـ Kernel Mode ويشغل handler معين</p>
       </div>
     </div>
 
     <!-- OS Services & Booting -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
       <div class="card">
-        <h3 class="text-lg font-black mb-4" style="color:var(--accent)">OS Services</h3>
-        <div class="space-y-2 text-sm">
+        <h3 class="text-sm sm:text-lg font-black mb-3" style="color:var(--accent)">OS Services</h3>
+        <div class="space-y-2 text-xs sm:text-sm">
           <div class="concept"><b>User Interface (UI):</b> CLI أو GUI للتواصل مع المستخدم</div>
           <div class="concept"><b>Program Execution:</b> تحميل وتشغيل البرامج</div>
           <div class="concept"><b>I/O Operations:</b> التعامل مع أجهزة الإدخال/الإخراج</div>
@@ -587,8 +847,8 @@
         </div>
       </div>
       <div class="card">
-        <h3 class="text-lg font-black mb-4" style="color:var(--accent)">Booting Process 🚀</h3>
-        <div class="space-y-3 text-sm">
+        <h3 class="text-sm sm:text-lg font-black mb-3" style="color:var(--accent)">Booting Process 🚀</h3>
+        <div class="space-y-3 text-xs sm:text-sm">
           <div class="flex gap-3 items-start">
             <span class="tag tag-yellow flex-shrink-0">1</span>
             <div><b>Power ON</b> → CPU ينشط الـ BIOS/UEFI</div>
@@ -619,28 +879,27 @@
 </section>
 
 <!-- ==================== OS TYPES ==================== -->
-<section id="os-types" class="py-16 px-4 md:px-6" style="background:linear-gradient(to bottom, var(--bg), var(--card2))">
-  <div class="max-w-6xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <span class="text-3xl">🖥️</span>
+<section id="os-types" class="section-pad" style="background:linear-gradient(to bottom, var(--bg), var(--card2))">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">🖥️</span>
       <h2 class="section-title">أنواع الـ Operating Systems</h2>
-      <button onclick="markDone('os-types')" id="done-os-types" class="btn btn-outline text-xs px-3 py-1 mr-auto">✓ تمت المراجعة</button>
+      <button onclick="markDone('os-types')" id="done-os-types" class="btn btn-outline" style="font-size:12px;padding:8px 14px;margin-right:auto;">✓ تمت المراجعة</button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
       <div class="card">
-        <div class="flex items-center gap-2 mb-3"><span class="text-2xl">📦</span><h3 class="font-black text-base" style="color:var(--accent)">Batch Systems</h3></div>
-        <div class="space-y-2 text-sm">
+        <div class="flex items-center gap-2 mb-3"><span class="text-xl">📦</span><h3 class="font-black text-sm" style="color:var(--accent)">Batch Systems</h3></div>
+        <div class="space-y-2 text-xs sm:text-sm">
           <div class="concept"><b>يعني إيه؟</b> Jobs بتتجمع وتشتغل واحدة ورا التانية بدون تدخل من المستخدم</div>
           <div class="concept concept-red"><b>العيب:</b> لو job واحدة وقعت في I/O → الـ CPU بتقف (idle) — مش كفاءة!</div>
           <div class="concept concept-green"><b>الميزة:</b> بسيطة جداً في التنفيذ</div>
-          <p class="text-xs mt-2" style="color:var(--muted)">تاريخياً: كانت بتستخدم punch cards</p>
         </div>
       </div>
 
       <div class="card">
-        <div class="flex items-center gap-2 mb-3"><span class="text-2xl">🔄</span><h3 class="font-black text-base" style="color:var(--accent)">Multiprogramming</h3></div>
-        <div class="space-y-2 text-sm">
+        <div class="flex items-center gap-2 mb-3"><span class="text-xl">🔄</span><h3 class="font-black text-sm" style="color:var(--accent)">Multiprogramming</h3></div>
+        <div class="space-y-2 text-xs sm:text-sm">
           <div class="concept"><b>يعني إيه؟</b> أكتر من process في الـ memory في نفس الوقت — لما واحدة تعمل I/O، التانية تشتغل</div>
           <div class="concept concept-green"><b>الفايدة:</b> CPU مش بتقف — استخدام أحسن</div>
           <div class="concept concept-red"><b>ملاحظة:</b> مفيش حاجة اسمها "conversation" مع المستخدم</div>
@@ -648,8 +907,8 @@
       </div>
 
       <div class="card">
-        <div class="flex items-center gap-2 mb-3"><span class="text-2xl">⏱️</span><h3 class="font-black text-base" style="color:var(--accent)">Time-Sharing</h3></div>
-        <div class="space-y-2 text-sm">
+        <div class="flex items-center gap-2 mb-3"><span class="text-xl">⏱️</span><h3 class="font-black text-sm" style="color:var(--accent)">Time-Sharing</h3></div>
+        <div class="space-y-2 text-xs sm:text-sm">
           <div class="concept"><b>يعني إيه؟</b> نوع من الـ Multiprogramming — بس الـ CPU بتتبدل بسرعة بين الـ users عن طريق time slices</div>
           <div class="concept concept-green"><b>الميزة:</b> كل user حاسس إنه عنده الـ CPU لوحده (interactive)</div>
           <div class="concept concept-yellow"><b>امتحانياً:</b> الفرق بين Multiprogramming وTime-Sharing هو وجود <b>time quantum</b> والـ interactivity</div>
@@ -657,8 +916,8 @@
       </div>
 
       <div class="card">
-        <div class="flex items-center gap-2 mb-3"><span class="text-2xl">⚡</span><h3 class="font-black text-base" style="color:var(--accent)">Real-Time Systems</h3></div>
-        <div class="space-y-2 text-sm">
+        <div class="flex items-center gap-2 mb-3"><span class="text-xl">⚡</span><h3 class="font-black text-sm" style="color:var(--accent)">Real-Time Systems</h3></div>
+        <div class="space-y-2 text-xs sm:text-sm">
           <div class="concept"><b>يعني إيه؟</b> لازم الـ response يحصل في وقت محدد (deadline) — التأخير ممكن يكون كارثي</div>
           <div class="concept concept-red"><b>أمثلة:</b> طائرات، أنظمة طبية، محطات نووية</div>
           <div>
@@ -670,25 +929,25 @@
       </div>
 
       <div class="card">
-        <div class="flex items-center gap-2 mb-3"><span class="text-2xl">🌐</span><h3 class="font-black text-base" style="color:var(--accent)">Distributed Systems</h3></div>
-        <div class="space-y-2 text-sm">
+        <div class="flex items-center gap-2 mb-3"><span class="text-xl">🌐</span><h3 class="font-black text-sm" style="color:var(--accent)">Distributed Systems</h3></div>
+        <div class="space-y-2 text-xs sm:text-sm">
           <div class="concept"><b>يعني إيه؟</b> أكتر من كمبيوتر مترابطين عن طريق network ويشتغلوا كـ system واحد</div>
           <div class="concept concept-green"><b>الميزة:</b> زيادة في الـ reliability والـ performance</div>
         </div>
       </div>
 
       <div class="card">
-        <div class="flex items-center gap-2 mb-3"><span class="text-2xl">📱</span><h3 class="font-black text-base" style="color:var(--accent)">Embedded Systems</h3></div>
-        <div class="space-y-2 text-sm">
+        <div class="flex items-center gap-2 mb-3"><span class="text-xl">📱</span><h3 class="font-black text-sm" style="color:var(--accent)">Embedded Systems</h3></div>
+        <div class="space-y-2 text-xs sm:text-sm">
           <div class="concept"><b>يعني إيه؟</b> OS مخصص لجهاز معين — بيعمل مهام محددة بس</div>
           <div class="concept concept-yellow"><b>خصائص:</b> Kernel صغير + real-time + محدود الموارد</div>
           <div class="text-xs" style="color:var(--muted)">أمثلة: موبايل، سيارة، ميكروويف، راوتر</div>
         </div>
       </div>
 
-      <div class="card md:col-span-2 xl:col-span-3">
-        <div class="flex items-center gap-2 mb-3"><span class="text-2xl">🖥️</span><h3 class="font-black text-base" style="color:var(--accent)">Virtual Machines</h3></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+      <div class="card sm:col-span-2 xl:col-span-3">
+        <div class="flex items-center gap-2 mb-3"><span class="text-xl">🖥️</span><h3 class="font-black text-sm" style="color:var(--accent)">Virtual Machines</h3></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
           <div>
             <div class="concept"><b>يعني إيه؟</b> Software بيعمل emulation لـ machine كاملة — بتخلي OS يشتغل فوق OS تاني</div>
             <div class="concept concept-green"><b>Process VM:</b> بيعمل environment لـ process واحدة (زي JVM)</div>
@@ -709,21 +968,21 @@
 </section>
 
 <!-- ==================== PROCESS ==================== -->
-<section id="process" class="py-16 px-4 md:px-6">
-  <div class="max-w-6xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <span class="text-3xl">⚙️</span>
+<section id="process" class="section-pad">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">⚙️</span>
       <h2 class="section-title">Process Management</h2>
-      <button onclick="markDone('process')" id="done-process" class="btn btn-outline text-xs px-3 py-1 mr-auto">✓ تمت المراجعة</button>
+      <button onclick="markDone('process')" id="done-process" class="btn btn-outline" style="font-size:12px;padding:8px 14px;margin-right:auto;">✓ تمت المراجعة</button>
     </div>
 
     <!-- Process vs Program -->
-    <div class="card mb-6">
-      <h3 class="text-lg font-black mb-4" style="color:var(--accent)">Process vs Program</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Process vs Program</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="concept concept-yellow">
-          <div class="font-black text-base mb-2" style="color:var(--yellow)">Program 📄</div>
-          <ul class="text-sm space-y-1">
+          <div class="font-black text-sm mb-2" style="color:var(--yellow)">Program 📄</div>
+          <ul class="text-xs sm:text-sm space-y-1">
             <li>• ملف ساكن على الـ disk</li>
             <li>• Passive entity</li>
             <li>• مجرد instructions مكتوبة</li>
@@ -731,8 +990,8 @@
           </ul>
         </div>
         <div class="concept concept-green">
-          <div class="font-black text-base mb-2" style="color:var(--accent2)">Process ⚙️</div>
-          <ul class="text-sm space-y-1">
+          <div class="font-black text-sm mb-2" style="color:var(--accent2)">Process ⚙️</div>
+          <ul class="text-xs sm:text-sm space-y-1">
             <li>• برنامج <b>قيد التنفيذ</b> في الـ memory</li>
             <li>• Active entity</li>
             <li>• محتاج CPU + Memory + I/O</li>
@@ -743,63 +1002,67 @@
     </div>
 
     <!-- Process States Interactive -->
-    <div class="card mb-6">
-      <h3 class="text-lg font-black mb-6" style="color:var(--accent)">Process States — اضغط على كل State 🎯</h3>
-      <div class="flex flex-wrap justify-center items-center gap-4 mb-6" id="state-diagram">
-        <div class="state-node" style="background:rgba(0,212,170,0.1);border-color:var(--accent2);color:var(--accent2)" onclick="showStateInfo('new')">New</div>
-        <div class="text-muted text-2xl">→</div>
-        <div class="state-node" style="background:rgba(108,99,255,0.1);border-color:var(--accent);color:var(--accent)" onclick="showStateInfo('ready')">Ready</div>
-        <div class="text-2xl">⇄</div>
-        <div class="state-node" style="background:rgba(255,215,0,0.1);border-color:var(--yellow);color:var(--yellow)" onclick="showStateInfo('running')">Running</div>
-        <div class="text-2xl">→</div>
-        <div class="state-node" style="background:rgba(255,69,96,0.1);border-color:var(--red);color:var(--red)" onclick="showStateInfo('terminated')">Terminated</div>
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Process States — اضغط على كل State 🎯</h3>
+
+      <div class="state-diagram-wrap mb-4">
+        <div class="state-diagram-inner" id="state-diagram">
+          <div class="state-node" style="background:rgba(0,212,170,0.1);border-color:var(--accent2);color:var(--accent2)" onclick="showStateInfo('new')">New</div>
+          <div style="color:var(--muted);font-size:20px;flex-shrink:0">→</div>
+          <div class="state-node" style="background:rgba(108,99,255,0.1);border-color:var(--accent);color:var(--accent)" onclick="showStateInfo('ready')">Ready</div>
+          <div style="font-size:20px;flex-shrink:0">⇄</div>
+          <div class="state-node" style="background:rgba(255,215,0,0.1);border-color:var(--yellow);color:var(--yellow)" onclick="showStateInfo('running')">Running</div>
+          <div style="font-size:20px;flex-shrink:0">→</div>
+          <div class="state-node" style="background:rgba(255,69,96,0.1);border-color:var(--red);color:var(--red)" onclick="showStateInfo('terminated')">Terminated</div>
+        </div>
       </div>
       <div class="flex justify-center mb-4">
         <div class="state-node" style="background:rgba(159,122,234,0.1);border-color:#9f7aea;color:#9f7aea" onclick="showStateInfo('waiting')">Waiting</div>
       </div>
-      <div id="state-info" class="text-sm" style="color:var(--muted)">
+
+      <div id="state-info" class="text-xs sm:text-sm" style="color:var(--muted)">
         👆 اضغط على أي State عشان تشوف تفاصيله
       </div>
-      <div class="mt-4 text-xs" style="color:var(--muted)">
+      <div class="mt-3 text-xs" style="color:var(--muted)">
         <p>التحولات المهمة: Running → Waiting (بسبب I/O request) | Running → Ready (بسبب interrupt/time quantum) | Waiting → Ready (I/O انتهى)</p>
       </div>
     </div>
 
     <!-- PCB -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
       <div class="card">
-        <h3 class="text-lg font-black mb-4" style="color:var(--accent)">PCB — Process Control Block</h3>
-        <div class="concept concept-yellow mb-3">
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">PCB — Process Control Block</h3>
+        <div class="concept concept-yellow mb-3 text-xs sm:text-sm">
           <b>يعني إيه؟</b> Data structure بيحفظ فيها الـ OS كل المعلومات عن الـ Process
         </div>
-        <div class="space-y-2 text-sm">
-          <div class="flex justify-between p-2 rounded" style="background:var(--card2)">
+        <div class="space-y-2 text-xs sm:text-sm">
+          <div class="flex justify-between p-2 rounded gap-2" style="background:var(--card2)">
             <span>Process State</span><span style="color:var(--accent2)">Running / Ready / Waiting...</span>
           </div>
-          <div class="flex justify-between p-2 rounded" style="background:var(--card2)">
+          <div class="flex justify-between p-2 rounded gap-2" style="background:var(--card2)">
             <span>Process ID (PID)</span><span style="color:var(--accent2)">رقم تعريف الـ Process</span>
           </div>
-          <div class="flex justify-between p-2 rounded" style="background:var(--card2)">
+          <div class="flex justify-between p-2 rounded gap-2" style="background:var(--card2)">
             <span>Program Counter (PC)</span><span style="color:var(--accent2)">عنوان الـ instruction الجاية</span>
           </div>
-          <div class="flex justify-between p-2 rounded" style="background:var(--card2)">
+          <div class="flex justify-between p-2 rounded gap-2" style="background:var(--card2)">
             <span>CPU Registers</span><span style="color:var(--accent2)">قيم الـ registers</span>
           </div>
-          <div class="flex justify-between p-2 rounded" style="background:var(--card2)">
+          <div class="flex justify-between p-2 rounded gap-2" style="background:var(--card2)">
             <span>Memory Limits</span><span style="color:var(--accent2)">Base and Limit</span>
           </div>
-          <div class="flex justify-between p-2 rounded" style="background:var(--card2)">
+          <div class="flex justify-between p-2 rounded gap-2" style="background:var(--card2)">
             <span>Open Files List</span><span style="color:var(--accent2)">الملفات المفتوحة</span>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <h3 class="text-lg font-black mb-4" style="color:var(--accent)">Context Switch</h3>
-        <div class="concept mb-3">
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Context Switch</h3>
+        <div class="concept mb-3 text-xs sm:text-sm">
           <b>يعني إيه؟</b> لما الـ CPU تتنقل من process لـ process تانية — بتحفظ PCB القديمة وتحمل PCB الجديدة
         </div>
-        <div class="space-y-3 text-sm">
+        <div class="space-y-3 text-xs sm:text-sm">
           <div class="flex gap-2 items-start">
             <span class="tag flex-shrink-0">1</span>
             <span>Save state of current process في الـ PCB بتاعته</span>
@@ -824,9 +1087,9 @@
     </div>
 
     <!-- Schedulers -->
-    <div class="card mb-6">
-      <h3 class="text-lg font-black mb-4" style="color:var(--accent)">أنواع الـ Schedulers</h3>
-      <div class="overflow-x-auto">
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">أنواع الـ Schedulers</h3>
+      <div class="table-wrap">
         <table>
           <tr><th>Scheduler</th><th>بيشتغل بين</th><th>وظيفته</th><th>سرعة الاستدعاء</th></tr>
           <tr>
@@ -839,25 +1102,25 @@
             <td class="font-bold" style="color:var(--red)">Short-term (CPU Scheduler)</td>
             <td>Memory → CPU</td>
             <td>بيقرر أنهي process تاخد الـ CPU دلوقتي</td>
-            <td style="color:var(--red)">سريع جداً (milliseconds)</td>
+            <td style="color:var(--red)">سريع جداً (ms)</td>
           </tr>
           <tr>
             <td class="font-bold" style="color:var(--accent)">Medium-term</td>
             <td>Memory ⇄ Disk</td>
-            <td>Swapping — بيشيل processes من memory لو محتاجين مساحة</td>
+            <td>Swapping — بيشيل processes من memory</td>
             <td style="color:var(--muted)">متوسط</td>
           </tr>
         </table>
       </div>
-      <div class="concept concept-yellow mt-4 text-sm">
+      <div class="concept concept-yellow mt-4 text-xs sm:text-sm">
         <b>امتحانياً:</b> اللي بيتكلم عنه أكتر في الامتحان هو الـ <b>Short-term scheduler</b> (CPU Scheduler) — ده اللي بيعمل الـ FCFS, SJF, RR
       </div>
     </div>
 
     <!-- Scheduling Queues -->
     <div class="card">
-      <h3 class="text-lg font-black mb-4" style="color:var(--accent)">Scheduling Queues</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Scheduling Queues</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
         <div class="concept">
           <div class="font-bold mb-2" style="color:var(--accent)">Job Queue</div>
           <p>كل الـ processes في النظام (disk + memory)</p>
@@ -876,18 +1139,18 @@
 </section>
 
 <!-- ==================== SCHEDULING ==================== -->
-<section id="scheduling" class="py-16 px-4 md:px-6" style="background:linear-gradient(to bottom, var(--bg), var(--card2))">
-  <div class="max-w-6xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <span class="text-3xl">📊</span>
+<section id="scheduling" class="section-pad" style="background:linear-gradient(to bottom, var(--bg), var(--card2))">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">📊</span>
       <h2 class="section-title">CPU Scheduling</h2>
-      <button onclick="markDone('scheduling')" id="done-scheduling" class="btn btn-outline text-xs px-3 py-1 mr-auto">✓ تمت المراجعة</button>
+      <button onclick="markDone('scheduling')" id="done-scheduling" class="btn btn-outline" style="font-size:12px;padding:8px 14px;margin-right:auto;">✓ تمت المراجعة</button>
     </div>
 
     <!-- Criteria -->
-    <div class="card mb-6">
-      <h3 class="text-lg font-black mb-4" style="color:var(--accent)">Scheduling Criteria — بنحكم على الـ Algorithm بإيه؟</h3>
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Scheduling Criteria — بنحكم على الـ Algorithm بإيه؟</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs sm:text-sm">
         <div class="concept concept-green"><b>CPU Utilization ↑</b> نسبة استخدام CPU — أعلى أفضل</div>
         <div class="concept concept-green"><b>Throughput ↑</b> عدد الـ processes المنتهية في الوحدة الزمنية</div>
         <div class="concept concept-yellow"><b>Turnaround Time ↓</b> الوقت من بدء لإنهاء العملية</div>
@@ -898,9 +1161,9 @@
     </div>
 
     <!-- Preemptive vs Non-preemptive -->
-    <div class="card mb-6">
-      <h3 class="text-lg font-black mb-4" style="color:var(--accent)">Preemptive vs Non-preemptive</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Preemptive vs Non-preemptive</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
         <div class="concept concept-red">
           <b>Non-preemptive:</b> لما process تاخد الـ CPU، مفيش حاجة تقدر تاخدها منها إلا لو هي خلصت أو طلبت I/O
         </div>
@@ -911,10 +1174,10 @@
     </div>
 
     <!-- Algorithms Detail -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
       <div class="card">
-        <div class="flex items-center gap-2 mb-3"><span class="tag">FCFS</span><h3 class="font-black">First-Come First-Served</h3></div>
-        <div class="space-y-2 text-sm">
+        <div class="flex items-center gap-2 mb-3 flex-wrap"><span class="tag">FCFS</span><h3 class="font-black text-sm">First-Come First-Served</h3></div>
+        <div class="space-y-2 text-xs sm:text-sm">
           <div class="concept"><b>الفكرة:</b> الأول يجي الأول يتخدم — زي طابور عادي</div>
           <div class="concept concept-red"><b>العيب:</b> Convoy Effect — process طويلة ممكن تخلي كل التانيين يستنوا</div>
           <div class="concept concept-green"><b>الميزة:</b> بسيطة جداً في التطبيق</div>
@@ -922,8 +1185,8 @@
         </div>
       </div>
       <div class="card">
-        <div class="flex items-center gap-2 mb-3"><span class="tag">SJF/SRTF</span><h3 class="font-black">Shortest Job First / SRTF</h3></div>
-        <div class="space-y-2 text-sm">
+        <div class="flex items-center gap-2 mb-3 flex-wrap"><span class="tag">SJF/SRTF</span><h3 class="font-black text-sm">Shortest Job First / SRTF</h3></div>
+        <div class="space-y-2 text-xs sm:text-sm">
           <div class="concept"><b>الفكرة:</b> الـ process اللي Burst Time أقل تشتغل الأول</div>
           <div class="concept concept-green"><b>الميزة:</b> أقل average waiting time نظرياً (optimal)</div>
           <div class="concept concept-red"><b>العيب:</b> Starvation — الـ long processes ممكن تستنى للأبد</div>
@@ -931,8 +1194,8 @@
         </div>
       </div>
       <div class="card">
-        <div class="flex items-center gap-2 mb-3"><span class="tag">RR</span><h3 class="font-black">Round Robin</h3></div>
-        <div class="space-y-2 text-sm">
+        <div class="flex items-center gap-2 mb-3 flex-wrap"><span class="tag">RR</span><h3 class="font-black text-sm">Round Robin</h3></div>
+        <div class="space-y-2 text-xs sm:text-sm">
           <div class="concept"><b>الفكرة:</b> كل process بتاخد time quantum (q) — لو مخلصتش، ترجع للآخر وتستنى</div>
           <div class="concept concept-green"><b>الميزة:</b> عادل جداً — لا Starvation — أحسن response time</div>
           <div class="concept concept-red"><b>التحدي:</b> لو q صغير → context switches كتير. لو q كبير → بيبقى زي FCFS</div>
@@ -940,8 +1203,8 @@
         </div>
       </div>
       <div class="card">
-        <div class="flex items-center gap-2 mb-3"><span class="tag tag-yellow">مقارنة</span><h3 class="font-black">متى أستخدم أنهي Algorithm؟</h3></div>
-        <div class="overflow-x-auto">
+        <div class="flex items-center gap-2 mb-3 flex-wrap"><span class="tag tag-yellow">مقارنة</span><h3 class="font-black text-sm">متى أستخدم أنهي Algorithm؟</h3></div>
+        <div class="table-wrap">
           <table>
             <tr><th>الموقف</th><th>الأنسب</th></tr>
             <tr><td>بساطة وبدائية</td><td>FCFS</td></tr>
@@ -956,11 +1219,11 @@
 
     <!-- SCHEDULING VISUALIZER -->
     <div class="card" style="border-color:var(--accent)">
-      <h3 class="text-xl font-black mb-6 text-center" style="color:var(--accent)">🎮 Scheduling Visualizer التفاعلي</h3>
+      <h3 class="text-base sm:text-xl font-black mb-5 text-center" style="color:var(--accent)">🎮 Scheduling Visualizer التفاعلي</h3>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
         <div>
-          <label class="block text-sm font-bold mb-2">اختار Algorithm:</label>
+          <label class="block text-xs sm:text-sm font-bold mb-2">اختار Algorithm:</label>
           <div class="flex flex-wrap gap-2 mb-4">
             <button class="tab-btn active" onclick="setAlgo('FCFS',this)">FCFS</button>
             <button class="tab-btn" onclick="setAlgo('SJF',this)">SJF</button>
@@ -969,26 +1232,26 @@
           </div>
           <div id="rr-quantum" class="hidden mb-4">
             <label class="block text-xs font-bold mb-1">Time Quantum:</label>
-            <input type="number" id="quantum" value="2" min="1" max="10" class="w-24 px-3 py-2 rounded-lg text-sm mono" style="background:var(--card2);border:1px solid var(--border);color:var(--text)">
+            <input type="number" id="quantum" value="2" min="1" max="10" class="inp mono-inp" style="width:100px">
           </div>
         </div>
         <div>
-          <label class="block text-sm font-bold mb-2">إضافة Process:</label>
-          <div class="flex gap-2 mb-2">
-            <input type="number" id="in-arrival" placeholder="Arrival" min="0" class="flex-1 px-3 py-2 rounded-lg text-sm mono" style="background:var(--card2);border:1px solid var(--border);color:var(--text)">
-            <input type="number" id="in-burst" placeholder="Burst" min="1" class="flex-1 px-3 py-2 rounded-lg text-sm mono" style="background:var(--card2);border:1px solid var(--border);color:var(--text)">
-            <button onclick="addProcess()" class="btn btn-primary px-4 py-2 text-sm">+</button>
+          <label class="block text-xs sm:text-sm font-bold mb-2">إضافة Process:</label>
+          <div class="sched-input-group mb-3">
+            <input type="number" id="in-arrival" placeholder="Arrival" min="0" class="inp mono-inp">
+            <input type="number" id="in-burst" placeholder="Burst" min="1" class="inp mono-inp">
+            <button onclick="addProcess()" class="btn btn-primary" style="flex-shrink:0;width:auto;">+</button>
           </div>
-          <div class="flex gap-2">
-            <button onclick="loadExample()" class="btn btn-outline text-xs px-3 py-2">مثال جاهز</button>
-            <button onclick="clearProcesses()" class="btn btn-outline text-xs px-3 py-2">مسح</button>
-            <button onclick="runScheduler()" class="btn btn-primary text-sm px-4 py-2">▶ تشغيل</button>
+          <div class="sched-btn-group">
+            <button onclick="loadExample()" class="btn btn-outline" style="font-size:12px;">مثال جاهز</button>
+            <button onclick="clearProcesses()" class="btn btn-outline" style="font-size:12px;">مسح</button>
+            <button onclick="runScheduler()" class="btn btn-primary" style="font-size:13px;">▶ تشغيل</button>
           </div>
         </div>
       </div>
 
       <!-- Process Table -->
-      <div id="process-table-wrap" class="mb-4 overflow-x-auto" style="display:none">
+      <div id="process-table-wrap" class="mb-4 table-wrap" style="display:none">
         <table id="process-table">
           <tr><th>Process</th><th>Arrival Time</th><th>Burst Time</th><th>حذف</th></tr>
         </table>
@@ -996,36 +1259,39 @@
 
       <!-- Gantt Chart -->
       <div id="gantt-area" style="display:none">
-        <h4 class="font-bold mb-3 text-sm" style="color:var(--accent)">Gantt Chart:</h4>
-        <div class="overflow-x-auto mb-2">
-          <div id="gantt-chart" class="flex gap-0 items-stretch" style="min-width:400px;direction:ltr"></div>
+        <h4 class="font-bold mb-3 text-xs sm:text-sm" style="color:var(--accent)">Gantt Chart:</h4>
+        <div class="gantt-wrapper mb-1">
+          <div id="gantt-chart" class="gantt-inner"></div>
         </div>
-        <div id="gantt-times" class="flex gap-0 text-xs mono mb-6" style="direction:ltr;color:var(--muted)"></div>
+        <div class="gantt-wrapper mb-5">
+          <div id="gantt-times" class="gantt-times-inner text-xs mono" style="color:var(--muted)"></div>
+        </div>
 
         <!-- Results Table -->
-        <h4 class="font-bold mb-3 text-sm" style="color:var(--accent)">النتائج:</h4>
-        <div class="overflow-x-auto">
+        <h4 class="font-bold mb-3 text-xs sm:text-sm" style="color:var(--accent)">النتائج:</h4>
+        <div class="table-wrap">
           <table id="results-table"></table>
         </div>
-        <div id="averages" class="mt-4 p-4 rounded-xl text-sm font-bold" style="background:rgba(108,99,255,0.1);border:1px solid rgba(108,99,255,0.3)"></div>
+        <div id="averages" class="mt-4 p-4 rounded-xl text-xs sm:text-sm font-bold" style="background:rgba(108,99,255,0.1);border:1px solid rgba(108,99,255,0.3)"></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ==================== MEMORY ==================== -->
-<section id="memory" class="py-16 px-4 md:px-6">
-  <div class="max-w-6xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <span class="text-3xl">🧠</span>
-      <h2 class="section-title">Memory Management (حتى Slide 40 بس)</h2>
-      <button onclick="markDone('memory')" id="done-memory" class="btn btn-outline text-xs px-3 py-1 mr-auto">✓ تمت المراجعة</button>
+<section id="memory" class="section-pad">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">🧠</span>
+      <h2 class="section-title">Memory Management</h2>
+      <button onclick="markDone('memory')" id="done-memory" class="btn btn-outline" style="font-size:12px;padding:8px 14px;margin-right:auto;">✓ تمت المراجعة</button>
     </div>
+    <p class="text-xs sm:text-sm mb-5" style="color:var(--muted)">(حتى Slide 40 بس)</p>
 
     <!-- Logical vs Physical -->
-    <div class="card mb-6">
-      <h3 class="text-lg font-black mb-4" style="color:var(--accent)">Logical vs Physical Address</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Logical vs Physical Address</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
         <div class="concept concept-yellow">
           <div class="font-bold mb-2" style="color:var(--yellow)">Logical Address (Virtual)</div>
           <p>العنوان اللي الـ CPU بيولده — الـ program بيشوفه</p>
@@ -1045,9 +1311,9 @@
     </div>
 
     <!-- Address Binding -->
-    <div class="card mb-6">
-      <h3 class="text-lg font-black mb-4" style="color:var(--accent)">Address Binding — متى بتتحدد العناوين؟</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Address Binding — متى بتتحدد العناوين؟</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
         <div class="concept">
           <div class="font-bold mb-2" style="color:var(--yellow)">Compile Time</div>
           <p>لو عارفين مكان الـ process في الـ memory من الأول — الـ compiler بيولد physical addresses مباشرة</p>
@@ -1064,22 +1330,14 @@
     </div>
 
     <!-- Contiguous Allocation & Fragmentation -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
       <div class="card">
-        <h3 class="text-lg font-black mb-4" style="color:var(--accent)">Contiguous Allocation وطرق الـ Allocation</h3>
-        <div class="space-y-3 text-sm">
-          <div class="concept">
-            <b>Contiguous:</b> الـ process بتاخد block متواصل في الـ memory
-          </div>
-          <div class="concept concept-yellow">
-            <b>First-Fit:</b> خد أول Hole كبير كفاية — أسرع
-          </div>
-          <div class="concept">
-            <b>Best-Fit:</b> خد أصغر Hole كافي — بيقلل الهدر بس أبطأ
-          </div>
-          <div class="concept concept-red">
-            <b>Worst-Fit:</b> خد أكبر Hole — بيسيب أكبر Hole متبقي
-          </div>
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Contiguous Allocation وطرق الـ Allocation</h3>
+        <div class="space-y-3 text-xs sm:text-sm">
+          <div class="concept"><b>Contiguous:</b> الـ process بتاخد block متواصل في الـ memory</div>
+          <div class="concept concept-yellow"><b>First-Fit:</b> خد أول Hole كبير كفاية — أسرع</div>
+          <div class="concept"><b>Best-Fit:</b> خد أصغر Hole كافي — بيقلل الهدر بس أبطأ</div>
+          <div class="concept concept-red"><b>Worst-Fit:</b> خد أكبر Hole — بيسيب أكبر Hole متبقي</div>
           <div class="mt-3 p-3 rounded-lg text-xs" style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2)">
             <b style="color:var(--yellow)">امتحانياً:</b> First-fit وBest-fit أحسن من Worst-fit في الغالب
           </div>
@@ -1087,8 +1345,8 @@
       </div>
 
       <div class="card">
-        <h3 class="text-lg font-black mb-4" style="color:var(--red)">Fragmentation — أهم فرق في الميموري</h3>
-        <div class="space-y-3 text-sm">
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--red)">Fragmentation — أهم فرق في الميموري</h3>
+        <div class="space-y-3 text-xs sm:text-sm">
           <div class="concept concept-red">
             <div class="font-bold mb-2" style="color:var(--red)">External Fragmentation</div>
             <p>المساحة الكلية الفاضية كافية للـ process، بس مش متواصلة (متقطعة)</p>
@@ -1105,21 +1363,21 @@
     </div>
 
     <!-- Memory Allocation Simulator -->
-    <div class="card mb-6" style="border-color:var(--accent2)">
-      <h3 class="text-xl font-black mb-4 text-center" style="color:var(--accent2)">🎮 Memory Allocation Simulator</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent2)">
+      <h3 class="text-base sm:text-xl font-black mb-4 text-center" style="color:var(--accent2)">🎮 Memory Allocation Simulator</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
-          <p class="text-sm font-bold mb-2">Holes الموجودة في الـ Memory:</p>
-          <div id="mem-holes" class="flex flex-wrap gap-2 mb-4">
+          <p class="text-xs sm:text-sm font-bold mb-2">Holes الموجودة في الـ Memory:</p>
+          <div id="mem-holes" class="mb-4">
             <span class="tag tag-green">100KB</span>
             <span class="tag tag-green">500KB</span>
             <span class="tag tag-green">200KB</span>
             <span class="tag tag-green">300KB</span>
             <span class="tag tag-green">600KB</span>
           </div>
-          <div class="flex gap-2 mb-4">
-            <input type="number" id="mem-request" placeholder="Process Size (KB)" class="flex-1 px-3 py-2 rounded-lg text-sm" style="background:var(--card2);border:1px solid var(--border);color:var(--text)">
-            <select id="mem-algo" class="px-3 py-2 rounded-lg text-sm" style="background:var(--card2);border:1px solid var(--border);color:var(--text)">
+          <div class="grid grid-cols-2 gap-2 mb-3">
+            <input type="number" id="mem-request" placeholder="Process Size (KB)" class="inp mono-inp">
+            <select id="mem-algo" class="inp" style="font-family:'Cairo',sans-serif;">
               <option value="first">First-Fit</option>
               <option value="best">Best-Fit</option>
               <option value="worst">Worst-Fit</option>
@@ -1128,7 +1386,7 @@
           <button onclick="runMemAlloc()" class="btn btn-primary w-full">▶ Allocate</button>
         </div>
         <div>
-          <div id="mem-result" class="concept concept-green text-sm" style="min-height:120px">
+          <div id="mem-result" class="concept concept-green" style="min-height:110px;font-size:13px;">
             اكتب حجم الـ process واختار الطريقة وكبس Allocate
           </div>
         </div>
@@ -1136,9 +1394,9 @@
     </div>
 
     <!-- Paging -->
-    <div class="card mb-6">
-      <h3 class="text-lg font-black mb-4" style="color:var(--accent)">Paging 📄</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-sm">
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Paging 📄</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-xs sm:text-sm">
         <div class="space-y-2">
           <div class="concept"><b>الفكرة:</b> الـ Physical Memory بتتقسم لـ <b>Frames</b> (أحجام ثابتة) — الـ Logical Memory بتتقسم لـ <b>Pages</b> (نفس الحجم)</div>
           <div class="concept concept-green"><b>الميزة:</b> بتحل External Fragmentation — الـ process مش لازم تكون متواصلة في الـ memory</div>
@@ -1161,35 +1419,35 @@ Physical Address = Frame Base + Offset
     </div>
 
     <!-- Paging Calculator -->
-    <div class="card mb-6" style="border-color:var(--accent)">
-      <h3 class="text-xl font-black mb-4 text-center" style="color:var(--accent)">🔢 Paging Address Translator</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent)">
+      <h3 class="text-base sm:text-xl font-black mb-4 text-center" style="color:var(--accent)">🔢 Paging Address Translator</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div class="space-y-3">
           <div>
             <label class="block text-xs font-bold mb-1">Logical Address:</label>
-            <input type="number" id="p-logical" placeholder="e.g. 50" class="w-full px-3 py-2 rounded-lg text-sm mono" style="background:var(--card2);border:1px solid var(--border);color:var(--text)">
+            <input type="number" id="p-logical" placeholder="e.g. 50" class="inp mono-inp">
           </div>
           <div>
             <label class="block text-xs font-bold mb-1">Page Size (bytes):</label>
-            <input type="number" id="p-pagesize" placeholder="e.g. 16" class="w-full px-3 py-2 rounded-lg text-sm mono" style="background:var(--card2);border:1px solid var(--border);color:var(--text)">
+            <input type="number" id="p-pagesize" placeholder="e.g. 16" class="inp mono-inp">
           </div>
           <div>
             <label class="block text-xs font-bold mb-1">Page Table (page→frame) — مثال: 0:5,1:6,2:1,3:2</label>
-            <input type="text" id="p-table" placeholder="0:5,1:6,2:1,3:2" class="w-full px-3 py-2 rounded-lg text-sm mono" style="background:var(--card2);border:1px solid var(--border);color:var(--text)">
+            <input type="text" id="p-table" placeholder="0:5,1:6,2:1,3:2" class="inp mono-inp">
           </div>
           <button onclick="runPaging()" class="btn btn-primary w-full">▶ Translate</button>
         </div>
-        <div id="paging-result" class="concept text-sm" style="min-height:140px">
+        <div id="paging-result" class="concept text-xs sm:text-sm">
           أدخل البيانات وكبس Translate
         </div>
       </div>
     </div>
 
     <!-- TLB & EAT -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
       <div class="card">
-        <h3 class="text-lg font-black mb-4" style="color:var(--accent)">TLB — Translation Lookaside Buffer</h3>
-        <div class="space-y-2 text-sm">
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">TLB — Translation Lookaside Buffer</h3>
+        <div class="space-y-2 text-xs sm:text-sm">
           <div class="concept"><b>يعني إيه؟</b> Cache سريع بيحفظ آخر translations من page number → frame number</div>
           <div class="concept concept-green"><b>TLB Hit:</b> لقى الـ page في الـ TLB → memory access واحدة بس</div>
           <div class="concept concept-red"><b>TLB Miss:</b> مش موجود في TLB → يدور في الـ Page Table → memory accesses اتنين</div>
@@ -1197,36 +1455,36 @@ Physical Address = Frame Base + Offset
         </div>
       </div>
       <div class="card">
-        <h3 class="text-lg font-black mb-4" style="color:var(--accent)">EAT Calculator 🧮</h3>
-        <div class="code mb-3 text-xs">EAT = (1+ε)α + (2+ε)(1-α)
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">EAT Calculator 🧮</h3>
+        <div class="code mb-3" style="font-size:10px;">EAT = (1+ε)α + (2+ε)(1-α)
     = 2 + ε - α
 حيث:
   ε = TLB lookup time
   α = Hit Ratio
   ma = Memory Access Time (1 unit)</div>
-        <div class="grid grid-cols-3 gap-2 mb-3">
+        <div class="eat-grid mb-3">
           <div>
             <label class="block text-xs mb-1">ma (ns):</label>
-            <input type="number" id="eat-ma" value="100" class="w-full px-2 py-1 rounded text-sm mono" style="background:var(--card2);border:1px solid var(--border);color:var(--text)">
+            <input type="number" id="eat-ma" value="100" class="inp mono-inp" style="padding:8px;">
           </div>
           <div>
             <label class="block text-xs mb-1">ε (ns):</label>
-            <input type="number" id="eat-eps" value="20" class="w-full px-2 py-1 rounded text-sm mono" style="background:var(--card2);border:1px solid var(--border);color:var(--text)">
+            <input type="number" id="eat-eps" value="20" class="inp mono-inp" style="padding:8px;">
           </div>
           <div>
             <label class="block text-xs mb-1">α (0-1):</label>
-            <input type="number" id="eat-alpha" value="0.8" step="0.01" min="0" max="1" class="w-full px-2 py-1 rounded text-sm mono" style="background:var(--card2);border:1px solid var(--border);color:var(--text)">
+            <input type="number" id="eat-alpha" value="0.8" step="0.01" min="0" max="1" class="inp mono-inp" style="padding:8px;">
           </div>
         </div>
         <button onclick="calcEAT()" class="btn btn-primary w-full text-sm">احسب EAT</button>
-        <div id="eat-result" class="mt-3 p-3 rounded-lg text-sm" style="background:var(--card2);display:none"></div>
+        <div id="eat-result" class="mt-3 p-3 rounded-lg text-xs sm:text-sm" style="background:var(--card2);display:none"></div>
       </div>
     </div>
 
     <!-- Memory Protection -->
     <div class="card">
-      <h3 class="text-lg font-black mb-4" style="color:var(--accent)">Memory Protection في Paging</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Memory Protection في Paging</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
         <div class="space-y-2">
           <div class="concept"><b>Valid-Invalid Bit:</b> كل entry في الـ Page Table عنده bit:</div>
           <div class="concept concept-green"><b>Valid (v):</b> الـ page موجودة في الـ logical address space للـ process وبشكل قانوني</div>
@@ -1242,31 +1500,31 @@ Physical Address = Frame Base + Offset
 </section>
 
 <!-- ==================== MCQ SECTION ==================== -->
-<section id="mcq" class="py-16 px-4 md:px-6" style="background:linear-gradient(to bottom,var(--bg),var(--card2))">
-  <div class="max-w-4xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <span class="text-3xl">❓</span>
+<section id="mcq" class="section-pad" style="background:linear-gradient(to bottom,var(--bg),var(--card2))">
+  <div class="max-w-content mx-auto" style="max-width:800px">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">❓</span>
       <h2 class="section-title">MCQ Practice</h2>
     </div>
 
-    <div class="card mb-4 flex flex-wrap gap-3 items-center justify-between">
-      <div class="flex gap-3">
-        <div class="text-center"><div id="mcq-score" class="text-2xl font-black" style="color:var(--accent2)">0</div><div class="text-xs" style="color:var(--muted)">صح</div></div>
-        <div class="text-center"><div id="mcq-wrong" class="text-2xl font-black" style="color:var(--red)">0</div><div class="text-xs" style="color:var(--muted)">غلط</div></div>
-        <div class="text-center"><div id="mcq-total" class="text-2xl font-black" style="color:var(--muted)">0</div><div class="text-xs" style="color:var(--muted)">أجبت</div></div>
+    <div class="card mb-4 flex flex-wrap gap-4 items-center justify-between">
+      <div class="flex gap-5">
+        <div class="text-center"><div id="mcq-score" class="text-xl sm:text-2xl font-black" style="color:var(--accent2)">0</div><div class="text-xs" style="color:var(--muted)">صح</div></div>
+        <div class="text-center"><div id="mcq-wrong" class="text-xl sm:text-2xl font-black" style="color:var(--red)">0</div><div class="text-xs" style="color:var(--muted)">غلط</div></div>
+        <div class="text-center"><div id="mcq-total" class="text-xl sm:text-2xl font-black" style="color:var(--muted)">0</div><div class="text-xs" style="color:var(--muted)">أجبت</div></div>
       </div>
       <button onclick="resetMCQ()" class="btn btn-outline text-sm">🔄 Reset</button>
     </div>
 
-    <div id="mcq-container" class="space-y-6"></div>
+    <div id="mcq-container" class="space-y-5"></div>
   </div>
 </section>
 
 <!-- ==================== TRUE/FALSE ==================== -->
-<section id="tf" class="py-16 px-4 md:px-6">
-  <div class="max-w-4xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <span class="text-3xl">✅</span>
+<section id="tf" class="section-pad">
+  <div class="max-w-content mx-auto" style="max-width:800px">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">✅</span>
       <h2 class="section-title">True / False</h2>
     </div>
     <div id="tf-container" class="space-y-4"></div>
@@ -1274,38 +1532,38 @@ Physical Address = Frame Base + Offset
 </section>
 
 <!-- ==================== EXAM TRAPS ==================== -->
-<section id="traps" class="py-16 px-4 md:px-6" style="background:linear-gradient(to bottom,var(--bg),var(--card2))">
-  <div class="max-w-5xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <span class="text-3xl">⚠️</span>
+<section id="traps" class="section-pad" style="background:linear-gradient(to bottom,var(--bg),var(--card2))">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">⚠️</span>
       <h2 class="section-title">Exam Traps — أشيع الأخطاء</h2>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="traps-container"></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5" id="traps-container"></div>
   </div>
 </section>
 
 <!-- ==================== ESSAYS ==================== -->
-<section id="essays" class="py-16 px-4 md:px-6">
-  <div class="max-w-5xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <span class="text-3xl">📝</span>
+<section id="essays" class="section-pad">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">📝</span>
       <h2 class="section-title">Model Answers — إجابات نموذجية للامتحان</h2>
     </div>
-    <div id="essays-container" class="space-y-4"></div>
+    <div id="essays-container" class="space-y-3"></div>
   </div>
 </section>
 
 <!-- ==================== CONNECTIONS ==================== -->
-<section id="connections" class="py-16 px-4 md:px-6" style="background:linear-gradient(to bottom,var(--bg),var(--card2))">
-  <div class="max-w-5xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <span class="text-3xl">🔗</span>
+<section id="connections" class="section-pad" style="background:linear-gradient(to bottom,var(--bg),var(--card2))">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">🔗</span>
       <h2 class="section-title">ربط الدنيا ببعض</h2>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
       <div class="card">
-        <div class="font-black mb-3" style="color:var(--accent)">Process → Scheduling → Context Switch</div>
-        <div class="text-sm space-y-2">
+        <div class="font-black mb-3 text-sm" style="color:var(--accent)">Process → Scheduling → Context Switch</div>
+        <div class="text-xs sm:text-sm space-y-2">
           <p>الـ <b>Process</b> بيتكون ويدخل الـ <b>Ready Queue</b></p>
           <p>↓ الـ <b>Short-term Scheduler</b> بيختار الـ process وبعمل <b>Context Switch</b></p>
           <p>↓ الـ Process بتشتغل في الـ <b>CPU</b></p>
@@ -1314,8 +1572,8 @@ Physical Address = Frame Base + Offset
         </div>
       </div>
       <div class="card">
-        <div class="font-black mb-3" style="color:var(--accent)">System Call → Kernel Mode → Privilege</div>
-        <div class="text-sm space-y-2">
+        <div class="font-black mb-3 text-sm" style="color:var(--accent)">System Call → Kernel Mode → Privilege</div>
+        <div class="text-xs sm:text-sm space-y-2">
           <p>الـ <b>User Program</b> محتاج يعمل I/O → يعمل <b>System Call</b></p>
           <p>↓ الـ CPU بيتحول من <b>User Mode → Kernel Mode</b></p>
           <p>↓ الـ <b>Kernel</b> بيعمل العملية المطلوبة</p>
@@ -1324,8 +1582,8 @@ Physical Address = Frame Base + Offset
         </div>
       </div>
       <div class="card">
-        <div class="font-black mb-3" style="color:var(--accent)">Paging → Fragmentation → Memory Protection</div>
-        <div class="text-sm space-y-2">
+        <div class="font-black mb-3 text-sm" style="color:var(--accent)">Paging → Fragmentation → Memory Protection</div>
+        <div class="text-xs sm:text-sm space-y-2">
           <p>الـ <b>Paging</b> بيقضي على <b>External Fragmentation</b></p>
           <p>↓ بس ممكن يسبب <b>Internal Fragmentation</b> في آخر page</p>
           <p>↓ كل entry في الـ <b>Page Table</b> عنده valid/invalid bit</p>
@@ -1333,8 +1591,8 @@ Physical Address = Frame Base + Offset
         </div>
       </div>
       <div class="card">
-        <div class="font-black mb-3" style="color:var(--accent)">TLB → EAT → Performance</div>
-        <div class="text-sm space-y-2">
+        <div class="font-black mb-3 text-sm" style="color:var(--accent)">TLB → EAT → Performance</div>
+        <div class="text-xs sm:text-sm space-y-2">
           <p>الـ <b>Page Table</b> في الـ memory → كل access محتاجة 2 memory accesses</p>
           <p>↓ الـ <b>TLB</b> بيشتغل كـ cache → لو Hit → memory access واحدة بس</p>
           <p>↓ الـ <b>EAT</b> بيحسب متوسط الوقت حسب Hit Ratio</p>
@@ -1346,28 +1604,28 @@ Physical Address = Frame Base + Offset
 </section>
 
 <!-- ==================== PROBLEMS ==================== -->
-<section id="problems" class="py-16 px-4 md:px-6">
-  <div class="max-w-5xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <span class="text-3xl">🧮</span>
+<section id="problems" class="section-pad">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">🧮</span>
       <h2 class="section-title">Solved Problems</h2>
     </div>
-    <div id="problems-container" class="space-y-6"></div>
+    <div id="problems-container" class="space-y-5"></div>
   </div>
 </section>
 
 <!-- ==================== CHEATSHEET ==================== -->
-<section id="cheatsheet" class="py-16 px-4 md:px-6" style="background:linear-gradient(to bottom,var(--bg),var(--card2))">
-  <div class="max-w-5xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <span class="text-3xl">📋</span>
+<section id="cheatsheet" class="section-pad" style="background:linear-gradient(to bottom,var(--bg),var(--card2))">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">📋</span>
       <h2 class="section-title">Final Cheatsheet — قبل الامتحان</h2>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
       <div class="card">
-        <div class="font-black mb-3" style="color:var(--yellow)">📐 الصيغ المهمة</div>
-        <div class="code text-xs">TAT = Completion - Arrival
+        <div class="font-black mb-3 text-sm" style="color:var(--yellow)">📐 الصيغ المهمة</div>
+        <div class="code" style="font-size:10px;">TAT = Completion - Arrival
 WT  = TAT - Burst Time
 RT  = First Run - Arrival
 
@@ -1382,8 +1640,8 @@ Internal Frag = PageSize - (Process mod PageSize)</div>
       </div>
 
       <div class="card">
-        <div class="font-black mb-3" style="color:var(--accent)">🔑 تعريفات أساسية</div>
-        <div class="space-y-1 text-xs">
+        <div class="font-black mb-3 text-sm" style="color:var(--accent)">🔑 تعريفات أساسية</div>
+        <div class="space-y-1" style="font-size:11px;">
           <p><b>OS:</b> intermediary بين user وhardware</p>
           <p><b>Kernel:</b> أول ما بيتحمل عند Boot، بيفضل في memory</p>
           <p><b>System Call:</b> الطريق الوحيد من User → Kernel Mode</p>
@@ -1398,8 +1656,8 @@ Internal Frag = PageSize - (Process mod PageSize)</div>
       </div>
 
       <div class="card">
-        <div class="font-black mb-3" style="color:var(--accent2)">⚡ Scheduling Summary</div>
-        <div class="space-y-1 text-xs">
+        <div class="font-black mb-3 text-sm" style="color:var(--accent2)">⚡ Scheduling Summary</div>
+        <div class="space-y-1" style="font-size:11px;">
           <p><b>FCFS:</b> أبسط، convoy effect، non-preemptive</p>
           <p><b>SJF:</b> أقل avg WT، starvation، non-preemptive</p>
           <p><b>SRTF:</b> SJF preemptive، أحسن avg WT حقيقياً</p>
@@ -1413,8 +1671,8 @@ Internal Frag = PageSize - (Process mod PageSize)</div>
       </div>
 
       <div class="card">
-        <div class="font-black mb-3" style="color:var(--red)">⚠️ أكثر الأخطاء الشائعة</div>
-        <div class="space-y-1 text-xs">
+        <div class="font-black mb-3 text-sm" style="color:var(--red)">⚠️ أكثر الأخطاء الشائعة</div>
+        <div class="space-y-1" style="font-size:11px;">
           <p>❌ OS = Kernel → غلط! OS أكبر</p>
           <p>❌ Interrupt = Trap → غلط! Interrupt من HW، Trap من SW</p>
           <p>❌ Ready = Waiting → غلط! Ready = في طابور CPU، Waiting = مستني I/O</p>
@@ -1424,9 +1682,9 @@ Internal Frag = PageSize - (Process mod PageSize)</div>
         </div>
       </div>
 
-      <div class="card md:col-span-2">
-        <div class="font-black mb-3" style="color:var(--accent)">🖥️ OS Types Comparison</div>
-        <div class="overflow-x-auto">
+      <div class="card sm:col-span-2">
+        <div class="font-black mb-3 text-sm" style="color:var(--accent)">🖥️ OS Types Comparison</div>
+        <div class="table-wrap">
           <table>
             <tr><th>Type</th><th>Interaction</th><th>Multi-process</th><th>Deadline</th><th>أمثلة</th></tr>
             <tr><td>Batch</td><td>❌</td><td>❌</td><td>❌</td><td>IBM punch cards</td></tr>
@@ -1443,40 +1701,42 @@ Internal Frag = PageSize - (Process mod PageSize)</div>
 </section>
 
 <!-- ==================== MOCK EXAM ==================== -->
-<section id="mock" class="py-16 px-4 md:px-6">
-  <div class="max-w-4xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
-      <span class="text-3xl">📝</span>
+<section id="mock" class="section-pad">
+  <div class="max-w-content mx-auto" style="max-width:800px">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">📝</span>
       <h2 class="section-title">Mock Exam</h2>
     </div>
 
-    <div id="mock-start" class="card text-center py-10">
-      <div class="text-5xl mb-4">🎓</div>
-      <h3 class="text-2xl font-black mb-3">Midterm Simulation</h3>
-      <p class="mb-2" style="color:var(--muted)">20 سؤال عشوائي من كل الـ topics</p>
-      <p class="mb-6" style="color:var(--red)">⏱️ مدة الامتحان: 20 دقيقة</p>
-      <button onclick="startMock()" class="btn btn-primary text-base px-8 py-3">🚀 ابدأ الامتحان</button>
+    <div id="mock-start" class="card text-center py-8 sm:py-12">
+      <div class="text-4xl sm:text-5xl mb-4">🎓</div>
+      <h3 class="text-xl sm:text-2xl font-black mb-3">Midterm Simulation</h3>
+      <p class="mb-2 text-sm" style="color:var(--muted)">20 سؤال عشوائي من كل الـ topics</p>
+      <p class="mb-6 text-sm" style="color:var(--red)">⏱️ مدة الامتحان: 20 دقيقة</p>
+      <button onclick="startMock()" class="btn btn-primary" style="font-size:15px;padding:14px 32px;">🚀 ابدأ الامتحان</button>
     </div>
 
     <div id="mock-exam" style="display:none">
-      <div class="card mb-4 flex items-center justify-between">
-        <div class="timer-display text-3xl" id="mock-timer">20:00</div>
-        <div>
-          <span id="mock-progress-text" class="font-bold" style="color:var(--accent)">0/20</span>
-          <div class="progress-bar w-32 mt-1"><div class="progress-fill" id="mock-progress" style="width:0%"></div></div>
+      <div class="card mb-4">
+        <div class="mock-header">
+          <div class="timer-display" id="mock-timer">20:00</div>
+          <div>
+            <span id="mock-progress-text" class="font-bold text-sm" style="color:var(--accent)">0/20</span>
+            <div class="progress-bar mt-1" style="width:140px;"><div class="progress-fill" id="mock-progress" style="width:0%"></div></div>
+          </div>
         </div>
       </div>
       <div id="mock-question-area" class="space-y-4"></div>
-      <div class="flex justify-between mt-6">
+      <div class="flex justify-between mt-5 gap-3">
         <button onclick="mockPrev()" class="btn btn-outline">→ السابق</button>
         <button onclick="mockNext()" id="mock-next-btn" class="btn btn-primary">التالي ←</button>
       </div>
     </div>
 
-    <div id="mock-result" style="display:none" class="card text-center py-10">
-      <div class="text-5xl mb-4" id="mock-emoji">🎉</div>
-      <h3 class="text-3xl font-black mb-2" id="mock-score-display"></h3>
-      <p class="mb-6" style="color:var(--muted)" id="mock-msg"></p>
+    <div id="mock-result" style="display:none" class="card text-center py-8 sm:py-12">
+      <div class="text-4xl sm:text-5xl mb-4" id="mock-emoji">🎉</div>
+      <h3 class="text-2xl sm:text-3xl font-black mb-2" id="mock-score-display"></h3>
+      <p class="mb-6 text-sm" style="color:var(--muted)" id="mock-msg"></p>
       <div id="mock-review" class="text-right space-y-3 mb-6"></div>
       <button onclick="resetMock()" class="btn btn-primary">🔄 حاول تاني</button>
     </div>
@@ -1485,7 +1745,7 @@ Internal Frag = PageSize - (Process mod PageSize)</div>
 
 <!-- Footer -->
 <footer class="py-8 text-center" style="border-top:1px solid var(--border)">
-  <p style="color:var(--muted)" class="text-sm">OS Midterm Rescue 🚨 | Lect 1, 2, 3, Lect 5 ≤ Slide 40 فقط | بالتوفيق في امتحانك 🎓</p>
+  <p style="color:var(--muted)" class="text-xs sm:text-sm px-4">OS Midterm Rescue 🚨 | Lect 1, 2, 3, Lect 5 ≤ Slide 40 فقط | بالتوفيق في امتحانك 🎓</p>
 </footer>
 
 <script>
@@ -1573,158 +1833,60 @@ const trapsData = [
 const essaysData = [
   {
     title: "اشرح الفرق بين Process وProgram",
-    answer: `A <strong>Program</strong> is a passive entity — a set of instructions stored on disk. It does not require CPU or memory resources until it is executed.
-
-A <strong>Process</strong> is an active entity — a program in execution. It requires CPU time, memory, I/O devices, and files. A single program can give rise to multiple processes.
-
-الفرق الأساسي: الـ Program ملف ساكن، الـ Process برنامج شغال في الـ memory محتاج resources.`
+    answer: `A <strong>Program</strong> is a passive entity — a set of instructions stored on disk. It does not require CPU or memory resources until it is executed.<br><br>A <strong>Process</strong> is an active entity — a program in execution. It requires CPU time, memory, I/O devices, and files. A single program can give rise to multiple processes.<br><br>الفرق الأساسي: الـ Program ملف ساكن، الـ Process برنامج شغال في الـ memory محتاج resources.`
   },
   {
     title: "اشرح الـ Dual-Mode Operation",
-    answer: `Operating systems use <strong>Dual-Mode Operation</strong> to protect themselves and system components.
-
-- <strong>User Mode</strong> (Mode bit = 1): Limited privileges. User programs run here. Cannot execute privileged instructions directly.
-- <strong>Kernel Mode</strong> (Mode bit = 0): Full privileges. OS code runs here. Can execute any instruction and access all resources.
-
-Transition User → Kernel: via System Call or Interrupt/Trap.
-Transition Kernel → User: OS returns control after completing the service.
-
-الهدف: حماية الـ system من الـ user programs — مش أي برنامج يقدر يعمل أي حاجة.`
+    answer: `Operating systems use <strong>Dual-Mode Operation</strong> to protect themselves and system components.<br><br>• <strong>User Mode</strong> (Mode bit = 1): Limited privileges. User programs run here. Cannot execute privileged instructions directly.<br>• <strong>Kernel Mode</strong> (Mode bit = 0): Full privileges. OS code runs here. Can execute any instruction and access all resources.<br><br>Transition User → Kernel: via System Call or Interrupt/Trap.<br>Transition Kernel → User: OS returns control after completing the service.<br><br>الهدف: حماية الـ system من الـ user programs — مش أي برنامج يقدر يعمل أي حاجة.`
   },
   {
     title: "قارن بين Interrupt وTrap",
-    answer: `<strong>Interrupt</strong>:
-- Source: Hardware devices (keyboard, disk, timer)
-- Asynchronous — happens anytime, not tied to instruction
-- Example: Disk finishes reading data
-
-<strong>Trap</strong>:
-- Source: Software / User programs
-- Synchronous — caused by current instruction
-- Types: System Calls (intentional) or Errors like division by zero (unintentional)
-
-كلاهما بيخلي الـ CPU يتحول → Kernel Mode ويشغل handler معين.`
+    answer: `<strong>Interrupt</strong>:<br>• Source: Hardware devices (keyboard, disk, timer)<br>• Asynchronous — happens anytime, not tied to instruction<br>• Example: Disk finishes reading data<br><br><strong>Trap</strong>:<br>• Source: Software / User programs<br>• Synchronous — caused by current instruction<br>• Types: System Calls (intentional) or Errors like division by zero (unintentional)<br><br>كلاهما بيخلي الـ CPU يتحول → Kernel Mode ويشغل handler معين.`
   },
   {
     title: "اشرح الـ Paging وازاي بيحل External Fragmentation",
-    answer: `<strong>Paging</strong> divides:
-- Physical memory into fixed-size blocks called <strong>Frames</strong>
-- Logical memory into blocks of same size called <strong>Pages</strong>
-
-A <strong>Page Table</strong> maps each page number to the frame number where it resides.
-
-Physical address = Frame Base Address + Offset
-
-<strong>Why it solves External Fragmentation</strong>: A process does NOT need contiguous physical memory — pages can be scattered in any available frames. So total free memory doesn't need to be in one block.
-
-<strong>Drawback</strong>: May cause Internal Fragmentation in the last page (if process size is not a multiple of page size).`
+    answer: `<strong>Paging</strong> divides:<br>• Physical memory into fixed-size blocks called <strong>Frames</strong><br>• Logical memory into blocks of same size called <strong>Pages</strong><br><br>A <strong>Page Table</strong> maps each page number to the frame number where it resides.<br><br>Physical address = Frame Base Address + Offset<br><br><strong>Why it solves External Fragmentation</strong>: A process does NOT need contiguous physical memory — pages can be scattered in any available frames.<br><br><strong>Drawback</strong>: May cause Internal Fragmentation in the last page (if process size is not a multiple of page size).`
   },
   {
     title: "اشرح الـ EAT وازاي الـ TLB بيحسنه",
-    answer: `Without TLB, accessing data requires 2 memory accesses: one for page table + one for actual data.
-
-With TLB (cache):
-- <strong>TLB Hit</strong>: page found in TLB → only 1 memory access needed
-- <strong>TLB Miss</strong>: not in TLB → access page table in memory → 2 accesses
-
-<strong>EAT Formula</strong>: EAT = (1 + ε) × α + (2 + ε) × (1 - α)
-Where: ε = TLB lookup time, α = hit ratio
-
-Example: α=80%, ε=20ns, ma=100ns
-EAT = 0.80 × 120 + 0.20 × 220 = 96 + 44 = <strong>140ns</strong>
-
-كلما الـ Hit Ratio (α) أعلى → الـ EAT بيقرب من memory access واحد.`
+    answer: `Without TLB, accessing data requires 2 memory accesses: one for page table + one for actual data.<br><br>With TLB (cache):<br>• <strong>TLB Hit</strong>: page found in TLB → only 1 memory access needed<br>• <strong>TLB Miss</strong>: not in TLB → access page table in memory → 2 accesses<br><br><strong>EAT Formula</strong>: EAT = (1 + ε) × α + (2 + ε) × (1 - α)<br>Where: ε = TLB lookup time, α = hit ratio<br><br>Example: α=80%, ε=20ns, ma=100ns<br>EAT = 0.80 × 120 + 0.20 × 220 = 96 + 44 = <strong>140ns</strong><br><br>كلما الـ Hit Ratio (α) أعلى → الـ EAT بيقرب من memory access time واحد.`
   }
 ];
 
 const problemsData = [
   {
     title: "Scheduling Problem — FCFS, SJF, RR",
-    data: `الـ Processes التالية:
-P1: Arrival=0, Burst=6
-P2: Arrival=1, Burst=4
-P3: Arrival=2, Burst=2`,
+    data: `الـ Processes التالية:\nP1: Arrival=0, Burst=6\nP2: Arrival=1, Burst=4\nP3: Arrival=2, Burst=2`,
     question: "احسب Average WT لكل من FCFS, SJF, Round Robin (q=2)",
     think: "هنبدأ بـ FCFS أبسط algorithm — بعدين SJF بنرتب حسب Burst — بعدين RR بنطبق الـ time quantum",
-    solution: `<strong>FCFS</strong> (بالترتيب: P1→P2→P3):
-P1: WT = 0,  TAT = 6
-P2: WT = 5,  TAT = 9   (بدأ عند 6)
-P3: WT = 9,  TAT = 11  (بدأ عند 8... هانا P2 خلصت عند 10، P3 بدأت عند 10)
-
-انتظر، نعمل Gantt:
-FCFS: [P1:0-6][P2:6-10][P3:10-12]
-P1 WT=0, P2 WT=5, P3 WT=8
-Avg WT (FCFS) = (0+5+8)/3 = 4.33
-
-<strong>SJF</strong> (shortest job first بعد ما كل process توصل):
-t=0: بس P1 موجودة → P1 يشتغل
-t=6: P2, P3 وصلوا، P3 (Burst=2) أقل → P3
-t=8: P2
-Gantt: [P1:0-6][P3:6-8][P2:8-12]
-P1 WT=0, P3 WT=4, P2 WT=7
-Avg WT (SJF) = (0+4+7)/3 = 3.67
-
-<strong>RR (q=2)</strong>:
-Queue بتشتغل: P1(2), P2(2), P3(2), P1(2), P2(2), P1(2)
-P1 finish=12, P2 finish=10, P3 finish=6
-WT = TAT - Burst
-P1: TAT=12, WT=6 | P2: TAT=9, WT=5 | P3: TAT=4, WT=2
-Avg WT (RR) = (6+5+2)/3 = 4.33`,
+    solution: `FCFS: [P1:0-6][P2:6-10][P3:10-12]\nP1 WT=0, P2 WT=5, P3 WT=8\nAvg WT (FCFS) = (0+5+8)/3 = 4.33\n\nSJF: [P1:0-6][P3:6-8][P2:8-12]\nP1 WT=0, P3 WT=4, P2 WT=7\nAvg WT (SJF) = (0+4+7)/3 = 3.67\n\nRR (q=2): P1 finish=12, P2 finish=10, P3 finish=6\nP1: TAT=12, WT=6 | P2: TAT=9, WT=5 | P3: TAT=4, WT=2\nAvg WT (RR) = (6+5+2)/3 = 4.33`,
     result: "Avg WT: FCFS=4.33 | SJF=3.67 | RR=4.33",
     trick: "الـ SJF بيدي أقل avg WT — ده يتأكد دايماً. في الامتحان تابع الترتيب الصح لما الـ processes بتوصل"
   },
   {
     title: "Paging Problem — Address Translation",
-    data: `Page Size = 4 bytes (2^2)
-Page Table: Page 0 → Frame 3, Page 1 → Frame 1, Page 2 → Frame 0
-Logical Address = 9`,
+    data: `Page Size = 4 bytes (2^2)\nPage Table: Page 0 → Frame 3, Page 1 → Frame 1, Page 2 → Frame 0\nLogical Address = 9`,
     question: "إيه الـ Physical Address للـ Logical Address 9؟",
-    think: "نقسم الـ Logical Address: Page Number = 9 ÷ 4 = 2 (الجزء الصحيح)، Offset = 9 mod 4 = 1",
-    solution: `Logical Address = 9
-Page Size = 4 bytes
-
-Page Number = 9 ÷ 4 = 2  (quotient)
-Offset = 9 mod 4 = 1
-
-من الـ Page Table: Page 2 → Frame 0
-Frame Base = Frame 0 × Page Size = 0 × 4 = 0
-
-Physical Address = Frame Base + Offset = 0 + 1 = 1`,
+    think: "نقسم الـ Logical Address: Page Number = 9 ÷ 4 = 2، Offset = 9 mod 4 = 1",
+    solution: `Logical Address = 9\nPage Size = 4 bytes\n\nPage Number = 9 ÷ 4 = 2\nOffset = 9 mod 4 = 1\n\nمن الـ Page Table: Page 2 → Frame 0\nFrame Base = Frame 0 × Page Size = 0 × 4 = 0\n\nPhysical Address = Frame Base + Offset = 0 + 1 = 1`,
     result: "Physical Address = 1",
-    trick: "الخطوات دايماً: (1) احسب Page Number = LA ÷ Page Size، (2) احسب Offset = LA mod Page Size، (3) ابحث عن الـ Frame في الـ Page Table، (4) Physical = Frame × PageSize + Offset"
+    trick: "الخطوات دايماً: (1) Page Number = LA ÷ Page Size، (2) Offset = LA mod Page Size، (3) ابحث عن الـ Frame، (4) Physical = Frame × PageSize + Offset"
   },
   {
     title: "EAT Problem",
-    data: `TLB lookup time (ε) = 20ns
-Memory Access Time (ma) = 100ns
-Hit Ratio (α) = 80%`,
+    data: `TLB lookup time (ε) = 20ns\nMemory Access Time (ma) = 100ns\nHit Ratio (α) = 80%`,
     question: "احسب الـ Effective Access Time (EAT)",
     think: "TLB Hit = 1 memory access + TLB. TLB Miss = 2 memory accesses + TLB",
-    solution: `EAT = (1 × ma + ε) × α + (2 × ma + ε) × (1 - α)
-    = (100 + 20) × 0.80 + (200 + 20) × 0.20
-    = 120 × 0.80 + 220 × 0.20
-    = 96 + 44
-    = 140 ns`,
+    solution: `EAT = (1 × ma + ε) × α + (2 × ma + ε) × (1 - α)\n    = (100 + 20) × 0.80 + (200 + 20) × 0.20\n    = 120 × 0.80 + 220 × 0.20\n    = 96 + 44\n    = 140 ns`,
     result: "EAT = 140 ns",
-    trick: "لو Hit Ratio = 99%: EAT = 120×0.99 + 220×0.01 = 118.8 + 2.2 = 121ns — أعلى hit ratio = EAT أقرب لـ 120ns (1 access)"
+    trick: "لو Hit Ratio = 99%: EAT = 120×0.99 + 220×0.01 = 118.8 + 2.2 = 121ns — أعلى hit ratio = EAT أقرب لـ 120ns"
   },
   {
     title: "Memory Allocation Problem",
-    data: `Holes في الـ Memory: 100KB, 500KB, 200KB, 300KB, 600KB
-Process محتاج: 212KB`,
+    data: `Holes في الـ Memory: 100KB, 500KB, 200KB, 300KB, 600KB\nProcess محتاج: 212KB`,
     question: "أنهي hole بيتاخد في First-Fit, Best-Fit, Worst-Fit؟",
     think: "نمشي على الـ holes بالترتيب ونطبق كل strategy",
-    solution: `Holes: [100KB, 500KB, 200KB, 300KB, 600KB]
-Request = 212KB
-
-<strong>First-Fit</strong>: أول hole كبير كفاية = 500KB ✅
-Remaining: [100KB, 288KB, 200KB, 300KB, 600KB]
-
-<strong>Best-Fit</strong>: أصغر hole كافي = 300KB ✅
-Remaining: [100KB, 500KB, 200KB, 88KB, 600KB]
-
-<strong>Worst-Fit</strong>: أكبر hole = 600KB ✅
-Remaining: [100KB, 500KB, 200KB, 300KB, 388KB]`,
+    solution: `Holes: [100KB, 500KB, 200KB, 300KB, 600KB]\nRequest = 212KB\n\nFirst-Fit: أول hole كبير كفاية = 500KB ✅\nRemaining: [100KB, 288KB, 200KB, 300KB, 600KB]\n\nBest-Fit: أصغر hole كافي = 300KB ✅\nRemaining: [100KB, 500KB, 200KB, 88KB, 600KB]\n\nWorst-Fit: أكبر hole = 600KB ✅\nRemaining: [100KB, 500KB, 200KB, 300KB, 388KB]`,
     result: "First-Fit→500KB | Best-Fit→300KB | Worst-Fit→600KB",
     trick: "في الامتحان تابع إن الـ hole لازم يكون أكبر من أو يساوي الـ request size"
   }
@@ -1856,14 +2018,14 @@ function renderProcessTable() {
   table.innerHTML = '<tr><th>Process</th><th>Arrival</th><th>Burst</th><th>حذف</th></tr>';
   processes.forEach((p, i) => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${p.id}</td><td>${p.arrival}</td><td>${p.burst}</td><td><button onclick="removeProcess(${i})" style="color:var(--red);background:none;border:none;cursor:pointer">✕</button></td>`;
+    tr.innerHTML = `<td>${p.id}</td><td>${p.arrival}</td><td>${p.burst}</td><td><button onclick="removeProcess(${i})" style="color:var(--red);background:none;border:none;cursor:pointer;font-size:16px;padding:4px 8px;">✕</button></td>`;
     table.appendChild(tr);
   });
 }
 
 function runScheduler() {
   if (processes.length === 0) { alert('أضف processes أولاً'); return; }
-  let gantt = [], results = {};
+  let gantt = [];
 
   if (currentAlgo === 'FCFS') gantt = fcfs([...processes]);
   else if (currentAlgo === 'SJF') gantt = sjf([...processes]);
@@ -1903,7 +2065,7 @@ function srtf(procs) {
   let t = 0, gantt = [];
   const rem = procs.map(p => ({ ...p, remaining: p.burst, done: false }));
   const total = procs.length;
-  let finished = 0, prev = null;
+  let finished = 0;
   while (finished < total) {
     const avail = rem.filter(p => p.arrival <= t && !p.done);
     if (avail.length === 0) { t++; continue; }
@@ -1918,7 +2080,6 @@ function srtf(procs) {
     t++;
     if (p.remaining === 0) { p.done = true; finished++; }
   }
-  // Merge consecutive
   let merged = [];
   gantt.forEach(g => {
     if (merged.length && merged[merged.length-1].id === g.id && merged[merged.length-1].end === g.start) {
@@ -1933,7 +2094,6 @@ function rr(procs, q) {
   const queue = [], rem = procs.map(p => ({ ...p, remaining: p.burst, done: false }));
   rem.sort((a, b) => a.arrival - b.arrival);
   let idx = 0;
-  // Seed queue
   while (idx < rem.length && rem[idx].arrival <= t) queue.push(rem[idx++]);
   while (queue.length > 0 || idx < rem.length) {
     if (queue.length === 0) {
@@ -1963,29 +2123,49 @@ function renderGantt(gantt) {
   const colors = {};
   processes.forEach((p, i) => colors[p.id] = COLORS[i % COLORS.length]);
 
+  const unitWidth = Math.max(40, Math.min(80, 400 / total));
+
   gantt.forEach(g => {
-    const width = ((g.end - g.start) / total) * 100;
+    const width = (g.end - g.start) * unitWidth;
     const bar = document.createElement('div');
     bar.className = 'gantt-bar';
-    bar.style.cssText = `width:${width}%;background:${colors[g.id]};min-width:30px;border:1px solid rgba(255,255,255,0.2)`;
+    bar.style.cssText = `width:${width}px;background:${colors[g.id]};border:1px solid rgba(255,255,255,0.15)`;
     bar.textContent = g.id;
     chart.appendChild(bar);
   });
 
   // Times
   const shown = new Set();
-  gantt.forEach(g => {
+  gantt.forEach((g, gi) => {
     if (!shown.has(g.start)) {
       const span = document.createElement('span');
       span.textContent = g.start;
-      span.style.cssText = `position:relative;margin-left:${((g.start - gantt[0].start) / total) * 100}%`;
-      times.appendChild(span);
+      span.style.cssText = `display:inline-block;width:${(g.start - gantt[0].start) === 0 ? 0 : unitWidth * (g.start - gantt[0].start)}px;text-align:left;font-size:11px;`;
+      if (gi > 0) {
+        const prev = gantt[gi-1];
+        const prevSpan = document.createElement('span');
+        prevSpan.textContent = g.start;
+        prevSpan.style.cssText = `display:inline-block;width:${unitWidth * (g.end - g.start)}px;text-align:right;font-size:11px;`;
+      }
       shown.add(g.start);
     }
   });
-  const last = document.createElement('span');
-  last.textContent = gantt[gantt.length-1].end;
-  times.appendChild(last);
+
+  // Simpler time rendering
+  times.innerHTML = '';
+  let accumulated = 0;
+  gantt.forEach((g, i) => {
+    const span = document.createElement('span');
+    span.textContent = g.start;
+    span.style.cssText = `display:inline-block;width:${(g.end-g.start)*unitWidth}px;text-align:left;font-size:11px;`;
+    times.appendChild(span);
+    if (i === gantt.length - 1) {
+      const endSpan = document.createElement('span');
+      endSpan.textContent = g.end;
+      endSpan.style.cssText = 'font-size:11px;';
+      times.appendChild(endSpan);
+    }
+  });
 
   // Calculate results
   const completionMap = {};
@@ -2050,9 +2230,8 @@ function runMemAlloc() {
     الـ ${algo === 'first' ? 'First-Fit' : algo === 'best' ? 'Best-Fit' : 'Worst-Fit'} اختار Hole رقم ${chosen+1} (${chosenSize}KB)<br>
     الـ ${size}KB اتحجزت<br>
     الـ Leftover: <b>${leftover}KB</b>`;
-  // Update UI
   const hd = document.getElementById('mem-holes');
-  hd.innerHTML = holes.map(h => h > 0 ? `<span class="tag tag-green">${h}KB</span>` : '<span class="tag" style="opacity:0.3">0KB (used)</span>').join('');
+  hd.innerHTML = holes.map(h => h > 0 ? `<span class="tag tag-green">${h}KB</span>` : '<span class="tag" style="opacity:0.3">0KB</span>').join('');
 }
 
 // ============================================================
@@ -2087,15 +2266,15 @@ function runPaging() {
 
   res.className = 'concept concept-green';
   res.innerHTML = `<b>✅ Translation Complete!</b><br><br>
-    <span class="mono text-xs">
-    Logical Address = ${la}<br>
+    <span class="mono" style="font-size:11px;direction:ltr;display:block;text-align:left;">
+    Logical = ${la}<br>
     Page Size = ${ps}<br>
-    ─────────────────<br>
+    ─────────────<br>
     Page Number = ${la} ÷ ${ps} = <b>${pageNum}</b><br>
     Offset = ${la} mod ${ps} = <b>${offset}</b><br>
     Frame (from table) = <b>${frame}</b><br>
-    ─────────────────<br>
-    Physical Address = ${frame}×${ps} + ${offset} = <b style="color:var(--accent2)">${physAddr}</b>
+    ─────────────<br>
+    Physical = ${frame}×${ps} + ${offset} = <b style="color:var(--accent2)">${physAddr}</b>
     </span>`;
 }
 
@@ -2118,11 +2297,11 @@ function calcEAT() {
 
   res.style.display = 'block';
   res.innerHTML = `
-    <span class="mono text-xs">
-    EAT = (${ma} + ${eps}) × ${alpha} + (${2*ma} + ${eps}) × ${1-alpha}<br>
+    <span class="mono" style="font-size:10px;direction:ltr;display:block;text-align:left;">
+    EAT = (${ma} + ${eps}) × ${alpha} + (${2*ma} + ${eps}) × ${(1-alpha).toFixed(2)}<br>
     = ${hitTime} × ${alpha} + ${missTime} × ${(1-alpha).toFixed(2)}<br>
     = ${(hitTime*alpha).toFixed(2)} + ${(missTime*(1-alpha)).toFixed(2)}<br>
-    = <b style="color:var(--accent2);font-size:16px">${eat.toFixed(2)} ns</b>
+    = <b style="color:var(--accent2);font-size:15px">${eat.toFixed(2)} ns</b>
     </span>`;
 }
 
@@ -2139,12 +2318,12 @@ function renderMCQ() {
     div.innerHTML = `
       <div class="flex items-start gap-3 mb-4">
         <span class="tag flex-shrink-0">${qi + 1}</span>
-        <p class="font-bold text-sm">${q.q}</p>
+        <p class="font-bold text-xs sm:text-sm leading-relaxed">${q.q}</p>
       </div>
       <div class="space-y-2" id="mcq-opts-${qi}">
-        ${q.opts.map((o, oi) => `<button class="mcq-option w-full text-right" onclick="answerMCQ(${qi},${oi})">${o}</button>`).join('')}
+        ${q.opts.map((o, oi) => `<button class="mcq-option" onclick="answerMCQ(${qi},${oi})">${o}</button>`).join('')}
       </div>
-      <div id="mcq-exp-${qi}" class="mt-3 p-3 rounded-lg text-sm" style="display:none;background:rgba(108,99,255,0.08);border:1px solid rgba(108,99,255,0.2)"></div>
+      <div id="mcq-exp-${qi}" class="mt-3 p-3 rounded-lg text-xs sm:text-sm" style="display:none;background:rgba(108,99,255,0.08);border:1px solid rgba(108,99,255,0.2)"></div>
     `;
     c.appendChild(div);
   });
@@ -2187,12 +2366,12 @@ function renderTF() {
     const div = document.createElement('div');
     div.className = 'card';
     div.innerHTML = `
-      <p class="font-bold text-sm mb-3">${qi + 1}. ${q.q}</p>
+      <p class="font-bold text-xs sm:text-sm mb-4 leading-relaxed">${qi + 1}. ${q.q}</p>
       <div class="flex gap-3">
-        <button onclick="answerTF(${qi}, true)" class="btn btn-outline text-sm px-6" id="tf-t-${qi}">✅ True</button>
-        <button onclick="answerTF(${qi}, false)" class="btn btn-outline text-sm px-6" id="tf-f-${qi}">❌ False</button>
+        <button onclick="answerTF(${qi}, true)" class="btn btn-outline" style="flex:1;" id="tf-t-${qi}">✅ True</button>
+        <button onclick="answerTF(${qi}, false)" class="btn btn-outline" style="flex:1;" id="tf-f-${qi}">❌ False</button>
       </div>
-      <div id="tf-exp-${qi}" class="mt-3 p-3 rounded-lg text-sm" style="display:none"></div>
+      <div id="tf-exp-${qi}" class="mt-3 p-3 rounded-lg text-xs sm:text-sm" style="display:none"></div>
     `;
     c.appendChild(div);
   });
@@ -2224,9 +2403,9 @@ function renderTraps() {
     const div = document.createElement('div');
     div.className = 'card';
     div.innerHTML = `
-      <div class="flex items-center gap-2 mb-3"><span class="text-xl">⚠️</span><h3 class="font-black text-base" style="color:var(--yellow)">${t.title}</h3></div>
-      <div class="concept concept-red mb-2 text-sm"><b>❌ الخطأ الشائع:</b> ${t.trap}</div>
-      <div class="concept concept-green text-sm"><b>✅ الصح:</b> ${t.correct}</div>
+      <div class="flex items-center gap-2 mb-3"><span class="text-lg">⚠️</span><h3 class="font-black text-sm" style="color:var(--yellow)">${t.title}</h3></div>
+      <div class="concept concept-red mb-2 text-xs sm:text-sm"><b>❌ الخطأ الشائع:</b> ${t.trap}</div>
+      <div class="concept concept-green text-xs sm:text-sm"><b>✅ الصح:</b> ${t.correct}</div>
     `;
     c.appendChild(div);
   });
@@ -2241,10 +2420,10 @@ function renderEssays() {
     const div = document.createElement('div');
     div.innerHTML = `
       <button class="acc-btn" onclick="toggleAcc('essay-${i}')">
-        <span>${e.title}</span><span>▼</span>
+        <span class="text-xs sm:text-sm">${e.title}</span><span style="flex-shrink:0">▼</span>
       </button>
-      <div class="acc-content card" id="essay-${i}" style="margin-top:-8px;border-top:none;border-radius:0 0 12px 12px">
-        <div class="text-sm" style="line-height:2">${e.answer}</div>
+      <div class="acc-content card text-xs sm:text-sm" id="essay-${i}" style="margin-top:-6px;border-top:none;border-radius:0 0 12px 12px;line-height:1.8">
+        ${e.answer}
       </div>
     `;
     c.appendChild(div);
@@ -2260,25 +2439,25 @@ function renderProblems() {
     const div = document.createElement('div');
     div.className = 'card';
     div.innerHTML = `
-      <h3 class="font-black text-lg mb-4" style="color:var(--accent)">${p.title}</h3>
+      <h3 class="font-black text-sm sm:text-lg mb-4" style="color:var(--accent)">${p.title}</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <div class="tag tag-yellow mb-2">1️⃣ المعطيات</div>
-          <div class="code text-xs">${p.data}</div>
+          <div class="tag tag-yellow mb-2 text-xs">1️⃣ المعطيات</div>
+          <div class="code" style="font-size:11px;white-space:pre-line">${p.data}</div>
         </div>
         <div>
-          <div class="tag mb-2">2️⃣ المطلوب</div>
-          <div class="concept text-sm">${p.question}</div>
-          <div class="tag tag-green mt-3 mb-2">3️⃣ هنفكر ازاي</div>
-          <div class="concept concept-green text-sm">${p.think}</div>
+          <div class="tag mb-2 text-xs">2️⃣ المطلوب</div>
+          <div class="concept text-xs sm:text-sm">${p.question}</div>
+          <div class="tag tag-green mt-3 mb-2 text-xs">3️⃣ هنفكر ازاي</div>
+          <div class="concept concept-green text-xs sm:text-sm">${p.think}</div>
         </div>
       </div>
-      <div class="tag tag-yellow mb-2">4️⃣ الحل خطوة خطوة</div>
-      <div class="code text-xs mb-4" style="direction:ltr;text-align:left">${p.solution}</div>
-      <div class="tag tag-green mb-2">5️⃣ النتيجة</div>
-      <div class="concept concept-green text-sm mb-3"><b style="color:var(--accent2)">${p.result}</b></div>
-      <div class="tag tag-red mb-2">6️⃣ الامتحان ممكن يضحك عليك في إيه</div>
-      <div class="concept concept-red text-sm">${p.trick}</div>
+      <div class="tag tag-yellow mb-2 text-xs">4️⃣ الحل خطوة خطوة</div>
+      <div class="code mb-4" style="font-size:11px;white-space:pre-line;direction:ltr;text-align:left">${p.solution}</div>
+      <div class="tag tag-green mb-2 text-xs">5️⃣ النتيجة</div>
+      <div class="concept concept-green text-xs sm:text-sm mb-3"><b style="color:var(--accent2)">${p.result}</b></div>
+      <div class="tag tag-red mb-2 text-xs">6️⃣ الامتحان ممكن يضحك عليك في إيه</div>
+      <div class="concept concept-red text-xs sm:text-sm">${p.trick}</div>
     `;
     c.appendChild(div);
   });
@@ -2296,7 +2475,6 @@ function toggleAcc(id) {
 // MOCK EXAM
 // ============================================================
 function startMock() {
-  // Pick 20 random questions
   const pool = [...mcqData];
   mockQuestions = [];
   while (mockQuestions.length < 20 && pool.length > 0) {
@@ -2320,10 +2498,10 @@ function renderMockQuestion() {
   document.getElementById('mock-next-btn').textContent = mockCurrentQ === mockQuestions.length - 1 ? 'إنهاء ✓' : 'التالي ←';
   area.innerHTML = `
     <div class="card">
-      <div class="tag mb-3">${mockCurrentQ + 1} / 20</div>
-      <p class="font-bold mb-4 text-base">${q.q}</p>
+      <div class="tag mb-3 text-xs">${mockCurrentQ + 1} / 20</div>
+      <p class="font-bold mb-4 text-xs sm:text-sm leading-relaxed">${q.q}</p>
       <div class="space-y-2" id="mock-opts">
-        ${q.opts.map((o, i) => `<button class="mcq-option w-full text-right ${mockAnswers[mockCurrentQ] === i ? (i === q.ans ? 'correct' : 'wrong') : ''}" onclick="mockAnswer(${i})">${o}</button>`).join('')}
+        ${q.opts.map((o, i) => `<button class="mcq-option ${mockAnswers[mockCurrentQ] === i ? (i === q.ans ? 'correct' : 'wrong') : ''}" onclick="mockAnswer(${i})">${o}</button>`).join('')}
       </div>
     </div>
   `;
@@ -2376,7 +2554,7 @@ function endMock() {
   const review = document.getElementById('mock-review');
   review.innerHTML = mockQuestions.map((q, i) => {
     const isRight = mockAnswers[i] === q.ans;
-    return `<div class="card text-sm" style="border-color:${isRight ? 'var(--accent2)' : 'var(--red)'}">
+    return `<div class="card text-xs sm:text-sm" style="border-color:${isRight ? 'var(--accent2)' : 'var(--red)'}">
       <b>${isRight ? '✅' : '❌'} ${i+1}. ${q.q}</b><br>
       ${!isRight ? `<span style="color:var(--red)">إجابتك: ${q.opts[mockAnswers[i]] || 'مجبتش'}</span><br>` : ''}
       <span style="color:var(--accent2)">الصح: ${q.opts[q.ans]}</span>
@@ -2391,5 +2569,6 @@ function resetMock() {
 }
 </script>
 </body>
+</html>
 </html>
 </html>
