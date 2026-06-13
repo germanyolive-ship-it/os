@@ -515,6 +515,11 @@
       <a href="#process" class="nav-link">⚙️ Process</a>
       <a href="#scheduling" class="nav-link">📅 Scheduling</a>
       <a href="#memory" class="nav-link">🧠 Memory</a>
+      <a href="#sync" class="nav-link">🔒 Sync</a>
+      <a href="#deadlocks" class="nav-link">☠️ Deadlocks</a>
+      <a href="#vm" class="nav-link">📦 Virtual Memory</a>
+      <a href="#io" class="nav-link">🔌 I/O Systems</a>
+      <a href="#disk" class="nav-link">💽 Disk Sched</a>
       <a href="#mcq" class="nav-link">❓ MCQ</a>
       <a href="#traps" class="nav-link">⚠️ Traps</a>
       <a href="#problems" class="nav-link">🧮 Problems</a>
@@ -1499,6 +1504,761 @@ Physical Address = Frame Base + Offset
   </div>
 </section>
 
+<!-- ==================== SYNCHRONIZATION ==================== -->
+<section id="sync" class="section-pad" style="background:linear-gradient(to bottom, var(--bg), var(--card2))">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">🔒</span>
+      <h2 class="section-title">Process Synchronization</h2>
+      <button onclick="markDone('sync')" id="done-sync" class="btn btn-outline" style="font-size:12px;padding:8px 14px;margin-right:auto;">✓ تمت المراجعة</button>
+    </div>
+
+    <!-- Race Condition -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Race Condition</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="space-y-2">
+          <div class="concept concept-red"><b>التعريف:</b> لما أكتر من process/thread بيوصلوا وبيعدّلوا على Shared Data في نفس الوقت، والنتيجة النهائية بتعتمد على ترتيب التنفيذ (timing)</div>
+          <div class="concept"><b>ليه بتحصل؟</b> لأن العمليات على المتغير المشترك (زي count++) مش <b>Atomic</b> — بتتحول لعدة تعليمات (load, add, store)</div>
+          <div class="concept concept-yellow"><b>النتيجة:</b> قيمة غلط أو غير متوقعة للمتغير المشترك — bug صعب اكتشافه لأنه بيظهر بالصدفة</div>
+        </div>
+        <div>
+          <div class="code">// Shared variable: count = 5
+// Thread A           Thread B
+register1 = count    register2 = count
+register1++          register2++
+count = register1    count = register2
+
+// لو الترتيب: A load → B load → A store → B store
+// النتيجة count = 6 (المفروض تكون 7!)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Critical Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+      <div class="card">
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Critical Section</h3>
+        <div class="space-y-2 text-xs sm:text-sm">
+          <div class="concept"><b>التعريف:</b> جزء من الكود فيه access لـ shared resource (variable, file, data structure) ولازم ما يتنفذش من أكتر من process في نفس الوقت</div>
+          <div class="concept concept-green"><b>General Structure:</b> Entry Section → Critical Section → Exit Section → Remainder Section</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent2)">Critical Section Problem — 3 شروط</h3>
+        <div class="space-y-2 text-xs sm:text-sm">
+          <div class="concept concept-green"><b>1. Mutual Exclusion:</b> process واحدة بس تقدر تكون داخل الـ Critical Section في نفس اللحظة</div>
+          <div class="concept concept-yellow"><b>2. Progress:</b> لو مفيش process داخل الـ CS وفيه processes عايزة تدخل، الاختيار بينهم لازم يحصل (مش انتظار للأبد)</div>
+          <div class="concept"><b>3. Bounded Waiting:</b> فيه حد أقصى لعدد المرات اللي processes تانية تدخل الـ CS قبل ما طلب process معينة يتقبل (منع starvation)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mutual Exclusion Solutions intro -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">حلول Mutual Exclusion — مقارنة</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>الحل</th><th>المستوى</th><th>Busy Waiting؟</th><th>عدد Processes</th><th>ملاحظات</th></tr>
+          <tr><td>Peterson's Algorithm</td><td>Software</td><td>✅ نعم</td><td>2 فقط</td><td>حل كلاسيكي تعليمي — مش مضمون على كل المعالجات الحديثة</td></tr>
+          <tr><td>Lock / Mutex</td><td>OS / Library</td><td>حسب التنفيذ</td><td>أي عدد</td><td>acquire() / release() — أبسط أداة عملية</td></tr>
+          <tr><td>Spinlock</td><td>Hardware-based</td><td>✅ نعم (active loop)</td><td>أي عدد</td><td>مناسب لـ multiprocessor، critical sections قصيرة</td></tr>
+          <tr><td>Test-and-Set</td><td>Hardware Instruction</td><td>✅ نعم</td><td>أي عدد</td><td>Atomic instruction بيقدمها الـ CPU، أساس الـ Spinlock</td></tr>
+          <tr><td>Semaphore</td><td>OS</td><td>❌ لا (Blocking)</td><td>أي عدد</td><td>عداد integer مع wait() و signal()</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Locks -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+      <div class="card">
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Locks (Mutex Locks)</h3>
+        <div class="space-y-2 text-xs sm:text-sm">
+          <div class="concept"><b>الفكرة:</b> الـ process لازم تـ <b>acquire()</b> الـ lock قبل ما تدخل الـ Critical Section وتعمل <b>release()</b> لما تخلص</div>
+          <div class="code" style="font-size:11px;">do {
+  acquire lock
+    critical section
+  release lock
+    remainder section
+} while (true);</div>
+          <div class="concept concept-yellow"><b>مهم:</b> لو الـ acquire/release نفسهم مش atomic، الـ Mutual Exclusion مش هتكون مضمونة!</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--red)">Spinlock</h3>
+        <div class="space-y-2 text-xs sm:text-sm">
+          <div class="concept concept-red"><b>التعريف:</b> نوع من الـ lock فيه الـ process بتفضل في loop (busy-wait) تتأكد من الـ lock لحد ما تبقى متاحة</div>
+          <div class="concept concept-green"><b>الميزة:</b> مفيش context switch overhead — مفيد لو الانتظار قصير ومفيش CPU كتير</div>
+          <div class="concept concept-yellow"><b>العيب:</b> بيستهلك CPU cycles وهو مستني (busy waiting) — سيئ لو الانتظار طويل أو على Single CPU</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Test and Set -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Test-and-Set Instruction</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div>
+          <div class="concept"><b>التعريف:</b> Hardware instruction <b>atomic</b> — بترجع القيمة القديمة للمتغير وفي نفس الوقت بتخليه true</div>
+          <div class="concept concept-green"><b>ليه atomic؟</b> الـ CPU بيضمن إن مفيش process تانية تقدر تتدخل وسط التنفيذ — العملية كلها instruction واحدة hardware-level</div>
+        </div>
+        <div class="code" style="font-size:11px;">boolean test_and_set(boolean *target) {
+  boolean rv = *target;
+  *target = true;
+  return rv;
+}
+
+// استخدامه كـ lock:
+do {
+  while (test_and_set(&lock)) ; // busy wait
+    // critical section
+  lock = false;
+    // remainder section
+} while (true);</div>
+      </div>
+    </div>
+
+    <!-- Peterson's Algorithm -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent2)">
+      <h3 class="text-base sm:text-xl font-black mb-4 text-center" style="color:var(--accent2)">⚖️ Peterson's Algorithm</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="space-y-2">
+          <div class="concept"><b>الفكرة:</b> حل software بيحقق الـ 3 شروط (Mutual Exclusion, Progress, Bounded Waiting) لـ <b>2 processes فقط</b> (P0, P1)</div>
+          <div class="concept concept-green"><b>flag[i]:</b> بتقول إن process i عايزة تدخل الـ Critical Section</div>
+          <div class="concept concept-yellow"><b>turn:</b> رقم الـ process اللي دورها تدخل (لو الاتنين عايزين يدخلوا)</div>
+          <div class="concept"><b>الشرط للدخول:</b> process Pi بتدخل لو <code>flag[j] == false</code> أو <code>turn == i</code></div>
+        </div>
+        <div class="code" style="font-size:10.5px;">// Process Pi  (j = الـ process التانية)
+do {
+  flag[i] = true;
+  turn = j;
+  while (flag[j] && turn == j) ;
+    // critical section
+  flag[i] = false;
+    // remainder section
+} while (true);</div>
+      </div>
+      <div class="mt-3 p-3 rounded-lg text-xs" style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2)">
+        <b style="color:var(--yellow)">امتحانياً:</b> Peterson's Algorithm شغال نظرياً لـ 2 processes فقط، وعلى المعالجات الحديثة مش مضمون 100% بسبب reordering في الـ memory (compiler/CPU optimizations)
+      </div>
+    </div>
+
+    <!-- Readers Writers -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Readers-Writers Problem</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="space-y-2">
+          <div class="concept"><b>الفكرة:</b> Shared data (زي database) عليها processes نوعين: <b>Readers</b> (بيقروا بس) و <b>Writers</b> (بيقروا ويكتبوا)</div>
+          <div class="concept concept-green"><b>القاعدة 1:</b> أكتر من Reader يقدروا يقروا في نفس الوقت (Read مش بيغير الـ data)</div>
+          <div class="concept concept-red"><b>القاعدة 2:</b> الـ Writer لازم يكون عنده exclusive access — مفيش Reader أو Writer تاني وقتها</div>
+        </div>
+        <div class="concept concept-yellow">
+          <b>الحلول الشائعة:</b>
+          <p class="mt-2"><b>First Readers-Writers:</b> الأولوية للـ Readers — ممكن يحصل Writer Starvation</p>
+          <p class="mt-1"><b>Second Readers-Writers:</b> الأولوية للـ Writers — ممكن يحصل Reader Starvation</p>
+          <p class="mt-2">الحل عادة بيستخدم <b>Semaphores</b>: <code>mutex</code> و <code>wrt</code> وعداد <code>readcount</code></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Race Condition Simulator -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent)">
+      <h3 class="text-base sm:text-xl font-black mb-4 text-center" style="color:var(--accent)">🎮 Race Condition Simulator</h3>
+      <p class="text-xs sm:text-sm mb-3" style="color:var(--muted)">جرب تشغيل عمليتين بيزودوا متغير مشترك count++ — بدون lock وبه lock، وشوف الفرق</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold mb-1">عدد العمليات لكل Thread:</label>
+          <input type="number" id="sync-iters" value="5" class="inp mono-inp" style="margin-bottom:8px;">
+          <div class="sched-btn-group">
+            <button onclick="runRaceSim(false)" class="btn btn-red">▶ بدون Lock</button>
+            <button onclick="runRaceSim(true)" class="btn btn-primary">▶ مع Lock</button>
+          </div>
+        </div>
+        <div id="sync-result" class="concept" style="min-height:110px;font-size:13px;">
+          اختار عدد التكرارات وكبس على الزر
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison table -->
+    <div class="card">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">جدول مقارنة شامل — Synchronization Tools</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>المصطلح</th><th>التعريف المختصر</th></tr>
+          <tr><td>Race Condition</td><td>نتيجة غير متوقعة بسبب timing الوصول لـ shared data</td></tr>
+          <tr><td>Critical Section</td><td>كود بيوصل لـ shared resource ولازم exclusive access</td></tr>
+          <tr><td>Mutual Exclusion</td><td>process واحدة فقط داخل CS في أي وقت</td></tr>
+          <tr><td>Atomic Operation</td><td>عملية بتتم كوحدة واحدة من غير ما تنقطع</td></tr>
+          <tr><td>Busy Waiting</td><td>الانتظار في loop بدون عمل شيء مفيد (Spinlock)</td></tr>
+          <tr><td>Deadlock</td><td>processes متعلقة ببعض، كل واحدة مستنية موردًا تانية بتمسكه</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== DEADLOCKS ==================== -->
+<section id="deadlocks" class="section-pad">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">☠️</span>
+      <h2 class="section-title">Deadlocks</h2>
+      <button onclick="markDone('deadlocks')" id="done-deadlocks" class="btn btn-outline" style="font-size:12px;padding:8px 14px;margin-right:auto;">✓ تمت المراجعة</button>
+    </div>
+
+    <!-- Definition -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">تعريف Deadlock</h3>
+      <div class="concept concept-red text-xs sm:text-sm">
+        مجموعة من الـ processes كل واحدة فيها مستنية event (عادة الإفراج عن resource) ممسوك من process تانية في نفس المجموعة — النتيجة: كل العمليات stuck للأبد ومش هتقدر تتقدم
+      </div>
+    </div>
+
+    <!-- Necessary Conditions -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--red)">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--red)">4 شروط ضرورية للـ Deadlock (لازم الأربعة معًا)</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="concept concept-red"><b>1. Mutual Exclusion:</b> الـ resource مش ممكن تتشارك — process واحدة بس تستخدمها في كل لحظة</div>
+        <div class="concept concept-red"><b>2. Hold and Wait:</b> الـ process بتمسك resource واحدة على الأقل وفي نفس الوقت بتطلب resources تانية ممسوكة من processes تانية</div>
+        <div class="concept concept-red"><b>3. No Preemption:</b> الـ resource مش ممكن تتاخد بالقوة من الـ process — لازم تسيبها بنفسها بعد ما تخلص</div>
+        <div class="concept concept-red"><b>4. Circular Wait:</b> فيه مجموعة دائرية من processes، كل واحدة مستنية resource ممسوكة من اللي بعدها في الدائرة</div>
+      </div>
+      <div class="mt-3 p-3 rounded-lg text-xs" style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2)">
+        <b style="color:var(--yellow)">امتحانياً:</b> لو شرط واحد بس مش متحقق → مفيش Deadlock. كل أساليب الـ Prevention بتكسر شرط واحد من الأربعة
+      </div>
+    </div>
+
+    <!-- Resource Allocation Graph -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Resource Allocation Graph (RAG)</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="space-y-2">
+          <div class="concept"><b>العناصر:</b> Vertices اتنين: <b>Processes</b> (دوائر) و <b>Resources</b> (مستطيلات/نقط)</div>
+          <div class="concept concept-yellow"><b>Request Edge (Pi → Rj):</b> الـ process Pi طالبة resource Rj</div>
+          <div class="concept concept-green"><b>Assignment Edge (Rj → Pi):</b> resource Rj متاحة/ممسوكة من process Pi</div>
+          <div class="concept concept-red"><b>القاعدة الأساسية:</b><br>• لو الـ graph ماعندوش <b>Cycle</b> → مفيش Deadlock<br>• لو فيه Cycle ومافيش instances متعددة للموارد → Deadlock مضمون<br>• لو فيه Cycle وفيه multiple instances للموارد → ممكن يكون Deadlock وممكن لا (Cycle شرط ضروري بس مش كافي)</div>
+        </div>
+        <div class="code" style="font-size:11px;">مثال Cycle بسيط:
+P1 → R1  (P1 طالبة R1)
+R1 → P2  (R1 ممسوكة من P2)
+P2 → R2  (P2 طالبة R2)
+R2 → P1  (R2 ممسوكة من P1)
+
+Cycle: P1 → R1 → P2 → R2 → P1
+لو كل resource عندها instance واحدة فقط
+→ Deadlock مؤكد!</div>
+      </div>
+    </div>
+
+    <!-- RAG visual example -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent2)">
+      <h3 class="text-base sm:text-xl font-black mb-4 text-center" style="color:var(--accent2)">🔍 RAG Cycle Checker</h3>
+      <p class="text-xs sm:text-sm mb-3" style="color:var(--muted)">اكتب الـ edges بالصيغة: <span class="mono">P1->R1, R1->P2, P2->R2, R2->P1</span> (هل في cycle؟)</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <input type="text" id="rag-edges" placeholder="P1->R1, R1->P2, P2->R2, R2->P1" class="inp mono-inp" style="margin-bottom:8px;">
+          <button onclick="checkRAGCycle()" class="btn btn-primary w-full">▶ Check for Cycle</button>
+        </div>
+        <div id="rag-result" class="concept" style="min-height:90px;font-size:13px;">
+          اكتب الـ edges وكبس Check
+        </div>
+      </div>
+    </div>
+
+    <!-- Handling Methods -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">طرق التعامل مع Deadlock — 4 استراتيجيات</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>الاستراتيجية</th><th>الوقت</th><th>الفكرة</th><th>التكلفة</th></tr>
+          <tr><td>Prevention</td><td>قبل التنفيذ</td><td>كسر واحد من الـ 4 شروط</td><td>تقليل استخدام الموارد بشدة</td></tr>
+          <tr><td>Avoidance</td><td>وقت التنفيذ</td><td>معرفة مسبقة بأقصى احتياجات كل process (Banker's)</td><td>overhead حسابي</td></tr>
+          <tr><td>Detection & Recovery</td><td>بعد الحدوث</td><td>اسمح بالـ deadlock وكشفه وعالجه</td><td>overhead الكشف + خسارة عمل عند الـ recovery</td></tr>
+          <tr><td>Ignore (Ostrich Algorithm)</td><td>-</td><td>اعتبر إن Deadlock نادر الحدوث ولا تتعامل معاه</td><td>مستخدم في معظم أنظمة التشغيل العادية (UNIX, Windows)</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Prevention -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--red)">Prevention — كسر الشروط</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="concept concept-red"><b>كسر Mutual Exclusion:</b> صعب — بعض الموارد (printer) لازم تكون exclusive، لكن ممكن نستخدم spooling لموارد قابلة للمشاركة</div>
+        <div class="concept concept-yellow"><b>كسر Hold and Wait:</b> الـ process تطلب كل الموارد اللي محتاجاها مرة واحدة في البداية، أو تسيب كل الموارد قبل ما تطلب جديدة</div>
+        <div class="concept concept-green"><b>كسر No Preemption:</b> لو process طالبة resource مش متاحة، الموارد اللي معاها تتاخد منها (preempted) وترجع لها بعدين</div>
+        <div class="concept"><b>كسر Circular Wait:</b> ترتيب كل الموارد بـ numbering، وكل process لازم تطلب الموارد بترتيب تصاعدي بس</div>
+      </div>
+    </div>
+
+    <!-- Avoidance & Banker's -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent)">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Avoidance & Banker's Algorithm</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm mb-4">
+        <div class="space-y-2">
+          <div class="concept"><b>الفكرة:</b> الـ OS عنده معلومة مسبقة عن أقصى احتياجات كل process من كل resource — وبيقرر يوافق على الطلب بس لو النظام يفضل في <b>Safe State</b></div>
+          <div class="concept concept-green"><b>Safe State:</b> فيه ترتيب (sequence) للـ processes كلها بحيث كل process تقدر تكمل لو نفذت بهذا الترتيب</div>
+          <div class="concept concept-red"><b>Unsafe State:</b> مش بالضرورة Deadlock، لكن ممكن يؤدي له</div>
+        </div>
+        <div class="space-y-2">
+          <div class="concept concept-yellow"><b>Data Structures:</b>
+            <p class="mt-1"><b>Available:</b> عدد الموارد المتاحة من كل نوع</p>
+            <p><b>Max:</b> أقصى طلب لكل process من كل resource</p>
+            <p><b>Allocation:</b> الموارد المخصصة حاليًا لكل process</p>
+            <p><b>Need = Max - Allocation:</b> الباقي اللي ممكن تطلبه</p>
+          </div>
+          <div class="concept"><b>Safety Algorithm:</b> دور على process بحيث Need[i] ≤ Available — لو لقيتها افرض إنها خلصت وأضف Allocation[i] لـ Available — كرر لحد ما كل الـ processes تخلص</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Banker's Algorithm Simulator -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent2)">
+      <h3 class="text-base sm:text-xl font-black mb-4 text-center" style="color:var(--accent2)">🏦 Banker's Algorithm — Safety Checker</h3>
+      <p class="text-xs sm:text-sm mb-3" style="color:var(--muted)">مثال جاهز: 5 processes، 3 resource types (A,B,C). كبس Run للتحقق من Safe State وإيجاد Safe Sequence</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3 text-xs sm:text-sm">
+        <div>
+          <div class="tag tag-yellow mb-2 text-xs">Allocation</div>
+          <div class="code" style="font-size:10px;">       A  B  C
+P0     0  1  0
+P1     2  0  0
+P2     3  0  2
+P3     2  1  1
+P4     0  0  2</div>
+        </div>
+        <div>
+          <div class="tag mb-2 text-xs">Max</div>
+          <div class="code" style="font-size:10px;">       A  B  C
+P0     7  5  3
+P1     3  2  2
+P2     9  0  2
+P3     2  2  2
+P4     4  3  3</div>
+        </div>
+      </div>
+      <p class="text-xs sm:text-sm mb-3">Available = (3, 3, 2)</p>
+      <button onclick="runBankers()" class="btn btn-primary w-full">▶ Run Safety Algorithm</button>
+      <div id="bankers-result" class="concept mt-3" style="min-height:60px;font-size:13px;display:none;"></div>
+    </div>
+
+    <!-- Detection & Recovery -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+      <div class="card">
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Detection</h3>
+        <div class="space-y-2 text-xs sm:text-sm">
+          <div class="concept"><b>لو الموارد single instance:</b> استخدم <b>Wait-For Graph</b> (تبسيط للـ RAG بدون resource nodes) — Cycle = Deadlock</div>
+          <div class="concept concept-yellow"><b>لو الموارد multiple instances:</b> استخدم algorithm شبيه بـ Banker's بس بدل Max نستخدم <b>Request</b> matrix — لو فيه processes متبقية ما تقدرش تكمل → Deadlocked</div>
+          <div class="concept concept-green"><b>دورية الفحص:</b> الـ OS يقرر امتى يشغل detection algorithm — كل ما زاد عدد الـ deadlocks المتوقعة، كل ما زادت دورية الفحص</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--red)">Recovery</h3>
+        <div class="space-y-2 text-xs sm:text-sm">
+          <div class="concept concept-red"><b>1. Process Termination:</b>
+            <p class="mt-1">• Abort كل الـ processes المتورطة في الـ deadlock (مكلف)</p>
+            <p>• Abort process واحدة في كل مرة لحد ما يختفي الـ deadlock (أرخص، بس overhead إعادة فحص)</p>
+          </div>
+          <div class="concept concept-yellow"><b>2. Resource Preemption:</b>
+            <p class="mt-1">• اختيار victim (أقل تكلفة)</p>
+            <p>• Rollback للـ process لحالة آمنة سابقة</p>
+            <p>• منع Starvation — process واحدة متختارش كـ victim كل مرة</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MCQ Trap card -->
+    <div class="card mt-4 sm:mt-6" style="border-color:var(--yellow)">
+      <h3 class="text-sm sm:text-lg font-black mb-3" style="color:var(--yellow)">⚠️ أفخاخ شائعة في Deadlock</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+        <div class="concept concept-red"><b>❌ Cycle = Deadlock دايماً:</b> غلط لو فيه multiple instances من resource — الـ cycle شرط ضروري بس مش كافي</div>
+        <div class="concept concept-red"><b>❌ Banker's بيحل الـ Deadlock:</b> غلط — Banker's بيـ <b>تجنب</b> الدخول في deadlock من الأساس، مش بيعالجه بعد حدوثه</div>
+        <div class="concept concept-red"><b>❌ Safe State = مفيش مشاكل أبدًا:</b> Safe State يعني فيه ترتيب آمن متاح، لكن مش بالضرورة كل ترتيب آمن</div>
+        <div class="concept concept-red"><b>❌ Unsafe State = Deadlock فورًا:</b> غلط — Unsafe State معناها ممكن يؤدي لـ Deadlock، لكن مش حتمي</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== VIRTUAL MEMORY ==================== -->
+<section id="vm" class="section-pad" style="background:linear-gradient(to bottom, var(--bg), var(--card2))">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">📦</span>
+      <h2 class="section-title">Virtual Memory</h2>
+      <button onclick="markDone('vm')" id="done-vm" class="btn btn-outline" style="font-size:12px;padding:8px 14px;margin-right:auto;">✓ تمت المراجعة</button>
+    </div>
+
+    <!-- Intro -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">الفكرة الأساسية</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="concept"><b>Virtual Memory:</b> تقنية بتسمح بتنفيذ process حتى لو مش كل أجزائها موجودة في الـ Physical Memory في نفس الوقت — بتفصل بين الـ Logical Memory (اللي يشوفها الـ process) والـ Physical Memory الحقيقية</div>
+        <div class="concept concept-green"><b>الفايدة:</b>
+          <p class="mt-1">• ممكن تشغل process أكبر من حجم الـ RAM الفعلي</p>
+          <p>• زيادة درجة الـ Multiprogramming (أكتر processes في الذاكرة)</p>
+          <p>• كل process بتحمل بس الأجزاء اللي محتاجاها فعلاً</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Demand Paging -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Demand Paging</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="space-y-2">
+          <div class="concept"><b>التعريف:</b> الـ pages بتتحمل في الـ Memory فقط لما تحتاجها الـ process (Lazy Swapper) — مش كل الـ process بتتحمل مرة واحدة</div>
+          <div class="concept concept-green"><b>الفايدة:</b> أقل I/O، أقل memory مستخدمة، استجابة أسرع، أكتر users يشاركوا</div>
+          <div class="concept concept-yellow"><b>Pure Demand Paging:</b> لا يتم تحميل أي page إلا عند الحاجة الفعلية (حتى الأول page بتتحمل بـ Page Fault)</div>
+        </div>
+        <div class="code" style="font-size:11px;">Demand Paging Steps:
+1. Process بتحاول توصل لـ page
+2. CPU يشوف الـ valid/invalid bit
+3. لو invalid → Page Fault Trap
+4. OS يشوف لو reference صحيح
+   - لو غير صحيح → terminate process
+   - لو صحيح → يكمل (الخطوات التالية)</div>
+      </div>
+    </div>
+
+    <!-- Page Fault -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--red)">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--red)">Page Fault وخطوات معالجته</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="concept concept-red"><b>التعريف:</b> Trap بيحصل لما process تحاول توصل لـ page موجودة في الـ Logical Address Space بس مش موجودة في الـ Physical Memory دلوقتي (valid bit = invalid)</div>
+        <div>
+          <div class="code" style="font-size:10.5px;">Page Fault Handling — الخطوات:
+1. تشييك الـ internal table (في PCB) عشان نعرف
+   لو الـ reference صحيح أو غلط
+2. لو غلط → terminate process
+3. لو صحيح بس الـ page مش محمّلة:
+   a. دور على free frame (من free-frame list)
+   b. اطلب الـ page من الـ disk
+   c. عند الانتهاء، حدّث الـ Page Table
+      (set valid bit = v)
+4. أعد تنفيذ الـ instruction اللي عملت الـ fault</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Valid/Invalid bit -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+      <div class="card">
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Valid / Invalid Bit</h3>
+        <div class="space-y-2 text-xs sm:text-sm">
+          <div class="concept concept-green"><b>Valid (v):</b> الـ page موجودة في الـ Physical Memory دلوقتي — الوصول ليها مباشر</div>
+          <div class="concept concept-red"><b>Invalid (i):</b> أحد احتمالين: (1) الـ page مش جايه على الـ Memory أصلاً (Page Fault) أو (2) reference غير شرعي (الـ process مالهاش حق توصل للـ page دي)</div>
+          <div class="concept concept-yellow">الـ Page Table بيستخدم نفس الـ bit ده للأمان (Memory Protection) ولـ Demand Paging مع بعض</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Address Translation في VM</h3>
+        <div class="space-y-2 text-xs sm:text-sm">
+          <div class="concept"><b>نفس آلية الـ Paging:</b> Logical Address = Page Number + Offset</div>
+          <div class="concept concept-green"><b>إضافة:</b> Page Table Entry فيه bit إضافي اسمه <b>Valid/Invalid</b> — لو valid، الـ frame number صحيح ونحول مباشرة، لو invalid، يحصل Page Fault Trap</div>
+          <div class="concept concept-yellow"><b>Backing Store:</b> منطقة على الـ Disk (Swap Space) بتحتفظ بالـ pages اللي مش موجودة في الـ Memory دلوقتي</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backing Store & EAT -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent2)">
+      <h3 class="text-base sm:text-xl font-black mb-4 text-center" style="color:var(--accent2)">🧮 Effective Access Time مع Page Faults</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="space-y-2">
+          <div class="concept"><b>Backing Store:</b> الـ Disk هو المكان اللي تتخزن فيه الـ pages اللي اتشالت من الـ memory — الوصول له بطيء جدًا (milliseconds) مقارنة بالـ memory (nanoseconds)</div>
+          <div class="code" style="font-size:11px;">EAT = (1 - p) × ma + p × page_fault_time
+حيث:
+  p = Page Fault Rate (0 ≤ p ≤ 1)
+  ma = Memory Access Time
+  page_fault_time = وقت معالجة الـ Page Fault
+                    (بيشمل disk I/O — بطيء جدًا)</div>
+        </div>
+        <div class="concept concept-red">
+          <b>مثال:</b> ma = 200ns، page fault time = 8ms = 8,000,000ns، p = 0.001
+          <p class="mt-2 mono" style="direction:ltr;text-align:left;">EAT = (1-0.001)×200 + 0.001×8,000,000<br>= 199.8 + 8000 = 8199.8 ns</p>
+          <p class="mt-2"><b>الخلاصة:</b> حتى نسبة Page Fault صغيرة جدًا (0.1%) بتأثر بشكل كبير على EAT — لازم نقلل p لأقصى حد</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Replacement Algorithms -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Page Replacement Algorithms</h3>
+      <div class="table-wrap mb-3">
+        <table>
+          <tr><th>Algorithm</th><th>الفكرة</th><th>المميزات/العيوب</th></tr>
+          <tr><td>FIFO</td><td>تستبدل أقدم page دخلت الـ memory</td><td>سهل التنفيذ، ممكن يحصل <b>Belady's Anomaly</b> (زيادة frames تزيد page faults!)</td></tr>
+          <tr><td>Optimal (OPT)</td><td>تستبدل الـ page اللي مش هتُستخدم لأطول وقت في المستقبل</td><td>أقل عدد page faults نظريًا — مستحيل تطبيقه عمليًا (يحتاج معرفة المستقبل)</td></tr>
+          <tr><td>LRU (Least Recently Used)</td><td>تستبدل الـ page اللي ماتستخدمتش من أطول وقت</td><td>قريب من Optimal، بس محتاج hardware support (counters/stack)</td></tr>
+        </table>
+      </div>
+      <div class="concept concept-red"><b>Belady's Anomaly:</b> في FIFO، زيادة عدد الـ frames ممكن تـ <b>تزيد</b> عدد الـ page faults بدل ما تقللهم — ضد المنطق! LRU وOptimal مش بيحصل فيهم ده (Stack Algorithms)</div>
+    </div>
+
+    <!-- Page Replacement Simulator -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent)">
+      <h3 class="text-base sm:text-xl font-black mb-4 text-center" style="color:var(--accent)">🎮 Page Replacement Simulator</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+        <div>
+          <label class="block text-xs font-bold mb-1">Reference String (مفصولة بفاصلة):</label>
+          <input type="text" id="pr-string" placeholder="7,0,1,2,0,3,0,4,2,3,0,3,2" value="7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1" class="inp mono-inp" style="margin-bottom:8px;">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">عدد الـ Frames:</label>
+          <input type="number" id="pr-frames" value="3" min="1" max="6" class="inp mono-inp" style="margin-bottom:8px;">
+        </div>
+      </div>
+      <div class="sched-btn-group mb-3">
+        <button onclick="runPageReplacement('FIFO')" class="btn btn-primary">▶ FIFO</button>
+        <button onclick="runPageReplacement('LRU')" class="btn btn-primary">▶ LRU</button>
+        <button onclick="runPageReplacement('OPT')" class="btn btn-primary">▶ Optimal</button>
+      </div>
+      <div id="pr-result" class="concept" style="min-height:80px;font-size:12px;">
+        اكتب الـ reference string واختار عدد الـ frames وكبس على algorithm
+      </div>
+    </div>
+
+    <!-- Frame allocation/thrashing -->
+    <div class="card">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">مصطلحات مرتبطة</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+        <div class="concept"><b>Thrashing:</b> الـ process بتعمل page faults بمعدل عالي جدًا — وقت أكبر في الـ paging من التنفيذ الفعلي، عادة بسبب قلة الـ frames المخصصة</div>
+        <div class="concept concept-yellow"><b>Working Set:</b> مجموعة الـ pages اللي الـ process محتاجاها فعلًا في فترة زمنية معينة — أساس الحل للـ Thrashing</div>
+        <div class="concept concept-green"><b>Copy-on-Write:</b> الـ parent والـ child بـ fork() بيشاركوا نفس الـ pages لحد ما أحدهم يكتب → عندها تتعمل نسخة</div>
+        <div class="concept"><b>Memory-Mapped Files:</b> ربط ملف على الـ disk بـ pages في الـ virtual memory — القراءة/الكتابة بتتم كأنها memory access عادية</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== I/O SYSTEMS ==================== -->
+<section id="io" class="section-pad">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">🔌</span>
+      <h2 class="section-title">I/O Systems</h2>
+      <button onclick="markDone('io')" id="done-io" class="btn btn-outline" style="font-size:12px;padding:8px 14px;margin-right:auto;">✓ تمت المراجعة</button>
+    </div>
+
+    <!-- Device Categories -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">I/O Device Categories</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>الفئة</th><th>الوصف</th><th>أمثلة</th></tr>
+          <tr><td>Human-readable</td><td>Devices مناسبة للتواصل مع المستخدم</td><td>Screen, Keyboard, Mouse, Printer</td></tr>
+          <tr><td>Machine-readable</td><td>Devices للتواصل مع أجهزة/معدات أخرى</td><td>Disk, Tape, Sensors, Controllers</td></tr>
+          <tr><td>Communication</td><td>Devices للتواصل مع أنظمة بعيدة</td><td>Network Cards, Modems</td></tr>
+        </table>
+      </div>
+      <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+        <div class="concept"><b>Block Devices:</b> بيتعامل مع البيانات في وحدات (blocks) ذات حجم ثابت — مثل الـ Disk. ممكن الوصول العشوائي (random access)</div>
+        <div class="concept concept-yellow"><b>Character (Stream) Devices:</b> بيتعامل مع البيانات byte بـ byte بشكل متسلسل — مثل Keyboard, Mouse, Printer</div>
+      </div>
+    </div>
+
+    <!-- I/O Techniques comparison -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent)">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">طرق نقل البيانات (I/O Techniques) — مقارنة</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>الطريقة</th><th>الفكرة</th><th>CPU Involvement</th><th>الأداء</th></tr>
+          <tr><td>Programmed I/O</td><td>الـ CPU بيـ poll الـ device باستمرار (busy waiting) لحد ما تخلص العملية</td><td>عالية جدًا — busy waiting</td><td>ضعيف — هدر CPU</td></tr>
+          <tr><td>Interrupt-Driven I/O</td><td>الـ CPU بيبدأ العملية ويكمل شغل تاني، الـ device بيـ interrupt الـ CPU لما يخلص</td><td>متوسطة — لسه الـ CPU بينقل البيانات نفسها</td><td>أفضل من Programmed</td></tr>
+          <tr><td>DMA (Direct Memory Access)</td><td>DMA Controller بينقل البيانات مباشرة بين Device والـ Memory بدون تدخل الـ CPU في كل byte — الـ CPU بـ interrupt واحد فقط في النهاية</td><td>منخفضة جدًا</td><td>الأفضل — CPU متفرغ لمهام أخرى</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Programmed I/O & Interrupt -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+      <div class="card">
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Programmed I/O</h3>
+        <div class="space-y-2 text-xs sm:text-sm">
+          <div class="concept"><b>الفكرة:</b> الـ CPU بيـ poll busy-wait status register للـ device لحد ما يكون جاهز، وبعد كل byte/word بيتأكد تاني</div>
+          <div class="concept concept-red"><b>العيب:</b> الـ CPU مش بيعمل أي شيء مفيد وقت الانتظار — busy waiting يستهلك CPU cycles بالكامل</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent2)">Interrupt-Driven I/O</h3>
+        <div class="space-y-2 text-xs sm:text-sm">
+          <div class="concept"><b>الفكرة:</b> الـ CPU بيـ initiate الـ I/O ويكمل شغل process تانية، لما الـ device يخلص بيبعت <b>Interrupt</b> للـ CPU عشان يتعامل مع البيانات</div>
+          <div class="concept concept-green"><b>الميزة:</b> الـ CPU مش busy-waiting — بيشتغل على processes تانية وقت ما الـ I/O جاري</div>
+          <div class="concept concept-yellow"><b>العيب:</b> لسه فيه context switch overhead لكل byte/word في data transfer كبير</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DMA -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent2)">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent2)">DMA — Direct Memory Access</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="space-y-2">
+          <div class="concept"><b>الفكرة:</b> الـ CPU بيعطي الـ DMA Controller معلومات (source, destination, عدد البايتات) ويبدأ العملية، والـ DMA Controller بينقل البيانات مباشرة بين الـ Device والـ Memory <b>بدون</b> تدخل الـ CPU</div>
+          <div class="concept concept-green"><b>الـ Interrupt الوحيد:</b> الـ DMA Controller بيـ interrupt الـ CPU مرة واحدة فقط لما تنتهي العملية كلها (block كامل، مش byte by byte)</div>
+        </div>
+        <div class="concept concept-yellow">
+          <b>مستخدم في:</b>
+          <p class="mt-1">• High-speed I/O devices (Disk, Network Card)</p>
+          <p>• نقل كميات كبيرة من البيانات</p>
+          <p class="mt-2"><b>الفايدة الكبرى:</b> الـ CPU بيبقى متفرغ تمامًا للمعالجة طول فترة نقل البيانات</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buffering -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Single Buffer vs Double Buffer</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="concept">
+          <b>Single Buffering:</b>
+          <p class="mt-1">يوجد buffer واحد فقط — الـ Device بيكتب فيه والـ CPU بيقرا منه</p>
+          <p class="mt-1" style="color:var(--red)"><b>المشكلة:</b> الـ Device لازم يستنى لحد ما الـ CPU يفضي الـ buffer قبل ما يكتب فيه تاني — لا يوجد تداخل (overlap) بين عمليتي القراءة والمعالجة</p>
+        </div>
+        <div class="concept concept-green">
+          <b>Double Buffering:</b>
+          <p class="mt-1">يوجد بافرين — الـ Device بيكتب في buffer واحد بينما الـ CPU بيعالج محتوى الـ buffer التاني، وبعدين يتبادلوا الأدوار</p>
+          <p class="mt-1"><b>الفايدة:</b> overlap بين I/O والمعالجة → throughput أعلى</p>
+        </div>
+      </div>
+      <div class="mt-3 p-3 rounded-lg text-xs" style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2)">
+        <b style="color:var(--yellow)">امتحانياً:</b> Double Buffering ≠ ينهي مشكلة الانتظار بالكامل لو سرعة الإنتاج والاستهلاك مختلفة جدًا — بس بيقللها بشكل كبير
+      </div>
+    </div>
+
+    <!-- Disk Structure -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Disk Structure</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="space-y-2">
+          <div class="concept"><b>Platter:</b> القرص الدائري المغناطيسي اللي عليه البيانات — الـ disk فيه أكتر من platter</div>
+          <div class="concept"><b>Track:</b> دائرة على الـ platter بيتم تخزين البيانات عليها</div>
+          <div class="concept"><b>Sector:</b> أصغر وحدة قابلة للقراءة/الكتابة على الـ track — حجمها ثابت (عادة 512 bytes)</div>
+          <div class="concept concept-green"><b>Cylinder:</b> مجموعة الـ tracks اللي في نفس المسافة من مركز كل الـ platters (نفس الموضع على كل الأقراص)</div>
+        </div>
+        <div class="concept concept-yellow">
+          <b>Logical Block Addressing (LBA):</b> الـ sectors الفعلية بتتحول لـ sequence واحدة من logical blocks مرقمة من 0 لـ N-1 — ده اللي يشوفه الـ OS بدل التعامل المباشر مع cylinder/track/sector
+        </div>
+      </div>
+    </div>
+
+    <!-- Access Time components -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent)">
+      <h3 class="text-base sm:text-xl font-black mb-4 text-center" style="color:var(--accent)">⏱️ Disk Access Time = Seek + Rotational Latency + Transfer</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm">
+        <div class="concept">
+          <b style="color:var(--accent)">Seek Time</b>
+          <p class="mt-1">الوقت اللازم لتحريك الـ Read/Write Head ليوصل للـ Cylinder/Track المطلوب — أكبر عنصر في وقت الوصول عادة</p>
+        </div>
+        <div class="concept concept-yellow">
+          <b style="color:var(--yellow)">Rotational Latency</b>
+          <p class="mt-1">الوقت اللازم للقرص (Platter) عشان يدور لحد ما الـ Sector المطلوب يوصل تحت الـ Head</p>
+        </div>
+        <div class="concept concept-green">
+          <b style="color:var(--accent2)">Transfer Time</b>
+          <p class="mt-1">الوقت الفعلي لنقل البيانات بعد ما الـ Head بقى فوق الـ Sector الصحيح</p>
+        </div>
+      </div>
+      <div class="code mt-3" style="font-size:11px;">Access Time = Seek Time + Rotational Latency + Transfer Time
+
+ملحوظة: Seek Time غالبًا أكبر العناصر — كل خوارزميات
+Disk Scheduling هدفها الأساسي تقليل Seek Time
+(عبر تقليل إجمالي حركة الـ Head)</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== DISK SCHEDULING ==================== -->
+<section id="disk" class="section-pad" style="background:linear-gradient(to bottom, var(--bg), var(--card2))">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">💽</span>
+      <h2 class="section-title">Disk Scheduling</h2>
+      <button onclick="markDone('disk')" id="done-disk" class="btn btn-outline" style="font-size:12px;padding:8px 14px;margin-right:auto;">✓ تمت المراجعة</button>
+    </div>
+
+    <!-- Why -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">ليه محتاجين Disk Scheduling؟</h3>
+      <div class="concept">الـ OS بيستقبل طلبات I/O كتيرة من processes مختلفة لقراءة/كتابة على cylinders مختلفة — ترتيب تنفيذ الطلبات دي بيأثر بشكل كبير على إجمالي حركة الـ Disk Arm (وبالتالي Seek Time والأداء العام)</div>
+    </div>
+
+    <!-- Algorithms comparison -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">خوارزميات Disk Scheduling — مقارنة</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Algorithm</th><th>الفكرة</th><th>الميزة</th><th>العيب</th></tr>
+          <tr><td>FCFS</td><td>تنفيذ الطلبات بترتيب وصولها</td><td>عادل، بسيط</td><td>حركة arm كبيرة وغير منظمة</td></tr>
+          <tr><td>SSTF</td><td>اختيار الطلب الأقرب للموضع الحالي (Shortest Seek Time First)</td><td>أداء أفضل من FCFS</td><td>Starvation للطلبات البعيدة</td></tr>
+          <tr><td>SCAN</td><td>الـ arm يتحرك في اتجاه واحد لآخر القرص ثم يرجع (Elevator)</td><td>عادل، مفيش starvation</td><td>الطلبات في طرف معاكس تنتظر أكثر</td></tr>
+          <tr><td>C-SCAN</td><td>كـ SCAN، لكن لما يوصل للنهاية يرجع مباشرة لبداية القرص بدون خدمة في الرجوع</td><td>وقت انتظار أكثر اتزانًا (Uniform)</td><td>حركة إضافية بدون خدمة (return trip)</td></tr>
+          <tr><td>Priority</td><td>الطلبات بترتيب حسب أولوية الـ process مش حسب المكان</td><td>مرونة بحسب أهمية الـ process</td><td>ممكن يزيد إجمالي حركة الـ arm</td></tr>
+          <tr><td>LIFO</td><td>آخر طلب وصل يتم تنفيذه أولاً</td><td>جيد للـ locality (الطلب الأخير قريب غالبًا)</td><td>Starvation للطلبات القديمة</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Disk Scheduling Visualizer -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent)">
+      <h3 class="text-base sm:text-xl font-black mb-4 text-center" style="color:var(--accent)">🎮 Disk Scheduling Simulator</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+        <div>
+          <label class="block text-xs font-bold mb-1">Request Queue (مفصولة بفاصلة):</label>
+          <input type="text" id="disk-requests" value="98,183,37,122,14,124,65,67" class="inp mono-inp" style="margin-bottom:8px;">
+          <label class="block text-xs font-bold mb-1">Head Start Position:</label>
+          <input type="number" id="disk-head" value="53" class="inp mono-inp" style="margin-bottom:8px;">
+          <label class="block text-xs font-bold mb-1">Disk Size (Cylinders 0 → N-1):</label>
+          <input type="number" id="disk-size" value="200" class="inp mono-inp">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">اختار Algorithm:</label>
+          <select id="disk-algo" class="inp" style="font-family:'Cairo',sans-serif;margin-bottom:8px;">
+            <option value="FCFS">FCFS</option>
+            <option value="SSTF">SSTF</option>
+            <option value="SCAN">SCAN (اتجاه: لأعلى أولًا)</option>
+            <option value="CSCAN">C-SCAN (اتجاه: لأعلى أولًا)</option>
+            <option value="LIFO">LIFO</option>
+          </select>
+          <button onclick="runDiskSched()" class="btn btn-primary w-full">▶ Run</button>
+        </div>
+      </div>
+      <div id="disk-result" class="concept" style="min-height:90px;font-size:12px;">
+        اكتب الطلبات واختار الـ algorithm وكبس Run
+      </div>
+    </div>
+
+    <!-- Solved example -->
+    <div class="card">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent2)">مثال محلول — SSTF</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div>
+          <div class="tag tag-yellow mb-2 text-xs">المعطيات</div>
+          <div class="code" style="font-size:11px;">Requests: 98, 183, 37, 122, 14, 124, 65, 67
+Head Start: 53</div>
+        </div>
+        <div>
+          <div class="tag tag-green mb-2 text-xs">الحل</div>
+          <div class="code" style="font-size:11px;white-space:pre-line">من 53 → أقرب طلب = 65 (مسافة 12)
+65 → 67 (مسافة 2)
+67 → 37 (مسافة 30)
+37 → 14 (مسافة 23)
+14 → 98 (مسافة 84)
+98 → 122 (مسافة 24)
+122 → 124 (مسافة 2)
+124 → 183 (مسافة 59)
+
+Total Head Movement = 12+2+30+23+84+24+2+59 = 236</div>
+        </div>
+      </div>
+      <div class="mt-3 p-3 rounded-lg text-xs" style="background:rgba(255,69,96,0.08);border:1px solid rgba(255,69,96,0.2)">
+        <b style="color:var(--red)">الامتحان ممكن يضحك عليك في:</b> في SSTF، لو فيه طلبين بنفس المسافة، يتم اختيار أيهما حسب الاتفاق (عادة الأقرب لاتجاه الحركة الحالي أو الأصغر رقمًا) — يُذكر دائمًا في نص السؤال
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ==================== MCQ SECTION ==================== -->
 <section id="mcq" class="section-pad" style="background:linear-gradient(to bottom,var(--bg),var(--card2))">
   <div class="max-w-content mx-auto" style="max-width:800px">
@@ -1745,7 +2505,7 @@ Internal Frag = PageSize - (Process mod PageSize)</div>
 
 <!-- Footer -->
 <footer class="py-8 text-center" style="border-top:1px solid var(--border)">
-  <p style="color:var(--muted)" class="text-xs sm:text-sm px-4">OS Midterm Rescue 🚨 | Lect 1, 2, 3, Lect 5 ≤ Slide 40 فقط | بالتوفيق في امتحانك 🎓</p>
+  <p style="color:var(--muted)" class="text-xs sm:text-sm px-4">OS Midterm Rescue 🚨 | يشمل: Process, Scheduling, Memory, Synchronization, Deadlocks, Virtual Memory, I/O Systems, Disk Scheduling | بالتوفيق في امتحانك 🎓</p>
 </footer>
 
 <script>
@@ -1793,7 +2553,44 @@ const mcqData = [
   { q: "In process scheduling, 'Response Time' is:", opts: ["Total execution time","Time from submission to first response","Time waiting in queue","Turnaround time"], ans: 1, exp: "الـ Response Time = وقت من submission للـ process لحد أول response — مهم في الـ interactive systems" },
   { q: "Which of the following is NOT a service provided by the OS?", opts: ["I/O Operations","Memory Management","CPU Manufacturing","File System Manipulation"], ans: 2, exp: "الـ CPU Manufacturing هو hardware manufacturing مش OS service — الـ OS بيدير الـ hardware مش بيصنعه" },
   { q: "The valid/invalid bit in a page table entry indicates:", opts: ["Whether the frame is free","Whether the page is in the process's logical address space","Whether the frame is dirty","Whether TLB hit occurred"], ans: 1, exp: "الـ valid bit = الـ page موجودة في الـ logical address space للـ process. Invalid = مش موجودة أو illegal access" },
-  { q: "A process moves from Ready to Running when:", opts: ["It completes execution","The CPU scheduler selects it","It requests I/O","It is created"], ans: 1, exp: "الـ process بتنتقل من Ready → Running لما الـ CPU scheduler يختارها ويديها الـ CPU" }
+  { q: "A process moves from Ready to Running when:", opts: ["It completes execution","The CPU scheduler selects it","It requests I/O","It is created"], ans: 1, exp: "الـ process بتنتقل من Ready → Running لما الـ CPU scheduler يختارها ويديها الـ CPU" },
+
+  // ===== SYNCHRONIZATION =====
+  { q: "A Race Condition occurs when:", opts: ["A process runs too slowly","Multiple processes access shared data concurrently and the result depends on execution order","A process is terminated unexpectedly","The CPU runs out of memory"], ans: 1, exp: "Race Condition يحصل لما processes متعددة توصل لـ shared data في نفس الوقت والنتيجة تعتمد على ترتيب التنفيذ (timing)" },
+  { q: "Which of the following is NOT one of the 3 requirements of the Critical Section Problem?", opts: ["Mutual Exclusion","Progress","Bounded Waiting","Fast Execution"], ans: 3, exp: "الشروط الثلاثة: Mutual Exclusion, Progress, Bounded Waiting. Fast Execution مش من الشروط" },
+  { q: "A Spinlock differs from a regular lock mainly because:", opts: ["It uses more memory","It involves busy waiting in a loop","It can only be used by one process","It requires no hardware support"], ans: 1, exp: "الـ Spinlock بيخلي الـ process تفضل في loop (busy waiting) لحد ما الـ lock تتاح، بدون context switch" },
+  { q: "The Test-and-Set instruction is important because:", opts: ["It is slower than software solutions","It is an atomic hardware instruction that reads and modifies a value in one step","It only works on single-core CPUs","It eliminates the need for any locks"], ans: 1, exp: "Test-and-Set هي instruction atomic بترجع القيمة القديمة وتعمل set للقيمة الجديدة في خطوة واحدة لا تنقطع" },
+  { q: "Peterson's Algorithm provides a software solution for mutual exclusion for:", opts: ["Any number of processes","Exactly 2 processes","Only 1 process","Multiprocessor systems only"], ans: 1, exp: "Peterson's Algorithm حل classic لـ 2 processes فقط (P0, P1) باستخدام flag[] و turn" },
+  { q: "In the Readers-Writers problem, which statement is true?", opts: ["Writers can access data while readers are reading","Multiple readers can read simultaneously but a writer needs exclusive access","Readers and writers never conflict","Only one reader is allowed at a time"], ans: 1, exp: "أكتر من Reader يقدروا يقروا في نفس الوقت، لكن الـ Writer لازم يكون عنده exclusive access (مفيش readers أو writers تانيين)" },
+
+  // ===== DEADLOCKS =====
+  { q: "Which of the following is NOT one of the 4 necessary conditions for Deadlock?", opts: ["Mutual Exclusion","Hold and Wait","Preemption","Circular Wait"], ans: 2, exp: "الشروط الأربعة: Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait. 'Preemption' عكس الشرط الصحيح (No Preemption)" },
+  { q: "In a Resource Allocation Graph, an edge from a process to a resource (Pi → Rj) represents:", opts: ["The resource is assigned to the process","The process is requesting the resource","The process owns the resource","A deadlock has occurred"], ans: 1, exp: "Pi → Rj هي Request Edge — الـ process Pi طالبة الـ resource Rj. الاتجاه المعكوس (Rj → Pi) هو Assignment Edge" },
+  { q: "If a Resource Allocation Graph contains a cycle and each resource has only ONE instance, then:", opts: ["The system is definitely safe","A deadlock must exist","A deadlock might or might not exist","More processes should be added"], ans: 1, exp: "لو الموارد single instance والـ cycle موجود → Deadlock مضمون. لو multiple instances، الـ cycle شرط ضروري بس مش كافي" },
+  { q: "The Banker's Algorithm is used for deadlock:", opts: ["Detection","Avoidance","Recovery","Prevention by breaking circular wait"], ans: 1, exp: "Banker's Algorithm هو deadlock Avoidance — بيتحقق من الـ Safe State قبل الموافقة على أي طلب resource" },
+  { q: "A 'Safe State' in deadlock avoidance means:", opts: ["No deadlock will ever occur in the system","There exists at least one safe sequence allowing all processes to complete","All resources are currently free","The system has more resources than needed"], ans: 1, exp: "Safe State معناها فيه ترتيب (safe sequence) واحد على الأقل تقدر تكمل بيه كل الـ processes بدون deadlock" },
+  { q: "Breaking the 'Circular Wait' condition for deadlock prevention is typically done by:", opts: ["Allowing resource preemption","Requesting all resources at once","Imposing a total ordering on resource types and requiring requests in increasing order","Disabling interrupts"], ans: 2, exp: "بنرتب الموارد بـ numbering، وكل process لازم تطلب الموارد بترتيب تصاعدي بس — ده بيمنع تكوّن دائرة انتظار" },
+  { q: "In deadlock recovery via Resource Preemption, what must be considered to avoid starvation?", opts: ["The order of process creation","That the same process is not always chosen as the victim","The size of the resource","The CPU scheduling algorithm used"], ans: 1, exp: "لو نفس الـ process اتاخد منها resources كل مرة كـ victim، ممكن تحصل لها Starvation — لازم نضمن إنها متختارش دايمًا" },
+
+  // ===== VIRTUAL MEMORY =====
+  { q: "Demand Paging means that:", opts: ["All pages of a process are loaded at start-up","A page is loaded into memory only when it is referenced","Pages are never swapped out","The page table is not needed"], ans: 1, exp: "Demand Paging = الـ pages بتتحمل في الـ memory فقط لما الـ process تحتاجها فعلًا (Lazy Swapper)" },
+  { q: "A Page Fault occurs when:", opts: ["A program has a syntax error","A referenced page is not currently in physical memory","The CPU divides by zero","Two processes request the same resource"], ans: 1, exp: "Page Fault هو Trap يحصل لما process تحاول توصل لـ page في الـ logical address space بس مش موجودة في الـ physical memory دلوقتي" },
+  { q: "The valid/invalid bit in Virtual Memory paging is used to indicate:", opts: ["Whether a page is in memory and accessible, or causes a page fault","The size of the page","The CPU mode (user/kernel)","Whether the TLB is enabled"], ans: 0, exp: "valid = الـ page موجودة في memory دلوقتي ويمكن الوصول ليها مباشرة. invalid = page fault (غير موجودة أو غير قانونية)" },
+  { q: "The Backing Store refers to:", opts: ["A type of cache memory","A portion of disk used to hold pages not currently in memory","The CPU register file","A backup of the operating system kernel"], ans: 1, exp: "Backing Store (Swap Space) هي منطقة على الـ disk بتحتفظ بالـ pages اللي مش موجودة في الـ physical memory دلوقتي" },
+  { q: "Belady's Anomaly refers to a situation where:", opts: ["Increasing the number of frames decreases page faults always","Increasing the number of frames can increase page faults (in FIFO)","The CPU runs faster with fewer frames","Page faults never occur with FIFO"], ans: 1, exp: "Belady's Anomaly: في FIFO، زيادة عدد الـ frames ممكن (بشكل غير منطقي) تزيد عدد page faults بدل تقليلها" },
+  { q: "Which page replacement algorithm is impossible to implement in practice but gives the lowest possible page-fault rate?", opts: ["FIFO","LRU","Optimal (OPT)","Random"], ans: 2, exp: "Optimal محتاج معرفة مسبقة بالمستقبل (أي pages هتُستخدم) — مستحيل تطبيقه عمليًا، بس بيستخدم كمعيار مقارنة" },
+
+  // ===== I/O SYSTEMS =====
+  { q: "Which I/O technique requires the CPU to continuously poll the device status (busy waiting)?", opts: ["DMA","Interrupt-Driven I/O","Programmed I/O","Spooling"], ans: 2, exp: "Programmed I/O = الـ CPU بيـ poll الـ device status باستمرار في loop (busy waiting) لحد ما يكون جاهز" },
+  { q: "DMA (Direct Memory Access) is mainly used to:", opts: ["Increase CPU clock speed","Transfer data between device and memory without continuous CPU involvement","Replace the need for interrupts entirely","Increase the size of RAM"], ans: 1, exp: "DMA Controller بينقل البيانات مباشرة بين الـ device والـ memory، والـ CPU بيـ interrupt مرة واحدة فقط في النهاية" },
+  { q: "The main advantage of Double Buffering over Single Buffering is:", opts: ["It uses less memory","It allows overlap between I/O operations and processing","It eliminates the need for interrupts","It removes the need for a device driver"], ans: 1, exp: "في Double Buffering، الـ device بيكتب في buffer واحد بينما الـ CPU بيعالج التاني — overlap بين I/O والمعالجة" },
+  { q: "On a disk, a Cylinder is defined as:", opts: ["A single sector on a platter","The set of tracks at the same position across all platters","The read/write head itself","The total storage capacity of the disk"], ans: 1, exp: "Cylinder = مجموعة الـ tracks اللي في نفس الموضع (نفس المسافة من المركز) على كل الـ platters" },
+  { q: "The total Disk Access Time is composed of:", opts: ["Only Seek Time","Seek Time + Rotational Latency + Transfer Time","Only Transfer Time","CPU Time + Memory Access Time"], ans: 1, exp: "Access Time = Seek Time (تحريك الـ head) + Rotational Latency (دوران القرص) + Transfer Time (نقل البيانات الفعلي)" },
+
+  // ===== DISK SCHEDULING =====
+  { q: "Which disk scheduling algorithm always selects the request closest to the current head position?", opts: ["FCFS","SSTF","SCAN","C-SCAN"], ans: 1, exp: "SSTF (Shortest Seek Time First) بيختار أقرب طلب للموضع الحالي للـ head — بس ممكن يسبب starvation للطلبات البعيدة" },
+  { q: "C-SCAN differs from SCAN in that:", opts: ["C-SCAN moves in both directions servicing requests","C-SCAN returns to the beginning of the disk without servicing requests on the return trip","C-SCAN never moves the head","C-SCAN is the same as FCFS"], ans: 1, exp: "C-SCAN بيمشي في اتجاه واحد كـ SCAN، بس لما يوصل للنهاية يرجع مباشرة لبداية القرص بدون خدمة طلبات في الرجوع" },
+  { q: "A major drawback of SSTF disk scheduling is:", opts: ["It requires more memory","It can cause starvation for requests far from the current head position","It is slower than FCFS in all cases","It cannot be implemented in hardware"], ans: 1, exp: "SSTF ممكن يسبب starvation للطلبات البعيدة لو طلبات قريبة بتيجي باستمرار وتفضل تتقدم عليها" }
 ];
 
 const tfData = [
@@ -1814,7 +2611,21 @@ const tfData = [
   { q: "First-Fit allocation always produces the best results.", ans: false, exp: "غلط — أحياناً Best-Fit أفضل من حيث استخدام الـ memory، لكن First-Fit أسرع في التنفيذ" },
   { q: "A Process Control Block (PCB) contains the program counter.", ans: true, exp: "صح — الـ PCB بيحتوي على كل state الـ process: Process State, PID, Program Counter, Registers, Memory Info, etc." },
   { q: "Real-Time OS must always guarantee hard deadlines.", ans: false, exp: "غلط — في Hard Real-Time لازم يضمن الـ deadline. في Soft Real-Time، الـ deadline مهمة بس فشلها مش كارثي" },
-  { q: "Logical addresses and physical addresses are always the same.", ans: false, exp: "غلط — بيكونوا نفس الحاجة في Compile-time و Load-time binding فقط. في Execution-time بيبقوا مختلفين" }
+  { q: "Logical addresses and physical addresses are always the same.", ans: false, exp: "غلط — بيكونوا نفس الحاجة في Compile-time و Load-time binding فقط. في Execution-time بيبقوا مختلفين" },
+
+  // ===== NEW CHAPTERS =====
+  { q: "A Spinlock avoids busy waiting completely.", ans: false, exp: "غلط — الـ Spinlock بالتعريف هو busy waiting في loop لحد ما الـ lock تتاح" },
+  { q: "Peterson's Algorithm works correctly for any number of processes.", ans: false, exp: "غلط — Peterson's Algorithm مصمم لـ 2 processes فقط (P0, P1)" },
+  { q: "The Test-and-Set instruction is atomic.", ans: true, exp: "صح — Test-and-Set hardware instruction بتتم كوحدة واحدة من غير ما تنقطع، وده أساس استخدامها لتحقيق Mutual Exclusion" },
+  { q: "All 4 necessary conditions (Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait) must hold simultaneously for a deadlock to occur.", ans: true, exp: "صح — لو شرط واحد بس مش متحقق، الـ Deadlock مستحيل يحصل" },
+  { q: "A cycle in a Resource Allocation Graph always means a deadlock has occurred.", ans: false, exp: "غلط — لو الموارد عندها multiple instances، الـ cycle شرط ضروري بس مش كافي للـ deadlock" },
+  { q: "The Banker's Algorithm prevents the system from entering an unsafe state.", ans: true, exp: "صح — Banker's Algorithm بيوافق على الطلب فقط لو النظام يفضل في safe state بعده" },
+  { q: "Demand Paging loads all pages of a process into memory before it starts executing.", ans: false, exp: "غلط — Demand Paging بيحمل الـ pages فقط لما الـ process تحتاجها فعلًا (lazy loading)" },
+  { q: "Belady's Anomaly can occur with the FIFO page replacement algorithm.", ans: true, exp: "صح — في FIFO، زيادة عدد الـ frames ممكن تزيد عدد page faults — وده Belady's Anomaly" },
+  { q: "DMA requires the CPU to transfer every byte of data between the device and memory.", ans: false, exp: "غلط — في DMA، الـ DMA Controller هو اللي بينقل البيانات مباشرة، والـ CPU بيـ interrupt مرة واحدة بس في النهاية" },
+  { q: "Double Buffering allows overlap between I/O and CPU processing.", ans: true, exp: "صح — بينما الـ device بيكتب في buffer واحد، الـ CPU بيعالج محتوى الـ buffer التاني" },
+  { q: "SSTF disk scheduling can cause starvation.", ans: true, exp: "صح — الطلبات البعيدة عن موضع الـ head ممكن تستنى للأبد لو طلبات قريبة فضلت تيجي باستمرار" },
+  { q: "C-SCAN services requests in both directions of head movement.", ans: false, exp: "غلط — C-SCAN بيخدم الطلبات في اتجاه واحد فقط، وبيرجع لبداية القرص بدون خدمة في رحلة العودة" }
 ];
 
 const trapsData = [
@@ -1827,7 +2638,14 @@ const trapsData = [
   { title: "Program vs Process", trap: "الـ program والـ process نفس الحاجة؟", correct: "Program = ملف ساكن على الـ disk (passive). Process = program قيد التنفيذ في memory (active) محتاج CPU ومعالجة" },
   { title: "Logical vs Physical Address", trap: "الـ CPU بيولد Physical Address مباشرة؟", correct: "الـ CPU بيولد Logical Address. الـ MMU هو اللي بيحول من Logical → Physical Address" },
   { title: "FCFS Starvation", trap: "FCFS يسبب Starvation؟", correct: "FCFS مش بيسبب Starvation — كل process بتشتغل في وقتها. بس بيسبب Convoy Effect. SJF هو اللي بيسبب Starvation" },
-  { title: "Context Switch Overhead", trap: "الـ Context Switch بيعمل شغل مفيد؟", correct: "أثناء الـ Context Switch — مفيش شغل مفيد بيحصل! الـ overhead ده cost حقيقي. أكتر context switches = أبطأ performance" }
+  { title: "Context Switch Overhead", trap: "الـ Context Switch بيعمل شغل مفيد؟", correct: "أثناء الـ Context Switch — مفيش شغل مفيد بيحصل! الـ overhead ده cost حقيقي. أكتر context switches = أبطأ performance" },
+  { title: "Spinlock vs Blocking Lock", trap: "الـ Spinlock أحسن دايمًا من الـ blocking lock؟", correct: "الـ Spinlock أحسن لو الانتظار قصير جدًا (لا يستحق context switch). لو الانتظار طويل، Spinlock بيهدر CPU cycles بلا فايدة" },
+  { title: "Cycle in RAG", trap: "أي cycle في Resource Allocation Graph = Deadlock؟", correct: "لو كل resource عندها instance واحدة فقط → نعم Deadlock. لو فيه multiple instances → الـ cycle شرط ضروري بس مش كافي" },
+  { title: "Banker's Algorithm Role", trap: "Banker's Algorithm بيكشف أو يعالج الـ deadlock بعد حدوثه؟", correct: "لا — Banker's Algorithm هو Avoidance، بيمنع الدخول في deadlock من الأساس عن طريق رفض الطلبات اللي تؤدي لـ unsafe state" },
+  { title: "Unsafe State vs Deadlock", trap: "Unsafe State = Deadlock فورًا؟", correct: "لا — Unsafe State معناها ممكن (بس مش حتمًا) يؤدي لـ deadlock حسب طلبات الـ processes القادمة" },
+  { title: "TLB Miss vs Page Fault (VM)", trap: "في Virtual Memory، TLB Miss = Page Fault؟", correct: "لا — TLB Miss يعني الـ translation مش في الـ cache بس الـ page موجودة في الـ memory. Page Fault يعني الـ page مش موجودة في الـ physical memory خالص" },
+  { title: "DMA vs Interrupt-Driven I/O", trap: "DMA = Interrupt-Driven I/O بس أسرع؟", correct: "في Interrupt-Driven I/O، الـ CPU لسه بينقل البيانات نفسها بعد كل interrupt. في DMA، الـ DMA Controller هو اللي بينقل البيانات بالكامل والـ CPU بيـ interrupt مرة واحدة في النهاية" },
+  { title: "SSTF Starvation", trap: "SSTF أحسن خوارزمية لأنها بتقلل الحركة دايمًا؟", correct: "SSTF بتقلل الحركة locally، لكن ممكن تسبب starvation لطلبات بعيدة لو طلبات قريبة استمرت في الوصول" }
 ];
 
 const essaysData = [
@@ -1850,6 +2668,34 @@ const essaysData = [
   {
     title: "اشرح الـ EAT وازاي الـ TLB بيحسنه",
     answer: `Without TLB, accessing data requires 2 memory accesses: one for page table + one for actual data.<br><br>With TLB (cache):<br>• <strong>TLB Hit</strong>: page found in TLB → only 1 memory access needed<br>• <strong>TLB Miss</strong>: not in TLB → access page table in memory → 2 accesses<br><br><strong>EAT Formula</strong>: EAT = (1 + ε) × α + (2 + ε) × (1 - α)<br>Where: ε = TLB lookup time, α = hit ratio<br><br>Example: α=80%, ε=20ns, ma=100ns<br>EAT = 0.80 × 120 + 0.20 × 220 = 96 + 44 = <strong>140ns</strong><br><br>كلما الـ Hit Ratio (α) أعلى → الـ EAT بيقرب من memory access time واحد.`
+  },
+  {
+    title: "اشرح الـ Critical Section Problem وشروطه الثلاثة",
+    answer: `The <strong>Critical Section</strong> is a segment of code that accesses shared resources, and must not be executed by more than one process at a time.<br><br>Any solution must satisfy 3 requirements:<br>• <strong>Mutual Exclusion</strong>: only one process can be in its critical section at a time<br>• <strong>Progress</strong>: if no process is in the critical section, the decision of which process enters next cannot be postponed indefinitely<br>• <strong>Bounded Waiting</strong>: there is a limit on how many times other processes can enter their critical sections before a waiting process's request is granted<br><br>Solutions range from software (Peterson's Algorithm) to hardware instructions (Test-and-Set) to OS constructs (locks, semaphores).`
+  },
+  {
+    title: "اشرح Peterson's Algorithm وقيد عمله",
+    answer: `Peterson's Algorithm is a classic software solution for mutual exclusion between <strong>2 processes</strong> (P0 and P1).<br><br>It uses two shared variables:<br>• <strong>flag[i]</strong>: indicates that process i wants to enter the critical section<br>• <strong>turn</strong>: indicates whose turn it is to enter when both want access<br><br>Process Pi sets flag[i]=true and turn=j (the other process), then waits while flag[j] is true AND turn==j.<br><br><strong>Limitation</strong>: It only works correctly for 2 processes, and is not guaranteed to work on modern processors that perform memory reordering optimizations.`
+  },
+  {
+    title: "اشرح الشروط الأربعة الضرورية لحدوث Deadlock",
+    answer: `A deadlock can occur only if all 4 conditions hold simultaneously:<br><br>1. <strong>Mutual Exclusion</strong>: at least one resource must be held in a non-shareable mode<br>2. <strong>Hold and Wait</strong>: a process holding at least one resource is waiting to acquire additional resources held by others<br>3. <strong>No Preemption</strong>: resources cannot be forcibly taken from a process; they must be released voluntarily<br>4. <strong>Circular Wait</strong>: a set of processes {P0,P1,...,Pn} exists such that P0 waits for a resource held by P1, P1 waits for P2, ..., and Pn waits for P0<br><br>Breaking ANY one of these conditions prevents deadlock — this is the basis of all Prevention strategies.`
+  },
+  {
+    title: "اشرح Banker's Algorithm وفكرة الـ Safe State",
+    answer: `The Banker's Algorithm is a <strong>deadlock avoidance</strong> algorithm. The OS maintains: <strong>Available</strong> (free resources), <strong>Max</strong> (max demand of each process), <strong>Allocation</strong> (currently allocated), and <strong>Need = Max - Allocation</strong>.<br><br>When a process requests resources, the system pretends to grant the request, then runs the <strong>Safety Algorithm</strong>: it checks if there exists a sequence of all processes such that each process's Need can be satisfied by Available + resources released by previously finished processes.<br><br>If such a <strong>safe sequence</strong> exists → grant the request (system stays in a Safe State). Otherwise → deny the request (would lead to an Unsafe State, which could lead to deadlock).`
+  },
+  {
+    title: "اشرح Demand Paging وخطوات معالجة Page Fault",
+    answer: `<strong>Demand Paging</strong> loads pages into memory only when they are referenced (lazy loading), reducing memory usage and I/O.<br><br>When a process references a page not in memory (valid/invalid bit = invalid), a <strong>Page Fault</strong> trap occurs:<br>1. Check an internal table to determine if the reference was valid<br>2. If invalid → terminate the process<br>3. If valid but not in memory → find a free frame, schedule a disk read to bring in the page, update the page table (set bit to valid)<br>4. Restart the instruction that caused the fault<br><br>This entire process is transparent to the user program.`
+  },
+  {
+    title: "قارن بين Programmed I/O وInterrupt-Driven I/O وDMA",
+    answer: `<strong>Programmed I/O</strong>: the CPU continuously polls the device status register (busy-waiting) until the device is ready — wastes CPU cycles entirely.<br><br><strong>Interrupt-Driven I/O</strong>: the CPU starts the operation and continues other work; the device sends an interrupt when ready, and the CPU then transfers the data — better, but the CPU still moves the data itself.<br><br><strong>DMA (Direct Memory Access)</strong>: a DMA controller transfers data directly between the device and memory without CPU involvement for each byte; the CPU is interrupted only once when the entire transfer completes — best for large transfers, freeing the CPU almost entirely.`
+  },
+  {
+    title: "اشرح مكونات Disk Access Time وطرق Disk Scheduling",
+    answer: `<strong>Disk Access Time</strong> = Seek Time (moving the read/write head to the correct cylinder) + Rotational Latency (waiting for the platter to rotate the desired sector under the head) + Transfer Time (actual data transfer).<br><br>Since Seek Time is usually the largest component, <strong>Disk Scheduling</strong> algorithms aim to minimize total head movement:<br>• <strong>FCFS</strong>: services requests in arrival order — simple but can cause long head movement<br>• <strong>SSTF</strong>: services the closest request first — efficient but can cause starvation<br>• <strong>SCAN</strong>: head moves in one direction servicing requests, then reverses (elevator algorithm)<br>• <strong>C-SCAN</strong>: like SCAN, but returns to the start of the disk without servicing on the return trip, giving more uniform wait times`
   }
 ];
 
@@ -1889,6 +2735,86 @@ const problemsData = [
     solution: `Holes: [100KB, 500KB, 200KB, 300KB, 600KB]\nRequest = 212KB\n\nFirst-Fit: أول hole كبير كفاية = 500KB ✅\nRemaining: [100KB, 288KB, 200KB, 300KB, 600KB]\n\nBest-Fit: أصغر hole كافي = 300KB ✅\nRemaining: [100KB, 500KB, 200KB, 88KB, 600KB]\n\nWorst-Fit: أكبر hole = 600KB ✅\nRemaining: [100KB, 500KB, 200KB, 300KB, 388KB]`,
     result: "First-Fit→500KB | Best-Fit→300KB | Worst-Fit→600KB",
     trick: "في الامتحان تابع إن الـ hole لازم يكون أكبر من أو يساوي الـ request size"
+  },
+  {
+    title: "Banker's Algorithm — Safety Check",
+    data: `5 Processes (P0-P4), 3 Resources (A,B,C)\nAvailable = (3,3,2)\n\nAllocation:        Max:\nP0: 0 1 0          P0: 7 5 3\nP1: 2 0 0          P1: 3 2 2\nP2: 3 0 2          P2: 9 0 2\nP3: 2 1 1          P3: 2 2 2\nP4: 0 0 2          P4: 4 3 3`,
+    question: "هل النظام في Safe State؟ إيجاد Safe Sequence",
+    think: "نحسب Need = Max - Allocation لكل process، وندور على process عندها Need ≤ Available — لو لقينا، نفرض إنها خلصت ونضيف Allocation بتاعتها لـ Available، ونكرر",
+    solution: `Need = Max - Allocation:
+P0: 7 4 3 | P1: 1 2 2 | P2: 6 0 0 | P3: 0 1 1 | P4: 4 3 1
+
+Available = (3,3,2)
+
+Step 1: P1 Need(1,2,2) ≤ Available(3,3,2) ✅
+  → Available += Allocation[P1] = (3,3,2)+(2,0,0) = (5,3,2)
+
+Step 2: P3 Need(0,1,1) ≤ Available(5,3,2) ✅
+  → Available += Allocation[P3] = (5,3,2)+(2,1,1) = (7,4,3)
+
+Step 3: P0 Need(7,4,3) ≤ Available(7,4,3) ✅
+  → Available += Allocation[P0] = (7,4,3)+(0,1,0) = (7,5,3)
+
+Step 4: P2 Need(6,0,0) ≤ Available(7,5,3) ✅
+  → Available += Allocation[P2] = (7,5,3)+(3,0,2) = (10,5,5)
+
+Step 5: P4 Need(4,3,1) ≤ Available(10,5,5) ✅
+  → All processes finished!`,
+    result: "✅ Safe State — Safe Sequence: <P1, P3, P0, P2, P4>",
+    trick: "لو في أي خطوة مفيش process عندها Need ≤ Available ومفيش processes متبقية تكمل → النظام Unsafe (وممكن يحصل deadlock). دايماً اعمل الجدول بشكل منظم: Need أولاً، بعدين جرب كل process لسه باقية"
+  },
+  {
+    title: "Deadlock Detection — Resource Allocation Graph",
+    data: `Edges:\nP1 → R1 (P1 طالبة R1)\nR1 → P2 (R1 ممسوكة من P2)\nP2 → R2 (P2 طالبة R2)\nR2 → P1 (R2 ممسوكة من P1)\n\nكل resource عندها instance واحدة فقط`,
+    question: "هل يوجد Deadlock؟",
+    think: "نتتبع المسار: نبدأ من أي process ونشوف لو فيه cycle يرجعنا لنفس الـ process",
+    solution: `المسار: P1 → R1 → P2 → R2 → P1
+
+ده cycle كامل: P1 → R1 → P2 → R2 → P1
+
+بما أن كل resource عندها instance واحدة فقط:
+Cycle موجود + single instance لكل resource
+= Deadlock مؤكد ✅`,
+    result: "✅ يوجد Deadlock — P1 و P2 كل واحدة مستنية resource ممسوكة من التانية",
+    trick: "لو كانت R1 أو R2 عندها أكتر من instance واحدة (مثلاً R1 عندها 2 instances)، وجود الـ cycle مكنش هيكفي لإثبات الـ deadlock — كان لازم نتحقق أكتر"
+  },
+  {
+    title: "Page Replacement — FIFO vs LRU vs Optimal",
+    data: `Reference String: 7,0,1,2,0,3,0,4,2,3,0,3,2\nNumber of Frames = 3`,
+    question: "احسب عدد Page Faults لكل من FIFO, LRU, Optimal",
+    think: "نمرر على الـ reference string خطوة بخطوة، ونطبق قاعدة الاستبدال المناسبة لكل خوارزمية عند امتلاء الـ frames",
+    solution: `FIFO (نستبدل أقدم page دخلت):
+7,0,1,2,0,3,0,4,2,3,0,3,2
+F F F F . F . F F F . . .  → 9 Page Faults
+
+LRU (نستبدل أقل page استخدامًا حديثًا):
+7,0,1,2,0,3,0,4,2,3,0,3,2
+F F F F . F . F F F . . .  → 9 Page Faults (نفس النتيجة هنا لكن المحتوى مختلف)
+
+Optimal (نستبدل page مش هتُستخدم لأطول وقت):
+7,0,1,2,0,3,0,4,2,3,0,3,2
+F F F F . F . F . . . . .  → 7 Page Faults`,
+    result: "FIFO = 9 | LRU = 9 | Optimal = 7 (أقل عدد دائمًا)",
+    trick: "Optimal دايمًا أقل أو يساوي باقي الخوارزميات — لو طلعت إجابتك Optimal أكبر من FIFO أو LRU، فيه غلطة في الحل. وتذكر إن أول 3 مراجع (لو frames=3) كلها Faults إجبارية"
+  },
+  {
+    title: "Disk Scheduling — SCAN Algorithm",
+    data: `Request Queue: 98, 183, 37, 122, 14, 124, 65, 67\nHead Start Position: 53\nDisk Size: 0–199 (200 cylinders)\nاتجاه الحركة: نحو الأرقام الأكبر أولًا`,
+    question: "احسب Total Head Movement باستخدام SCAN",
+    think: "الـ head تتحرك في اتجاه واحد (لأعلى) تخدم كل الطلبات في طريقها لحد آخر القرص (199)، بعدين ترجع تخدم الطلبات الباقية",
+    solution: `الترتيب التصاعدي للطلبات: 14, 37, 65, 67, 98, 122, 124, 183
+
+من 53 (نتحرك لأعلى):
+53 → 65 → 67 → 98 → 122 → 124 → 183 → 199 (نهاية القرص)
+المسافة = (199 - 53) = 146
+
+بعد الوصول للنهاية، نرجع لخدمة:
+199 → 37 → 14
+المسافة = (199 - 14) = 185
+
+Total Head Movement = 146 + 185 = 331`,
+    result: "Total Head Movement (SCAN) = 331",
+    trick: "لازم تحدد اتجاه الحركة الأولي من نص السؤال. في SCAN التقليدي، الـ head تكمل لحد نهاية القرص (199 أو 0) حتى لو مفيش طلبات هناك — وده الفرق عن LOOK variant"
   }
 ];
 
@@ -1944,7 +2870,7 @@ function markDone(id) {
 }
 
 function updateProgress() {
-  const total = 5;
+  const total = 10;
   const done = doneSet.size;
   const pct = Math.round((done / total) * 100);
   document.getElementById('progress-pct').textContent = pct + '%';
@@ -2306,6 +3232,261 @@ function calcEAT() {
 }
 
 // ============================================================
+// RACE CONDITION SIMULATOR
+// ============================================================
+function runRaceSim(useLock) {
+  const iters = parseInt(document.getElementById('sync-iters').value) || 5;
+  const res = document.getElementById('sync-result');
+  let count = 0;
+  if (useLock) {
+    // With lock: each increment is atomic
+    for (let i = 0; i < iters * 2; i++) count++;
+    res.className = 'concept concept-green';
+    res.innerHTML = `<b>✅ مع Lock — count++ atomic</b><br>
+      Thread A و Thread B كل واحدة عملت count++ مرتين × ${iters} = ${iters*2} عملية<br>
+      النتيجة النهائية: <b style="color:var(--accent2);font-size:16px">count = ${count}</b><br>
+      <span class="text-xs" style="color:var(--muted)">الـ lock بيضمن إن كل عملية count++ تتم بالكامل (load+inc+store) قبل ما تبدأ عملية تانية → النتيجة صحيحة ومتوقعة دايمًا</span>`;
+  } else {
+    // Without lock: simulate lost updates due to interleaving
+    let lost = Math.max(0, Math.floor(iters / 2));
+    let actual = (iters * 2) - lost;
+    res.className = 'concept concept-red';
+    res.innerHTML = `<b>❌ بدون Lock — Race Condition!</b><br>
+      المفروض النتيجة: count = ${iters*2} (لكل thread ${iters} عملية)<br>
+      لكن بسبب التداخل (interleaving) في load/increment/store، حصل lost updates<br>
+      النتيجة الفعلية (مثال): <b style="color:var(--red);font-size:16px">count = ${actual}</b> (المفروض ${iters*2})<br>
+      <span class="text-xs" style="color:var(--muted)">القيمة الحقيقية بتختلف من تشغيل لآخر — ده بالضبط جوهر مشكلة Race Condition: النتيجة غير محددة (non-deterministic)</span>`;
+  }
+}
+
+// ============================================================
+// RAG CYCLE CHECKER
+// ============================================================
+function checkRAGCycle() {
+  const input = document.getElementById('rag-edges').value.trim();
+  const res = document.getElementById('rag-result');
+  if (!input) { res.innerHTML = '<span style="color:var(--red)">أدخل edges</span>'; return; }
+
+  const edges = input.split(',').map(e => e.trim()).filter(e => e.includes('->'));
+  const graph = {};
+  edges.forEach(e => {
+    const [from, to] = e.split('->').map(x => x.trim());
+    if (!graph[from]) graph[from] = [];
+    graph[from].push(to);
+  });
+
+  // DFS cycle detection
+  const visited = {}, inStack = {};
+  let cyclePath = null;
+
+  function dfs(node, path) {
+    visited[node] = true;
+    inStack[node] = true;
+    path.push(node);
+    const neighbors = graph[node] || [];
+    for (const next of neighbors) {
+      if (inStack[next]) {
+        cyclePath = [...path, next];
+        return true;
+      }
+      if (!visited[next] && dfs(next, path)) return true;
+    }
+    path.pop();
+    inStack[node] = false;
+    return false;
+  }
+
+  const allNodes = new Set();
+  edges.forEach(e => { const [f,t] = e.split('->').map(x=>x.trim()); allNodes.add(f); allNodes.add(t); });
+
+  let found = false;
+  for (const node of allNodes) {
+    if (!visited[node]) {
+      if (dfs(node, [])) { found = true; break; }
+    }
+  }
+
+  if (found) {
+    res.className = 'concept concept-red';
+    res.innerHTML = `<b>⚠️ يوجد Cycle!</b><br>المسار: ${cyclePath.join(' → ')}<br><br>
+      <b>لو كل resource عندها instance واحدة فقط:</b> Deadlock مؤكد ✅<br>
+      <b>لو فيه multiple instances:</b> Cycle شرط ضروري بس مش كافي — ممكن ما يكونش deadlock`;
+  } else {
+    res.className = 'concept concept-green';
+    res.innerHTML = `<b>✅ لا يوجد Cycle</b><br>الـ Graph خالي من الدوائر — مفيش Deadlock في هذا الـ RAG`;
+  }
+}
+
+// ============================================================
+// BANKER'S ALGORITHM SAFETY CHECKER
+// ============================================================
+function runBankers() {
+  const alloc = [[0,1,0],[2,0,0],[3,0,2],[2,1,1],[0,0,2]];
+  const max = [[7,5,3],[3,2,2],[9,0,2],[2,2,2],[4,3,3]];
+  let available = [3,3,2];
+  const n = 5, m = 3;
+  const need = alloc.map((a,i) => a.map((v,j) => max[i][j] - v));
+  const finished = new Array(n).fill(false);
+  const sequence = [];
+  let work = [...available];
+
+  let progress = true;
+  while (progress && sequence.length < n) {
+    progress = false;
+    for (let i = 0; i < n; i++) {
+      if (!finished[i]) {
+        let canRun = true;
+        for (let j = 0; j < m; j++) if (need[i][j] > work[j]) canRun = false;
+        if (canRun) {
+          for (let j = 0; j < m; j++) work[j] += alloc[i][j];
+          finished[i] = true;
+          sequence.push('P' + i);
+          progress = true;
+        }
+      }
+    }
+  }
+
+  const res = document.getElementById('bankers-result');
+  res.style.display = 'block';
+  if (sequence.length === n) {
+    res.className = 'concept concept-green';
+    res.innerHTML = `<b>✅ Safe State!</b><br>Safe Sequence: <b style="color:var(--accent2)">&lt;${sequence.join(', ')}&gt;</b><br>
+      <span class="text-xs" style="color:var(--muted)">كل الـ processes تقدر تكمل بهذا الترتيب من غير ما يحصل deadlock</span>`;
+  } else {
+    res.className = 'concept concept-red';
+    res.innerHTML = `<b>❌ Unsafe State!</b><br>الـ processes اللي اتعرفت: ${sequence.join(', ') || 'مفيش'}<br>
+      الباقي ممكن يدخل في deadlock`;
+  }
+}
+
+// ============================================================
+// PAGE REPLACEMENT SIMULATOR
+// ============================================================
+function runPageReplacement(algo) {
+  const str = document.getElementById('pr-string').value.trim();
+  const numFrames = parseInt(document.getElementById('pr-frames').value) || 3;
+  const refs = str.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+  const res = document.getElementById('pr-result');
+
+  if (refs.length === 0) { res.innerHTML = '<span style="color:var(--red)">أدخل reference string صحيح</span>'; return; }
+
+  let frames = [];
+  let faults = 0;
+  let steps = [];
+
+  if (algo === 'FIFO') {
+    let queue = [];
+    refs.forEach(p => {
+      if (!frames.includes(p)) {
+        faults++;
+        if (frames.length < numFrames) { frames.push(p); queue.push(p); }
+        else { const victim = queue.shift(); frames[frames.indexOf(victim)] = p; queue.push(p); }
+        steps.push({ ref: p, frames: [...frames], fault: true });
+      } else steps.push({ ref: p, frames: [...frames], fault: false });
+    });
+  } else if (algo === 'LRU') {
+    let lastUsed = {};
+    refs.forEach((p, t) => {
+      if (!frames.includes(p)) {
+        faults++;
+        if (frames.length < numFrames) frames.push(p);
+        else {
+          let lruPage = frames[0], lruTime = lastUsed[frames[0]];
+          frames.forEach(f => { if (lastUsed[f] < lruTime) { lruTime = lastUsed[f]; lruPage = f; } });
+          frames[frames.indexOf(lruPage)] = p;
+        }
+        steps.push({ ref: p, frames: [...frames], fault: true });
+      } else steps.push({ ref: p, frames: [...frames], fault: false });
+      lastUsed[p] = t;
+    });
+  } else if (algo === 'OPT') {
+    refs.forEach((p, t) => {
+      if (!frames.includes(p)) {
+        faults++;
+        if (frames.length < numFrames) frames.push(p);
+        else {
+          // find page in frames used farthest in future (or never)
+          let farthest = -1, victimIdx = 0;
+          frames.forEach((f, idx) => {
+            let nextUse = refs.slice(t+1).indexOf(f);
+            if (nextUse === -1) nextUse = Infinity;
+            if (nextUse > farthest) { farthest = nextUse; victimIdx = idx; }
+          });
+          frames[victimIdx] = p;
+        }
+        steps.push({ ref: p, frames: [...frames], fault: true });
+      } else steps.push({ ref: p, frames: [...frames], fault: false });
+    });
+  }
+
+  const stepsHtml = steps.map(s =>
+    `<span style="display:inline-block;margin:2px;padding:4px 8px;border-radius:6px;font-size:11px;background:${s.fault?'rgba(255,69,96,0.15)':'rgba(0,212,170,0.1)'};border:1px solid ${s.fault?'var(--red)':'var(--accent2)'};color:${s.fault?'var(--red)':'var(--accent2)'}">${s.ref}${s.fault?' ✗':' ✓'}<br><span style="color:var(--muted);font-size:9px">[${s.frames.join(',')}]</span></span>`
+  ).join('');
+
+  res.innerHTML = `<b>${algo} — Page Faults: <span style="color:var(--accent2);font-size:15px">${faults}</span> / ${refs.length}</b>
+    <div style="margin-top:10px;line-height:2.2">${stepsHtml}</div>
+    <p class="text-xs mt-2" style="color:var(--muted)">✗ = Page Fault | ✓ = موجودة بالفعل (Hit) | [الأرقام بين الأقواس] = حالة الـ frames بعد كل خطوة</p>`;
+}
+
+// ============================================================
+// DISK SCHEDULING SIMULATOR
+// ============================================================
+function runDiskSched() {
+  const reqStr = document.getElementById('disk-requests').value.trim();
+  const head = parseInt(document.getElementById('disk-head').value) || 0;
+  const diskSize = parseInt(document.getElementById('disk-size').value) || 200;
+  const algo = document.getElementById('disk-algo').value;
+  const res = document.getElementById('disk-result');
+
+  let requests = reqStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+  if (requests.length === 0) { res.innerHTML = '<span style="color:var(--red)">أدخل requests صحيحة</span>'; return; }
+
+  let order = [], total = 0, current = head;
+
+  if (algo === 'FCFS') {
+    order = [...requests];
+  } else if (algo === 'SSTF') {
+    let remaining = [...requests];
+    let cur = current;
+    while (remaining.length > 0) {
+      remaining.sort((a,b) => Math.abs(a-cur) - Math.abs(b-cur));
+      order.push(remaining[0]);
+      cur = remaining[0];
+      remaining.splice(0,1);
+    }
+  } else if (algo === 'SCAN') {
+    let up = requests.filter(r => r >= current).sort((a,b) => a-b);
+    let down = requests.filter(r => r < current).sort((a,b) => b-a);
+    order = [...up];
+    if (down.length > 0) order.push(diskSize - 1);
+    order = order.concat(down);
+  } else if (algo === 'CSCAN') {
+    let up = requests.filter(r => r >= current).sort((a,b) => a-b);
+    let down = requests.filter(r => r < current).sort((a,b) => a-b);
+    order = [...up];
+    if (down.length > 0) { order.push(diskSize - 1); order.push(0); order = order.concat(down); }
+  } else if (algo === 'LIFO') {
+    order = [...requests].reverse();
+  }
+
+  // calculate total movement
+  let movement = [];
+  let pos = current;
+  order.forEach(r => {
+    movement.push(Math.abs(r - pos));
+    total += Math.abs(r - pos);
+    pos = r;
+  });
+
+  res.innerHTML = `<b>${algo} — Total Head Movement: <span style="color:var(--accent2);font-size:16px">${total}</span></b><br><br>
+    <span class="mono" style="font-size:11px;direction:ltr;display:block;text-align:left;line-height:1.8">
+    Order: ${head} → ${order.join(' → ')}<br><br>
+    Sum of movements: ${movement.join(' + ')} = ${total}
+    </span>`;
+}
+
+// ============================================================
 // RENDER MCQ
 // ============================================================
 function renderMCQ() {
@@ -2569,6 +3750,4 @@ function resetMock() {
 }
 </script>
 </body>
-</html>
-</html>
 </html>
