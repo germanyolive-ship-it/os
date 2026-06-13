@@ -518,6 +518,7 @@
       <a href="#sync" class="nav-link">🔒 Sync</a>
       <a href="#deadlocks" class="nav-link">☠️ Deadlocks</a>
       <a href="#vm" class="nav-link">📦 Virtual Memory</a>
+      <a href="#page-replacement" class="nav-link">🔄 Page Replacement</a>
       <a href="#io" class="nav-link">🔌 I/O Systems</a>
       <a href="#disk" class="nav-link">💽 Disk Sched</a>
       <a href="#mcq" class="nav-link">❓ MCQ</a>
@@ -687,6 +688,22 @@
             <li>✅ EAT calculation</li>
             <li>✅ Internal vs External Fragmentation</li>
             <li>✅ First-fit / Best-fit / Worst-fit</li>
+            <li>✅ <b>Page Replacement:</b> FIFO, OPT, LRU — احسب عدد Page Faults</li>
+            <li>✅ <b>Belady's Anomaly</b> — ليه بيحصل في FIFO بس</li>
+          </ul>
+        </div>
+
+        <!-- Card 7: Page Replacement Quick Ref -->
+        <div class="card-red">
+          <div class="flex items-center gap-2 mb-3"><span class="text-xl">🔄</span><span class="font-black text-sm" style="color:var(--red)">Page Replacement — سريع</span></div>
+          <ul class="text-xs sm:text-sm space-y-2" style="color:var(--text)">
+            <li>🔸 <b>FIFO:</b> شيل الأقدم دخولاً — سهل — بيعاني من Belady's</li>
+            <li>🔸 <b>OPT:</b> شيل الأبعد استخداماً مستقبلاً — أفضل نظرياً — مستحيل عملياً</li>
+            <li>🔸 <b>LRU:</b> شيل الأقل استخداماً مؤخراً — Stack Algorithm</li>
+            <li>🔸 <b>2nd Chance:</b> FIFO + Reference Bit — فرصة تانية للـ pages المستخدمة</li>
+            <li>🔸 <b>LFU:</b> شيل الأقل تردداً (counter) | <b>MFU:</b> شيل الأكثر تردداً</li>
+            <li>🔸 <b>Stack Algorithms (لا يعانون من Belady's):</b> OPT وLRU</li>
+            <li>🔸 أول n references = Page Faults إجبارية (Compulsory)</li>
           </ul>
         </div>
 
@@ -1982,40 +1999,15 @@ P4     4  3  3</div>
       </div>
     </div>
 
-    <!-- Page Replacement Algorithms -->
-    <div class="card mb-4 sm:mb-6">
-      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--accent)">Page Replacement Algorithms</h3>
-      <div class="table-wrap mb-3">
-        <table>
-          <tr><th>Algorithm</th><th>الفكرة</th><th>المميزات/العيوب</th></tr>
-          <tr><td>FIFO</td><td>تستبدل أقدم page دخلت الـ memory</td><td>سهل التنفيذ، ممكن يحصل <b>Belady's Anomaly</b> (زيادة frames تزيد page faults!)</td></tr>
-          <tr><td>Optimal (OPT)</td><td>تستبدل الـ page اللي مش هتُستخدم لأطول وقت في المستقبل</td><td>أقل عدد page faults نظريًا — مستحيل تطبيقه عمليًا (يحتاج معرفة المستقبل)</td></tr>
-          <tr><td>LRU (Least Recently Used)</td><td>تستبدل الـ page اللي ماتستخدمتش من أطول وقت</td><td>قريب من Optimal، بس محتاج hardware support (counters/stack)</td></tr>
-        </table>
-      </div>
-      <div class="concept concept-red"><b>Belady's Anomaly:</b> في FIFO، زيادة عدد الـ frames ممكن تـ <b>تزيد</b> عدد الـ page faults بدل ما تقللهم — ضد المنطق! LRU وOptimal مش بيحصل فيهم ده (Stack Algorithms)</div>
-    </div>
-
-    <!-- Page Replacement Simulator -->
-    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent)">
-      <h3 class="text-base sm:text-xl font-black mb-4 text-center" style="color:var(--accent)">🎮 Page Replacement Simulator</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+    <!-- Page Replacement Algorithms — Full section below -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent2)">
+      <div class="flex items-center gap-3 flex-wrap">
+        <span class="text-2xl">🔄</span>
         <div>
-          <label class="block text-xs font-bold mb-1">Reference String (مفصولة بفاصلة):</label>
-          <input type="text" id="pr-string" placeholder="7,0,1,2,0,3,0,4,2,3,0,3,2" value="7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1" class="inp mono-inp" style="margin-bottom:8px;">
+          <h3 class="text-sm sm:text-lg font-black" style="color:var(--accent2)">Page Replacement Algorithms</h3>
+          <p class="text-xs sm:text-sm mt-1" style="color:var(--muted)">FIFO, OPT, LRU, Second Chance, LFU, MFU — مع Simulator تفاعلي وأمثلة محلولة</p>
         </div>
-        <div>
-          <label class="block text-xs font-bold mb-1">عدد الـ Frames:</label>
-          <input type="number" id="pr-frames" value="3" min="1" max="6" class="inp mono-inp" style="margin-bottom:8px;">
-        </div>
-      </div>
-      <div class="sched-btn-group mb-3">
-        <button onclick="runPageReplacement('FIFO')" class="btn btn-primary">▶ FIFO</button>
-        <button onclick="runPageReplacement('LRU')" class="btn btn-primary">▶ LRU</button>
-        <button onclick="runPageReplacement('OPT')" class="btn btn-primary">▶ Optimal</button>
-      </div>
-      <div id="pr-result" class="concept" style="min-height:80px;font-size:12px;">
-        اكتب الـ reference string واختار عدد الـ frames وكبس على algorithm
+        <a href="#page-replacement" class="btn btn-primary" style="margin-right:auto;">🔄 اذهب للقسم الكامل</a>
       </div>
     </div>
 
@@ -2027,6 +2019,470 @@ P4     4  3  3</div>
         <div class="concept concept-yellow"><b>Working Set:</b> مجموعة الـ pages اللي الـ process محتاجاها فعلًا في فترة زمنية معينة — أساس الحل للـ Thrashing</div>
         <div class="concept concept-green"><b>Copy-on-Write:</b> الـ parent والـ child بـ fork() بيشاركوا نفس الـ pages لحد ما أحدهم يكتب → عندها تتعمل نسخة</div>
         <div class="concept"><b>Memory-Mapped Files:</b> ربط ملف على الـ disk بـ pages في الـ virtual memory — القراءة/الكتابة بتتم كأنها memory access عادية</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PAGE REPLACEMENT ALGORITHMS ==================== -->
+<section id="page-replacement" class="section-pad" style="background:linear-gradient(to bottom, var(--card2), var(--bg))">
+  <div class="max-w-content mx-auto">
+    <div class="section-header">
+      <span class="text-2xl sm:text-3xl">🔄</span>
+      <h2 class="section-title">Page Replacement Algorithms</h2>
+      <button onclick="markDone('page-replacement')" id="done-page-replacement" class="btn btn-outline" style="font-size:12px;padding:8px 14px;margin-right:auto;">✓ تمت المراجعة</button>
+    </div>
+
+    <!-- Overview -->
+    <div class="card mb-4 sm:mb-6">
+      <h3 class="text-sm sm:text-lg font-black mb-3" style="color:var(--accent)">ليه محتاجين Page Replacement؟</h3>
+      <div class="concept mb-3 text-xs sm:text-sm">لما الـ Physical Memory تتملي والـ process تطلب page جديدة، الـ OS لازم يختار <b>ضحية (Victim Page)</b> يشيلها من الـ Memory عشان يحط الـ page الجديدة. الخوارزمية دي بتقرر <b>أنهي page يتشال</b> بهدف تقليل عدد الـ Page Faults المستقبلية.</div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 text-center text-xs">
+        <div class="concept" style="padding:8px 4px;"><b style="color:var(--accent)">FIFO</b><br><span style="color:var(--muted)">الأقدم أولاً</span></div>
+        <div class="concept concept-green" style="padding:8px 4px;"><b style="color:var(--accent2)">OPT</b><br><span style="color:var(--muted)">الأمثل</span></div>
+        <div class="concept concept-yellow" style="padding:8px 4px;"><b style="color:var(--yellow)">LRU</b><br><span style="color:var(--muted)">الأقل استخداماً</span></div>
+        <div class="concept" style="padding:8px 4px;border-right-color:#a855f7"><b style="color:#a855f7">2nd Chance</b><br><span style="color:var(--muted)">FIFO + فرصة</span></div>
+        <div class="concept concept-red" style="padding:8px 4px;"><b style="color:var(--red)">LFU</b><br><span style="color:var(--muted)">الأقل تردداً</span></div>
+        <div class="concept" style="padding:8px 4px;border-right-color:#f97316"><b style="color:#f97316">MFU</b><br><span style="color:var(--muted)">الأكثر تردداً</span></div>
+      </div>
+    </div>
+
+    <!-- ===== FIFO ===== -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent)">
+      <div class="flex items-center gap-2 mb-4 flex-wrap">
+        <span class="text-xl">📥</span>
+        <h3 class="text-sm sm:text-xl font-black" style="color:var(--accent)">FIFO — First In First Out</h3>
+        <span class="tag">السهل</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm mb-4">
+        <div class="space-y-2">
+          <div class="concept"><b>الفكرة:</b> استبدل الـ page اللي دخلت الـ Memory من أطول وقت — زي queue: أول ما يدخل أول ما يخرج</div>
+          <div class="concept concept-green"><b>آلية العمل:</b><br>• احتفظ بـ queue بترتيب الدخول<br>• لما تحتاج تستبدل، شيل من مقدمة الـ queue<br>• الـ page الجديدة تتضاف لآخر الـ queue</div>
+          <div class="concept concept-yellow"><b>المميزات:</b><br>✅ سهل التنفيذ جداً<br>✅ ما محتاجش hardware خاص<br>✅ overhead بسيط</div>
+          <div class="concept concept-red"><b>العيوب:</b><br>❌ أداء متوسط — الـ page الأقدم مش بالضرورة الأقل استخداماً<br>❌ يعاني من <b>Belady's Anomaly</b></div>
+        </div>
+        <div class="space-y-2">
+          <div class="concept"><b>بيشتغل كويس لما:</b> الـ pages بتتستخدم بشكل متسلسل وما بترجعش كتير</div>
+          <div class="concept concept-red"><b>بيشتغل وحش لما:</b> الـ pages القديمة بتتستخدم بشكل دوري — ممكن يشيل page محتاجينها بعدها بخطوة</div>
+          <div class="concept concept-yellow"><b>أخطاء شائعة في الامتحان:</b><br>⚠️ لا تنسى إن الأول n عناصر كلها Faults (Compulsory Faults)<br>⚠️ الـ queue بيتحدث بناءً على وقت الدخول مش الاستخدام<br>⚠️ لو الـ page موجودة بالفعل → Hit مش Fault (حتى لو في آخر الـ queue)</div>
+        </div>
+      </div>
+
+      <!-- FIFO Solved Example -->
+      <div class="card mb-3" style="background:var(--card2);border-color:var(--accent)">
+        <h4 class="text-xs sm:text-sm font-black mb-3" style="color:var(--accent)">📝 مثال محلول — FIFO (Frames = 3)</h4>
+        <div class="code text-xs mb-3" style="direction:ltr;text-align:left;">Reference String: 1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5
+Frames = 3</div>
+        <div class="table-wrap">
+          <table style="min-width:600px;font-size:11px;">
+            <tr>
+              <th>Ref</th><th>1</th><th>2</th><th>3</th><th>4</th><th>1</th><th>2</th><th>5</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+            </tr>
+            <tr>
+              <td><b>F1</b></td>
+              <td style="color:var(--accent2)">1</td><td style="color:var(--accent2)">1</td><td style="color:var(--accent2)">1</td><td style="color:var(--accent)">4</td><td style="color:var(--accent)">4</td><td style="color:var(--accent)">4</td><td style="color:var(--accent)">4</td><td style="color:var(--accent2)">1</td><td style="color:var(--accent2)">1</td><td style="color:var(--accent2)">1</td><td style="color:var(--accent)">4</td><td style="color:var(--accent)">4</td>
+            </tr>
+            <tr>
+              <td><b>F2</b></td>
+              <td>-</td><td style="color:var(--accent2)">2</td><td style="color:var(--accent2)">2</td><td style="color:var(--accent2)">2</td><td style="color:var(--accent)">1</td><td style="color:var(--accent)">1</td><td style="color:var(--accent)">1</td><td style="color:var(--accent)">1</td><td style="color:var(--accent2)">2</td><td style="color:var(--accent2)">2</td><td style="color:var(--accent2)">2</td><td style="color:var(--accent)">5</td>
+            </tr>
+            <tr>
+              <td><b>F3</b></td>
+              <td>-</td><td>-</td><td style="color:var(--accent2)">3</td><td style="color:var(--accent2)">3</td><td style="color:var(--accent2)">3</td><td style="color:var(--accent)">2</td><td style="color:var(--accent)">2</td><td style="color:var(--accent)">2</td><td style="color:var(--accent)">2</td><td style="color:var(--accent)">3</td><td style="color:var(--accent)">3</td><td style="color:var(--accent)">3</td>
+            </tr>
+            <tr>
+              <td><b>Fault?</b></td>
+              <td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--accent2)">✓</td><td style="color:var(--accent2)">✓</td><td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--accent2)">✓</td>
+            </tr>
+          </table>
+        </div>
+        <div class="mt-3 p-3 rounded-lg text-xs" style="background:rgba(255,69,96,0.08);border:1px solid rgba(255,69,96,0.2)">
+          <b style="color:var(--red)">النتيجة: Page Faults = 9</b> (7 Faults الأولى + 2 hits في ref 7,8 + 2 Faults مرة تانية)
+          <br><span style="color:var(--muted)">Queue عند النهاية: [4→1→2→3→4→5] — ترتيب الدخول</span>
+        </div>
+      </div>
+
+      <!-- MCQ FIFO -->
+      <div class="concept concept-yellow text-xs sm:text-sm">
+        <b>🧪 أسئلة MCQ على FIFO:</b><br>
+        Q1: في FIFO مع 3 frames و reference string: 3,2,1,0,3,2,4,3,2,1,0,4 — كام Page Fault؟ → <b style="color:var(--accent2)">9</b><br>
+        Q2: أيه خوارزمية الـ page replacement اللي بتعاني من Belady's Anomaly؟ → <b style="color:var(--accent2)">FIFO</b><br>
+        Q3: في FIFO، لما تحتاج تستبدل، بتشيل الـ page اللي؟ → <b style="color:var(--accent2)">الأقدم دخولاً للـ memory</b>
+      </div>
+    </div>
+
+    <!-- ===== OPT ===== -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent2)">
+      <div class="flex items-center gap-2 mb-4 flex-wrap">
+        <span class="text-xl">⭐</span>
+        <h3 class="text-sm sm:text-xl font-black" style="color:var(--accent2)">OPT — Optimal Page Replacement</h3>
+        <span class="tag tag-green">الأفضل نظرياً</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm mb-4">
+        <div class="space-y-2">
+          <div class="concept"><b>الفكرة:</b> استبدل الـ page اللي <b>مش هتتستخدم لأطول وقت في المستقبل</b> — يعني شوف في الـ reference string القادمة، أنهي page هتتاخر كتير قبل ما تتاستخدم، وشيلها</div>
+          <div class="concept concept-green"><b>آلية العمل:</b><br>• عند الـ Page Fault: شوف كل page في الـ frames<br>• لكل page، إيجاد أول مرة هتتاستخدم في المستقبل<br>• الـ page اللي هتتاستخدم أآخر وقت (أو مش هتتاستخدم) → هي الـ victim</div>
+          <div class="concept concept-yellow"><b>المميزات:</b><br>✅ أقل عدد page faults ممكن (Optimal)<br>✅ بيُستخدم كـ benchmark لمقارنة الخوارزميات التانية<br>✅ لا يعاني من Belady's Anomaly (Stack Algorithm)</div>
+          <div class="concept concept-red"><b>العيوب:</b><br>❌ <b>مستحيل تطبيقه عملياً</b> — محتاج معرفة المستقبل<br>❌ بيستخدم فقط للمقارنة النظرية والـ benchmarking</div>
+        </div>
+        <div class="space-y-2">
+          <div class="concept"><b>بيشتغل كويس لما:</b> في بيئة تجريبية أو simulation — دايماً الأفضل</div>
+          <div class="concept concept-red"><b>بيشتغل وحش لما:</b> في الواقع، مستحيل تطبيقه لأن الـ OS مش عارف الـ future references</div>
+          <div class="concept concept-yellow"><b>أخطاء شائعة في الامتحان:</b><br>⚠️ لو page مش هتتاستخدم خالص في المستقبل → هي الـ victim (أولوية قصوى للاستبدال)<br>⚠️ لو أكتر من page بنفس الحالة → اختار أي واحدة (الأبعد استخداماً)<br>⚠️ OPT ≠ LRU — OPT بيبص للمستقبل، LRU بيبص للماضي</div>
+        </div>
+      </div>
+
+      <!-- OPT Solved Example -->
+      <div class="card mb-3" style="background:var(--card2);border-color:var(--accent2)">
+        <h4 class="text-xs sm:text-sm font-black mb-3" style="color:var(--accent2)">📝 مثال محلول — OPT (Frames = 3)</h4>
+        <div class="code text-xs mb-3" style="direction:ltr;text-align:left;">Reference String: 7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2
+Frames = 3</div>
+        <div class="table-wrap">
+          <table style="min-width:700px;font-size:11px;">
+            <tr>
+              <th>Ref</th><th>7</th><th>0</th><th>1</th><th>2</th><th>0</th><th>3</th><th>0</th><th>4</th><th>2</th><th>3</th><th>0</th><th>3</th><th>2</th>
+            </tr>
+            <tr>
+              <td><b>F1</b></td>
+              <td style="color:var(--accent2)">7</td><td style="color:var(--accent2)">7</td><td style="color:var(--accent2)">7</td><td style="color:var(--accent)">2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td>
+            </tr>
+            <tr>
+              <td><b>F2</b></td>
+              <td>-</td><td style="color:var(--accent2)">0</td><td style="color:var(--accent2)">0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>4</td><td>4</td><td style="color:var(--accent)">0</td><td>0</td><td>0</td>
+            </tr>
+            <tr>
+              <td><b>F3</b></td>
+              <td>-</td><td>-</td><td style="color:var(--accent2)">1</td><td>1</td><td>1</td><td style="color:var(--accent)">3</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td><td>3</td>
+            </tr>
+            <tr>
+              <td><b>Fault?</b></td>
+              <td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--accent2)">✓</td><td style="color:var(--red)">✗</td><td style="color:var(--accent2)">✓</td><td style="color:var(--red)">✗</td><td style="color:var(--accent2)">✓</td><td style="color:var(--accent2)">✓</td><td style="color:var(--red)">✗</td><td style="color:var(--accent2)">✓</td><td style="color:var(--accent2)">✓</td>
+            </tr>
+          </table>
+        </div>
+        <div class="mt-3 p-3 rounded-lg text-xs" style="background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.2)">
+          <b style="color:var(--accent2)">النتيجة: Page Faults = 9</b> (3 Compulsory + 6 Capacity faults)
+          <br><span style="color:var(--muted)">عند ref=4 (الموضع 4): frames=[7,0,1] — 7 هتتاستخدم مرة تانية في pos∞ (مش موجودة)، 0 في pos 4، 1 في pos∞ → نشيل 7 أو 1 (اللي مش هيجي — هنا 7 أبعد)</span>
+        </div>
+      </div>
+
+      <div class="concept concept-yellow text-xs sm:text-sm">
+        <b>🧪 أسئلة MCQ على OPT:</b><br>
+        Q1: ليه مش ممكن نطبق OPT عملياً؟ → <b style="color:var(--accent2)">لأنه يحتاج معرفة المستقبل (future reference string)</b><br>
+        Q2: OPT يعاني من Belady's Anomaly؟ → <b style="color:var(--accent2)">لا — OPT هو Stack Algorithm</b><br>
+        Q3: OPT بيُستخدم في العمل عشان؟ → <b style="color:var(--accent2)">كـ benchmark لمقارنة خوارزميات تانية</b>
+      </div>
+    </div>
+
+    <!-- ===== LRU ===== -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--yellow)">
+      <div class="flex items-center gap-2 mb-4 flex-wrap">
+        <span class="text-xl">⏰</span>
+        <h3 class="text-sm sm:text-xl font-black" style="color:var(--yellow)">LRU — Least Recently Used</h3>
+        <span class="tag tag-yellow">الأكثر استخداماً عملياً</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm mb-4">
+        <div class="space-y-2">
+          <div class="concept"><b>الفكرة:</b> استبدل الـ page اللي <b>ماتستخدمتش من أطول وقت في الماضي</b> — بيفترض إن الـ page اللي ماتستخدمتش من فترة، مش محتاجينها دلوقتي</div>
+          <div class="concept concept-green"><b>آلية العمل:</b><br>• لكل page، احتفظ بـ timestamp آخر استخدام<br>• عند الـ Fault: شيل الـ page صاحبة أقدم timestamp<br>• <b>تطبيقات: Counter-based</b> (كاونتر بيتحدث مع كل access) أو <b>Stack-based</b> (recent page على قمة الـ stack)</div>
+          <div class="concept concept-yellow"><b>المميزات:</b><br>✅ أداء قريب جداً من OPT<br>✅ لا يعاني من Belady's Anomaly (Stack Algorithm)<br>✅ Approximation جيدة للـ OPT</div>
+          <div class="concept concept-red"><b>العيوب:</b><br>❌ يحتاج hardware support (counters أو special stack)<br>❌ Overhead أعلى من FIFO<br>❌ التنفيذ الحقيقي بيكون approximation</div>
+        </div>
+        <div class="space-y-2">
+          <div class="concept"><b>بيشتغل كويس لما:</b> الـ locality of reference موجودة — الـ pages اللي اتستخدمت مؤخراً هتتستخدم تاني</div>
+          <div class="concept concept-red"><b>بيشتغل وحش لما:</b> sequential scans كبيرة — بيستخدم كل الـ frames مرة واحدة بدون repetition</div>
+          <div class="concept concept-yellow"><b>أخطاء شائعة:</b><br>⚠️ LRU ≠ FIFO — LRU بيبص لآخر <b>استخدام</b>، FIFO بيبص لآخر <b>دخول</b><br>⚠️ لو page اتاستخدمت وهي في الـ frame، بيتحدث الـ timestamp بتاعها<br>⚠️ لو Tie (أكتر من page بنفس الـ LRU time) → اختار أي واحدة</div>
+        </div>
+      </div>
+
+      <!-- LRU Solved Example -->
+      <div class="card mb-3" style="background:var(--card2);border-color:var(--yellow)">
+        <h4 class="text-xs sm:text-sm font-black mb-3" style="color:var(--yellow)">📝 مثال محلول — LRU (Frames = 3)</h4>
+        <div class="code text-xs mb-3" style="direction:ltr;text-align:left;">Reference String: 7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2
+Frames = 3</div>
+        <div class="table-wrap">
+          <table style="min-width:700px;font-size:11px;">
+            <tr>
+              <th>Ref</th><th>7</th><th>0</th><th>1</th><th>2</th><th>0</th><th>3</th><th>0</th><th>4</th><th>2</th><th>3</th><th>0</th><th>3</th><th>2</th>
+            </tr>
+            <tr>
+              <td><b>F1</b></td>
+              <td style="color:var(--accent2)">7</td><td style="color:var(--accent2)">7</td><td style="color:var(--accent2)">7</td><td style="color:var(--yellow)">2</td><td>2</td><td style="color:var(--yellow)">3</td><td>3</td><td>4</td><td>4</td><td>3</td><td>3</td><td>3</td><td>3</td>
+            </tr>
+            <tr>
+              <td><b>F2</b></td>
+              <td>-</td><td style="color:var(--accent2)">0</td><td style="color:var(--accent2)">0</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:var(--yellow)">4</td><td>4</td><td>4</td><td style="color:var(--yellow)">0</td><td>0</td><td>0</td>
+            </tr>
+            <tr>
+              <td><b>F3</b></td>
+              <td>-</td><td>-</td><td style="color:var(--accent2)">1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td style="color:var(--yellow)">2</td><td>2</td><td>2</td><td>2</td><td>2</td>
+            </tr>
+            <tr>
+              <td><b>Fault?</b></td>
+              <td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--accent2)">✓</td><td style="color:var(--red)">✗</td><td style="color:var(--accent2)">✓</td><td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--red)">✗</td><td style="color:var(--accent2)">✓</td><td style="color:var(--accent2)">✓</td>
+            </tr>
+          </table>
+        </div>
+        <div class="code text-xs mt-2" style="direction:ltr;text-align:left;">Step-by-step at ref=2 (pos 3): Frames=[7,0,1] — LRU order: 7(pos0)<0(pos1)<1(pos2) → evict 7
+Step at ref=3 (pos 5): Frames=[2,0,1] — LRU order: 1(pos2)<2(pos3)<0(pos4) → evict 1
+Step at ref=4 (pos 7): Frames=[2,0,3] — LRU order: 2(pos3)<3(pos5)<0(pos6) → evict 2</div>
+        <div class="mt-2 p-3 rounded-lg text-xs" style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2)">
+          <b style="color:var(--yellow)">النتيجة: Page Faults = 8</b> | Page Hits = 5
+        </div>
+      </div>
+
+      <div class="concept concept-yellow text-xs sm:text-sm">
+        <b>🧪 أسئلة MCQ على LRU:</b><br>
+        Q1: LRU هو Stack Algorithm يعني؟ → <b style="color:var(--accent2)">مش بيعاني من Belady's Anomaly</b><br>
+        Q2: LRU approximation في الـ OS الحديث بيستخدم؟ → <b style="color:var(--accent2)">Reference Bit (Additional Reference Bits)</b><br>
+        Q3: الفرق بين LRU و OPT إيه؟ → <b style="color:var(--accent2)">LRU بيبص للماضي، OPT بيبص للمستقبل</b>
+      </div>
+    </div>
+
+    <!-- ===== Second Chance / Clock ===== -->
+    <div class="card mb-4 sm:mb-6" style="border-color:#a855f7">
+      <div class="flex items-center gap-2 mb-4 flex-wrap">
+        <span class="text-xl">🕐</span>
+        <h3 class="text-sm sm:text-xl font-black" style="color:#a855f7">Second Chance / Clock Algorithm</h3>
+        <span class="tag" style="background:rgba(168,85,247,0.15);color:#a855f7;border-color:rgba(168,85,247,0.3)">FIFO محسّن</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm mb-4">
+        <div class="space-y-2">
+          <div class="concept"><b>الفكرة:</b> FIFO بس مع <b>Reference Bit</b> — كل page بيبقى عندها bit (0 أو 1). لما page بتتاستخدم، الـ bit بتبقى 1. لما نيجي نشيل، لو الـ bit=1 → ندي الـ page "فرصة تانية" ونعمل الـ bit=0 ونكمل، لو bit=0 → هي الـ victim</div>
+          <div class="concept concept-green"><b>Clock Algorithm:</b> تنفيذ دائري للـ Second Chance — الـ pages في ring buffer (زي عقارب الساعة)، الـ pointer بيدور وبيشوف كل page. bit=1 → عمل 0 وكمّل، bit=0 → استبدل</div>
+          <div class="concept concept-yellow"><b>المميزات:</b><br>✅ أفضل من FIFO في الأداء<br>✅ سهل التنفيذ نسبياً<br>✅ overhead معقول<br>✅ approximation جيدة للـ LRU</div>
+          <div class="concept concept-red"><b>العيوب:</b><br>❌ لو كل الـ bits = 1، بيبقى behaves like FIFO<br>❌ مش دقيق زي LRU — بس approximation</div>
+        </div>
+        <div class="space-y-2">
+          <div class="concept"><b>بيشتغل كويس لما:</b> فيه mix من الـ pages — بعضها بيتاستخدم كتير (bit=1) وبعضها نادراً (bit=0)</div>
+          <div class="concept concept-red"><b>بيشتغل وحش لما:</b> كل الـ pages بيتاستخدموا بنفس المعدل → يبقى زي FIFO</div>
+          <div class="concept concept-yellow"><b>أخطاء شائعة:</b><br>⚠️ لما تعطي "فرصة تانية" للـ page، بتحطها في آخر الـ queue (مش بتشيلها)<br>⚠️ الـ pointer بيكمل من بعد الـ page المستبدلة (مش بيرجع من الأول)<br>⚠️ في Clock: لما تستبدل page، الـ clock pointer بيقف عند اللي بعدها</div>
+          <div class="concept">
+            <b>مثال توضيحي — Second Chance:</b>
+            <div class="code" style="font-size:10px;margin-top:6px;direction:ltr;text-align:left;">Queue: [P1(bit=1), P2(bit=0), P3(bit=1)]
+Need to replace:
+→ Check P1: bit=1 → give 2nd chance: set bit=0, move to back
+→ Queue: [P2(bit=0), P3(bit=1), P1(bit=0)]
+→ Check P2: bit=0 → VICTIM! Replace P2</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept" style="background:rgba(168,85,247,0.08);border-right-color:#a855f7;font-size:12px;">
+        <b>🧪 أسئلة MCQ على Second Chance/Clock:</b><br>
+        Q1: الـ Clock Algorithm هو implementation لـ؟ → <b style="color:#a855f7">Second Chance Algorithm</b><br>
+        Q2: في Second Chance، الـ page اللي بيتبقى فيها bit=1 وقت الاستبدال؟ → <b style="color:#a855f7">بيتعملها bit=0 وبتتحرك لآخر القائمة (فرصة تانية)</b><br>
+        Q3: Second Chance هو تحسين على؟ → <b style="color:#a855f7">FIFO</b>
+      </div>
+    </div>
+
+    <!-- ===== LFU ===== -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--red)">
+      <div class="flex items-center gap-2 mb-4 flex-wrap">
+        <span class="text-xl">📊</span>
+        <h3 class="text-sm sm:text-xl font-black" style="color:var(--red)">LFU — Least Frequently Used</h3>
+        <span class="tag tag-red">بيعتمد على التردد</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm mb-4">
+        <div class="space-y-2">
+          <div class="concept"><b>الفكرة:</b> استبدل الـ page اللي <b>اتستخدمت أقل عدد مرات</b> — بيحتفظ بـ counter لكل page بيعد كام مرة اتستخدمت من لما دخلت الـ memory</div>
+          <div class="concept concept-green"><b>آلية العمل:</b><br>• لكل page: counter يبدأ بـ 0 وبيزيد مع كل access<br>• عند الـ Fault: شيل الـ page بأصغر counter<br>• لو Tie: استخدم FIFO للبت بينهم</div>
+          <div class="concept concept-yellow"><b>المميزات:</b><br>✅ جيد لو الـ pages اللي بتتاستخدم كتير محتاجينها<br>✅ بيحافظ على الـ popular pages</div>
+          <div class="concept concept-red"><b>العيوب:</b><br>❌ Page اتستخدمت كتير في البداية وبعدين ما بقيتش محتاجينها → بتفضل في الـ memory (Old Page Problem)<br>❌ لازم تخزن counter لكل page (overhead)<br>❌ مش بيراعي الـ recency (زمن آخر استخدام)</div>
+        </div>
+        <div class="space-y-2">
+          <div class="concept"><b>بيشتغل كويس لما:</b> الـ pages الأكثر استخداماً هي الأكثر حاجة في المستقبل (stable workload)</div>
+          <div class="concept concept-red"><b>بيشتغل وحش لما:</b> الـ working set بيتغير — pages قديمة بـ high frequency بتفضل وبتمنع الـ pages الجديدة المحتاجة</div>
+          <div class="concept concept-yellow"><b>مثال محلول — LFU (Frames = 3):</b>
+            <div class="code" style="font-size:10px;margin-top:4px;direction:ltr;text-align:left;">Ref: 1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5
+Frames=3
+1→[1(1)]F  2→[1(1),2(1)]F  3→[1(1),2(1),3(1)]F
+4→ FAULT: all cnt=1, FIFO order: evict 1 → [2(1),3(1),4(1)]F
+1→ FAULT: min cnt=1 (all), FIFO: evict 2 → [3(1),4(1),1(1)]F
+2→ FAULT: evict 3 → [4(1),1(1),2(1)]F
+5→ FAULT: evict 4 → [1(1),2(1),5(1)]F ... → 10 Page Faults</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept concept-red text-xs sm:text-sm">
+        <b>🧪 أسئلة MCQ على LFU:</b><br>
+        Q1: LFU بيستبدل الـ page اللي؟ → <b style="color:var(--accent2)">الأقل عدد استخدامات (أصغر frequency counter)</b><br>
+        Q2: مشكلة LFU الأساسية إيه؟ → <b style="color:var(--accent2)">الـ pages القديمة اللي اتستخدمت كتير في البداية بتفضل في الـ memory</b><br>
+        Q3: لو في Tie في LFU (نفس العدد)، إيه اللي بيحصل؟ → <b style="color:var(--accent2)">بيُستخدم FIFO (الأقدم دخولاً يتشال)</b>
+      </div>
+    </div>
+
+    <!-- ===== MFU ===== -->
+    <div class="card mb-4 sm:mb-6" style="border-color:#f97316">
+      <div class="flex items-center gap-2 mb-4 flex-wrap">
+        <span class="text-xl">📈</span>
+        <h3 class="text-sm sm:text-xl font-black" style="color:#f97316">MFU — Most Frequently Used</h3>
+        <span class="tag" style="background:rgba(249,115,22,0.15);color:#f97316;border-color:rgba(249,115,22,0.3)">عكس LFU</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm mb-4">
+        <div class="space-y-2">
+          <div class="concept"><b>الفكرة:</b> استبدل الـ page <b>الأكثر استخداماً</b> — المنطق وراءه: الـ page اللي اتستخدمت كتير، غالباً خلصت وظيفتها وممكن نشيلها</div>
+          <div class="concept concept-green"><b>آلية العمل:</b><br>• نفس آلية LFU بالضبط<br>• بس بنشيل الـ page بأكبر counter (مش أصغر)</div>
+          <div class="concept concept-yellow"><b>المميزات:</b><br>✅ بيحافظ على الـ newly loaded pages (اللي counter بتاعها صغير)<br>✅ مفيد لو الـ pages الجديدة هي الأهم</div>
+          <div class="concept concept-red"><b>العيوب:</b><br>❌ أداء ضعيف في معظم الحالات<br>❌ بيشيل الـ pages الأكثر استخداماً اللي غالباً محتاجينها<br>❌ نادراً بيتستخدم في الـ real systems</div>
+        </div>
+        <div class="space-y-2">
+          <div class="concept"><b>بيشتغل كويس لما:</b> الـ pages الجديدة هي اللي محتاجينها — والقديمة اللي استخدامها عالي انتهت مهمتها</div>
+          <div class="concept concept-red"><b>بيشتغل وحش لما:</b> الـ hot pages (اللي بتتاستخدم كتير) لازم تفضل في الـ memory — MFU هيشيلها</div>
+          <div class="concept concept-yellow"><b>الفرق بين LFU و MFU:</b>
+            <div class="code" style="font-size:10px;margin-top:4px;direction:ltr;text-align:left;">Pages: A(cnt=5), B(cnt=2), C(cnt=1), D(cnt=8)
+Need to replace:
+LFU → evict C (smallest count = 1)
+MFU → evict D (largest count = 8)</div>
+          </div>
+          <div class="concept concept-yellow"><b>أخطاء شائعة:</b><br>⚠️ لا تخلط بين LFU وMFU — اسمهم عكس بعض<br>⚠️ MFU نادر الاستخدام العملي — بيجي في الامتحان كسؤال تعريفي/مقارنة</div>
+        </div>
+      </div>
+
+      <div class="concept text-xs sm:text-sm" style="border-right-color:#f97316;background:rgba(249,115,22,0.08)">
+        <b>🧪 أسئلة MCQ على MFU:</b><br>
+        Q1: MFU بيستبدل الـ page اللي؟ → <b style="color:#f97316">الأكثر عدد استخدامات (أكبر frequency counter)</b><br>
+        Q2: MFU مبني على افتراض إن؟ → <b style="color:#f97316">الـ page اللي اتستخدمت كتير خلصت مهمتها وممكن تتشال</b><br>
+        Q3: إيه الفرق الوحيد بين LFU وMFU؟ → <b style="color:#f97316">LFU بيشيل الـ page بأقل counter، MFU بأكبر counter</b>
+      </div>
+    </div>
+
+    <!-- ===== COMPARISON TABLE ===== -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent)">
+      <h3 class="text-sm sm:text-xl font-black mb-4 text-center" style="color:var(--accent)">📊 جدول مقارنة شامل — كل الخوارزميات</h3>
+      <div class="table-wrap">
+        <table style="min-width:700px;">
+          <tr>
+            <th>الخوارزمية</th>
+            <th>التعقيد</th>
+            <th>عدد Page Faults</th>
+            <th>المميزات</th>
+            <th>العيوب</th>
+            <th>Belady's?</th>
+          </tr>
+          <tr>
+            <td><b style="color:var(--accent)">FIFO</b></td>
+            <td>O(1)</td>
+            <td style="color:var(--red)">عالي</td>
+            <td>سهل التنفيذ، overhead بسيط</td>
+            <td>أداء ضعيف، Belady's Anomaly</td>
+            <td style="color:var(--red)">✗ يعاني</td>
+          </tr>
+          <tr>
+            <td><b style="color:var(--accent2)">OPT</b></td>
+            <td>O(n)</td>
+            <td style="color:var(--accent2)">الأقل (Optimal)</td>
+            <td>أفضل أداء نظرياً، benchmark</td>
+            <td>مستحيل تطبيقه — يحتاج المستقبل</td>
+            <td style="color:var(--accent2)">✓ لا يعاني</td>
+          </tr>
+          <tr>
+            <td><b style="color:var(--yellow)">LRU</b></td>
+            <td>O(n) أو O(log n)</td>
+            <td style="color:var(--yellow)">قريب من OPT</td>
+            <td>أداء ممتاز، Stack Algorithm</td>
+            <td>يحتاج hardware support</td>
+            <td style="color:var(--accent2)">✓ لا يعاني</td>
+          </tr>
+          <tr>
+            <td><b style="color:#a855f7">Second Chance</b></td>
+            <td>O(n) worst</td>
+            <td style="color:#a855f7">متوسط-جيد</td>
+            <td>Approximation جيد للـ LRU، عملي</td>
+            <td>worst case = FIFO</td>
+            <td style="color:var(--red)">⚠️ ممكن</td>
+          </tr>
+          <tr>
+            <td><b style="color:var(--red)">LFU</b></td>
+            <td>O(log n)</td>
+            <td style="color:var(--red)">متوسط-عالي</td>
+            <td>بيحافظ على الـ popular pages</td>
+            <td>Old page problem، لا يراعي recency</td>
+            <td style="color:var(--red)">⚠️ ممكن</td>
+          </tr>
+          <tr>
+            <td><b style="color:#f97316">MFU</b></td>
+            <td>O(log n)</td>
+            <td style="color:var(--red)">عالي عادةً</td>
+            <td>بيحافظ على الـ new pages</td>
+            <td>بيشيل الـ hot pages، أداء ضعيف</td>
+            <td style="color:var(--red)">⚠️ ممكن</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== BELADY'S ANOMALY ===== -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--red);background:linear-gradient(135deg,#1a0810,#1f0f14)">
+      <h3 class="text-sm sm:text-xl font-black mb-4 text-center" style="color:var(--red)">⚠️ Belady's Anomaly — الشذوذ المجنون</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm mb-4">
+        <div class="space-y-2">
+          <div class="concept concept-red"><b>التعريف:</b> ظاهرة غريبة في FIFO حيث <b>زيادة عدد الـ Frames (ذاكرة أكتر) تؤدي لزيادة عدد الـ Page Faults</b> بدل ما تقللها — عكس المنطق المتوقع تماماً!</div>
+          <div class="concept concept-yellow"><b>ليه بيحصل في FIFO؟</b><br>FIFO مش Stack Algorithm — مجموعة الـ pages في n frames مش بالضرورة subset من مجموعة الـ pages في n+1 frames. زيادة الـ frames ممكن تغير ترتيب الـ eviction بشكل يزيد الـ faults</div>
+          <div class="code text-xs" style="direction:ltr;text-align:left;">Belady's Example:
+Ref String: 1,2,3,4,1,2,5,1,2,3,4,5
+
+3 Frames: Page Faults = 9
+4 Frames: Page Faults = 10  ← أكتر! ده Belady's Anomaly</div>
+        </div>
+        <div class="space-y-2">
+          <div class="concept concept-green"><b>ليه OPT وLRU مش بيعانوا منه؟ (Stack Algorithms)</b><br><br>
+            <b>Stack Property:</b> في Stack Algorithms، مجموعة الـ pages في n frames دايماً هي نفسها الـ subset من مجموعة الـ n+1 frames. زيادة frame = مجرد إضافة بدون تغيير ترتيب الاختيار القائم → فالـ faults مش ممكن تزيد.</div>
+          <div class="concept concept-yellow"><b>الخوارزميات اللي مش بتعاني:</b><br>✅ OPT — Stack Algorithm<br>✅ LRU — Stack Algorithm<br><br><b>الخوارزميات اللي ممكن تعاني:</b><br>❌ FIFO — NOT a Stack Algorithm<br>⚠️ Second Chance/LFU/MFU — ممكن في حالات معينة</div>
+          <div class="concept concept-red"><b>في الامتحان:</b> لو سألوك "أيه اللي بيعاني من Belady's Anomaly؟" → الجواب دايماً FIFO. لو سألوا "Stack Algorithms" → OPT و LRU</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== INTERACTIVE SIMULATOR ===== -->
+    <div class="card mb-4 sm:mb-6" style="border-color:var(--accent2)">
+      <h3 class="text-base sm:text-xl font-black mb-4 text-center" style="color:var(--accent2)">🎮 Page Replacement Simulator التفاعلي</h3>
+      <p class="text-xs sm:text-sm mb-4 text-center" style="color:var(--muted)">أدخل الـ Reference String واختار الخوارزمية وعدد الـ Frames — هتشوف كل خطوة بالتفصيل</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+        <div>
+          <label class="block text-xs font-bold mb-1">📋 Reference String (أرقام مفصولة بفواصل أو مسافات):</label>
+          <input type="text" id="adv-pr-string" value="7,0,1,2,0,3,0,4,2,3,0,3,2" class="inp mono-inp">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">🗂️ عدد الـ Frames:</label>
+          <input type="number" id="adv-pr-frames" value="3" min="1" max="8" class="inp mono-inp">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">⚙️ الخوارزمية:</label>
+          <select id="adv-pr-algo" class="inp">
+            <option value="FIFO">FIFO — First In First Out</option>
+            <option value="OPT">OPT — Optimal</option>
+            <option value="LRU">LRU — Least Recently Used</option>
+            <option value="SECOND_CHANCE">Second Chance / Clock</option>
+            <option value="LFU">LFU — Least Frequently Used</option>
+            <option value="MFU">MFU — Most Frequently Used</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sched-btn-group mb-4">
+        <button onclick="runAdvancedPageReplacement()" class="btn btn-primary">▶ Run Simulation</button>
+        <button onclick="runAllAlgorithms()" class="btn btn-outline" style="border-color:var(--accent2);color:var(--accent2)">📊 مقارنة كل الخوارزميات</button>
+        <button onclick="clearPRResult()" class="btn btn-outline">🗑️ مسح</button>
+      </div>
+
+      <div id="adv-pr-result" style="min-height:100px;">
+        <div class="concept" style="font-size:13px;text-align:center;color:var(--muted);">اكتب الـ Reference String واختار الخوارزمية واضغط Run</div>
+      </div>
+    </div>
+
+    <!-- Common Exam Mistakes - Overall -->
+    <div class="card" style="border-color:var(--yellow)">
+      <h3 class="text-sm sm:text-lg font-black mb-4" style="color:var(--yellow)">⚠️ أشهر أخطاء الامتحان في Page Replacement</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+        <div class="concept concept-red"><b>❌ نسيان الـ Compulsory Faults:</b> أول n references (عدد الـ frames) كلها Faults إجبارية — مش الخوارزمية اللي بتسببها، ده حتمي</div>
+        <div class="concept concept-red"><b>❌ الـ Hit = Fault:</b> لو الـ page موجودة في الـ frame → HIT مش Fault. حتى لو الـ page هتتشال بعدها بخطوة واحدة</div>
+        <div class="concept concept-red"><b>❌ الخلط بين LRU وFIFO:</b> LRU بيبص لآخر استخدام، FIFO بيبص لأول دخول. Page ممكن تكون الأقدم دخولاً بس الأحدث استخداماً</div>
+        <div class="concept concept-red"><b>❌ OPT = ممكن التطبيق:</b> OPT نظري بحت — في الامتحان، هو benchmark مش حل عملي</div>
+        <div class="concept concept-red"><b>❌ زيادة Frames = أقل Faults دايماً:</b> غلط في FIFO — Belady's Anomaly ممكن يخلي الـ faults تزيد</div>
+        <div class="concept concept-red"><b>❌ LFU/MFU Tie Handling:</b> في حالة Tie، استخدم FIFO (الأقدم دخولاً)</div>
       </div>
     </div>
   </div>
@@ -2590,7 +3046,20 @@ const mcqData = [
   // ===== DISK SCHEDULING =====
   { q: "Which disk scheduling algorithm always selects the request closest to the current head position?", opts: ["FCFS","SSTF","SCAN","C-SCAN"], ans: 1, exp: "SSTF (Shortest Seek Time First) بيختار أقرب طلب للموضع الحالي للـ head — بس ممكن يسبب starvation للطلبات البعيدة" },
   { q: "C-SCAN differs from SCAN in that:", opts: ["C-SCAN moves in both directions servicing requests","C-SCAN returns to the beginning of the disk without servicing requests on the return trip","C-SCAN never moves the head","C-SCAN is the same as FCFS"], ans: 1, exp: "C-SCAN بيمشي في اتجاه واحد كـ SCAN، بس لما يوصل للنهاية يرجع مباشرة لبداية القرص بدون خدمة طلبات في الرجوع" },
-  { q: "A major drawback of SSTF disk scheduling is:", opts: ["It requires more memory","It can cause starvation for requests far from the current head position","It is slower than FCFS in all cases","It cannot be implemented in hardware"], ans: 1, exp: "SSTF ممكن يسبب starvation للطلبات البعيدة لو طلبات قريبة بتيجي باستمرار وتفضل تتقدم عليها" }
+  { q: "A major drawback of SSTF disk scheduling is:", opts: ["It requires more memory","It can cause starvation for requests far from the current head position","It is slower than FCFS in all cases","It cannot be implemented in hardware"], ans: 1, exp: "SSTF ممكن يسبب starvation للطلبات البعيدة لو طلبات قريبة بتيجي باستمرار وتفضل تتقدم عليها" },
+
+  // ===== PAGE REPLACEMENT =====
+  { q: "Which page replacement algorithm replaces the page that was loaded into memory the longest time ago?", opts: ["LRU","OPT","FIFO","LFU"], ans: 2, exp: "FIFO (First In First Out) بيستبدل الـ page اللي دخلت الـ Memory من أطول وقت — يتتبع ترتيب الدخول بـ queue" },
+  { q: "Belady's Anomaly refers to:", opts: ["LRU causing more page faults than OPT","Increasing the number of frames increasing page faults in FIFO","OPT being impossible to implement","Page faults occurring on every memory access"], ans: 1, exp: "Belady's Anomaly في FIFO: زيادة عدد الـ frames ممكن تزيد عدد الـ page faults بدل ما تقللها — عكس المنطق المتوقع" },
+  { q: "Which page replacement algorithm is theoretically optimal but cannot be implemented in practice?", opts: ["FIFO","LRU","OPT","LFU"], ans: 2, exp: "OPT (Optimal) هو الأفضل نظرياً — بيستبدل الـ page اللي مش هتتاستخدم لأطول وقت في المستقبل. مستحيل عملياً لأنه يحتاج معرفة المستقبل" },
+  { q: "Which page replacement algorithms are 'Stack Algorithms' and therefore cannot suffer from Belady's Anomaly?", opts: ["FIFO and LRU","OPT and LFU","OPT and LRU","FIFO and MFU"], ans: 2, exp: "OPT وLRU كلاهما Stack Algorithms — مجموعة الـ pages في n frames هي دايماً subset من n+1 frames، لذا زيادة الـ frames مش ممكن تزيد الـ faults" },
+  { q: "In LRU page replacement, which page is selected as victim?", opts: ["The page loaded longest ago","The page that will not be used for the longest time","The page least recently used (used longest ago in time)","The page with the lowest frequency count"], ans: 2, exp: "LRU (Least Recently Used) بيستبدل الـ page اللي ماتستخدمتش من أطول وقت في الماضي — مش أقدم دخولاً (FIFO) ولا الأبعد استخداماً مستقبلاً (OPT)" },
+  { q: "The Second Chance (Clock) algorithm is an improvement over which algorithm?", opts: ["OPT","LRU","LFU","FIFO"], ans: 3, exp: "Second Chance هو تحسين على FIFO — بيضيف Reference Bit لكل page: لو bit=1 عند الاستبدال، بيعطيها فرصة تانية (يعمل bit=0 ويكمل) بدل ما يشيلها فوراً" },
+  { q: "In LFU page replacement, when a tie occurs (two pages have the same frequency count), which is replaced?", opts: ["The most recently used one","The page with the higher page number","The page that entered the frames earliest (FIFO tie-breaking)","A random page"], ans: 2, exp: "في LFU عند Tie (نفس الـ frequency count)، يتم استخدام FIFO كـ tie-breaker — الـ page الأقدم دخولاً هي الـ victim" },
+  { q: "What does MFU (Most Frequently Used) page replacement algorithm do?", opts: ["Replaces the page used most recently","Replaces the page with the highest frequency of use","Replaces the page with the lowest frequency of use","Replaces the page loaded first"], ans: 1, exp: "MFU بيستبدل الـ page الأكثر استخداماً (أكبر frequency counter) — بناءً على افتراض إنها خلصت مهمتها. عكس LFU تماماً" },
+  { q: "How many compulsory (cold-start) page faults occur when a process first references 4 distinct pages with 4 available frames?", opts: ["0","2","4","Depends on algorithm"], ans: 2, exp: "أول 4 references لـ pages مختلفة = 4 Compulsory Faults إجبارية بغض النظر عن الخوارزمية — الـ frames فاضية في البداية" },
+  { q: "Given reference string: 1,2,3,4,1,2,5,1,2,3,4,5 with 3 frames using FIFO, how many page faults occur?", opts: ["6","7","9","12"], ans: 2, exp: "FIFO مع 3 frames: 1(F),2(F),3(F),4(F-evict1),1(F-evict2),2(F-evict3),5(F-evict4),1(F),2(F),3(F-evict5),4(F),5(✓) = 9 Faults" },
+  { q: "In the Second Chance algorithm, if ALL pages in frames have their reference bit set to 1 when replacement is needed, the algorithm behaves like:", opts: ["LRU","OPT","FIFO","LFU"], ans: 2, exp: "لو كل الـ reference bits = 1، الـ Second Chance Algorithm بيعمل 0 لكل الـ bits ويمشي على الأول واللي يلاقيه bit=0 (اللي بقاله أطول وقت بدون reference) — بيتصرف زي FIFO" }
 ];
 
 const tfData = [
@@ -2625,7 +3094,16 @@ const tfData = [
   { q: "DMA requires the CPU to transfer every byte of data between the device and memory.", ans: false, exp: "غلط — في DMA، الـ DMA Controller هو اللي بينقل البيانات مباشرة، والـ CPU بيـ interrupt مرة واحدة بس في النهاية" },
   { q: "Double Buffering allows overlap between I/O and CPU processing.", ans: true, exp: "صح — بينما الـ device بيكتب في buffer واحد، الـ CPU بيعالج محتوى الـ buffer التاني" },
   { q: "SSTF disk scheduling can cause starvation.", ans: true, exp: "صح — الطلبات البعيدة عن موضع الـ head ممكن تستنى للأبد لو طلبات قريبة فضلت تيجي باستمرار" },
-  { q: "C-SCAN services requests in both directions of head movement.", ans: false, exp: "غلط — C-SCAN بيخدم الطلبات في اتجاه واحد فقط، وبيرجع لبداية القرص بدون خدمة في رحلة العودة" }
+  { q: "C-SCAN services requests in both directions of head movement.", ans: false, exp: "غلط — C-SCAN بيخدم الطلبات في اتجاه واحد فقط، وبيرجع لبداية القرص بدون خدمة في رحلة العودة" },
+
+  // ===== PAGE REPLACEMENT T/F =====
+  { q: "FIFO page replacement always produces fewer page faults when more frames are available.", ans: false, exp: "غلط — FIFO يعاني من Belady's Anomaly: زيادة الـ frames ممكن تزيد عدد الـ page faults في بعض الـ reference strings" },
+  { q: "OPT (Optimal) page replacement algorithm can be implemented in real operating systems.", ans: false, exp: "غلط — OPT مستحيل تطبيقه عملياً لأنه يحتاج معرفة الـ future reference string. بيستخدم فقط كـ theoretical benchmark" },
+  { q: "LRU is a Stack Algorithm and therefore cannot suffer from Belady's Anomaly.", ans: true, exp: "صح — LRU هو Stack Algorithm: مجموعة الـ pages في n frames دايماً subset من مجموعة n+1 frames. لذا زيادة الـ frames مش ممكن تزيد الـ page faults" },
+  { q: "In LFU replacement, the page that was used most recently is the one replaced.", ans: false, exp: "غلط — LFU (Least Frequently Used) بيشيل الـ page الأقل تردداً (أصغر frequency counter)، مش الأقدم استخداماً. ده LRU مش LFU" },
+  { q: "The Second Chance algorithm is an approximation of LRU using a reference bit.", ans: true, exp: "صح — Second Chance بيستخدم Reference Bit كـ approximation للـ recency. بدل tracking دقيق للوقت، بيستخدم bit واحد لكل page" },
+  { q: "MFU (Most Frequently Used) replaces the page with the smallest access count.", ans: false, exp: "غلط — MFU بيشيل الـ page بأكبر access count (الأكثر استخداماً). اللي بيشيل الأقل استخداماً هو LFU" },
+  { q: "The first n page references always cause page faults when starting with n empty frames.", ans: true, exp: "صح — أول n references لـ pages مختلفة (مع n frames فاضية) = n Compulsory/Cold-start Faults إجبارية بغض النظر عن الخوارزمية" }
 ];
 
 const trapsData = [
@@ -2645,7 +3123,12 @@ const trapsData = [
   { title: "Unsafe State vs Deadlock", trap: "Unsafe State = Deadlock فورًا؟", correct: "لا — Unsafe State معناها ممكن (بس مش حتمًا) يؤدي لـ deadlock حسب طلبات الـ processes القادمة" },
   { title: "TLB Miss vs Page Fault (VM)", trap: "في Virtual Memory، TLB Miss = Page Fault؟", correct: "لا — TLB Miss يعني الـ translation مش في الـ cache بس الـ page موجودة في الـ memory. Page Fault يعني الـ page مش موجودة في الـ physical memory خالص" },
   { title: "DMA vs Interrupt-Driven I/O", trap: "DMA = Interrupt-Driven I/O بس أسرع؟", correct: "في Interrupt-Driven I/O، الـ CPU لسه بينقل البيانات نفسها بعد كل interrupt. في DMA، الـ DMA Controller هو اللي بينقل البيانات بالكامل والـ CPU بيـ interrupt مرة واحدة في النهاية" },
-  { title: "SSTF Starvation", trap: "SSTF أحسن خوارزمية لأنها بتقلل الحركة دايمًا؟", correct: "SSTF بتقلل الحركة locally، لكن ممكن تسبب starvation لطلبات بعيدة لو طلبات قريبة استمرت في الوصول" }
+  { title: "SSTF Starvation", trap: "SSTF أحسن خوارزمية لأنها بتقلل الحركة دايمًا؟", correct: "SSTF بتقلل الحركة locally، لكن ممكن تسبب starvation لطلبات بعيدة لو طلبات قريبة استمرت في الوصول" },
+  { title: "FIFO vs LRU", trap: "FIFO وLRU نفس الخوارزمية — كلاهما بيشيل بناءً على الوقت؟", correct: "غلط — FIFO بيشيل الـ page الأقدم دخولاً (ترتيب الـ loading)، أما LRU بيشيل الـ page اللي ماتستخدمتش من أطول وقت (ترتيب الـ access). page ممكن تكون الأقدم دخولاً بس الأحدث استخداماً" },
+  { title: "Belady's Anomaly", trap: "زيادة عدد الـ Frames دايماً بتقلل Page Faults؟", correct: "غلط في FIFO — Belady's Anomaly بيثبت إن زيادة الـ frames ممكن تزيد الـ faults. بس في Stack Algorithms (OPT وLRU) ده مش ممكن يحصل" },
+  { title: "OPT = قابل للتطبيق", trap: "OPT Algorithm ممكن نطبقه في الـ OS الحديث؟", correct: "غلط — OPT نظري بحت لأنه يحتاج معرفة الـ future reference string. بيستخدم فقط كـ benchmark لمقارنة الخوارزميات التانية" },
+  { title: "LFU vs MFU Confusion", trap: "LFU وMFU نفس الخوارزمية؟", correct: "عكس تماماً — LFU بيشيل الـ page بأقل frequency (Least Frequently Used)، MFU بيشيل الـ page بأكبر frequency (Most Frequently Used)" },
+  { title: "Hit = Fault", trap: "لو الـ page موجودة في الـ frame بس هتتشال بعدها = Fault؟", correct: "غلط — لو الـ page موجودة في الـ frames عند الـ reference = HIT حتى لو الـ algorithm هيشيلها بعدين في خطوة تانية. الـ Fault بيحصل بس لما الـ page مش موجودة وقت الـ reference" }
 ];
 
 const essaysData = [
@@ -2870,7 +3353,7 @@ function markDone(id) {
 }
 
 function updateProgress() {
-  const total = 10;
+  const total = 11;
   const done = doneSet.size;
   const pct = Math.round((done / total) * 100);
   document.getElementById('progress-pct').textContent = pct + '%';
@@ -3427,6 +3910,286 @@ function runPageReplacement(algo) {
   res.innerHTML = `<b>${algo} — Page Faults: <span style="color:var(--accent2);font-size:15px">${faults}</span> / ${refs.length}</b>
     <div style="margin-top:10px;line-height:2.2">${stepsHtml}</div>
     <p class="text-xs mt-2" style="color:var(--muted)">✗ = Page Fault | ✓ = موجودة بالفعل (Hit) | [الأرقام بين الأقواس] = حالة الـ frames بعد كل خطوة</p>`;
+}
+
+// ============================================================
+// ADVANCED PAGE REPLACEMENT SIMULATOR (Full 6-algorithm)
+// ============================================================
+function parseRefString(str) {
+  return str.split(/[,\s]+/).map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+}
+
+function runFIFO(refs, numFrames) {
+  let frames = [], queue = [], faults = 0, steps = [];
+  refs.forEach(p => {
+    const hit = frames.includes(p);
+    if (!hit) {
+      faults++;
+      if (frames.length < numFrames) { frames.push(p); queue.push(p); }
+      else { const v = queue.shift(); frames[frames.indexOf(v)] = p; queue.push(p); }
+    }
+    steps.push({ ref: p, frames: [...frames], fault: !hit, extra: `Queue: [${queue.join('→')}]` });
+  });
+  return { faults, hits: refs.length - faults, steps };
+}
+
+function runOPT(refs, numFrames) {
+  let frames = [], faults = 0, steps = [];
+  refs.forEach((p, t) => {
+    const hit = frames.includes(p);
+    if (!hit) {
+      faults++;
+      if (frames.length < numFrames) { frames.push(p); }
+      else {
+        let farthest = -1, victimIdx = 0;
+        frames.forEach((f, idx) => {
+          let nextUse = refs.slice(t + 1).indexOf(f);
+          if (nextUse === -1) nextUse = Infinity;
+          if (nextUse > farthest) { farthest = nextUse; victimIdx = idx; }
+        });
+        frames[victimIdx] = p;
+      }
+    }
+    steps.push({ ref: p, frames: [...frames], fault: !hit, extra: '' });
+  });
+  return { faults, hits: refs.length - faults, steps };
+}
+
+function runLRU(refs, numFrames) {
+  let frames = [], lastUsed = {}, faults = 0, steps = [];
+  refs.forEach((p, t) => {
+    const hit = frames.includes(p);
+    if (!hit) {
+      faults++;
+      if (frames.length < numFrames) { frames.push(p); }
+      else {
+        let lruPage = frames[0], lruTime = lastUsed[frames[0]] ?? -1;
+        frames.forEach(f => { if ((lastUsed[f] ?? -1) < lruTime) { lruTime = lastUsed[f]; lruPage = f; } });
+        frames[frames.indexOf(lruPage)] = p;
+      }
+    }
+    lastUsed[p] = t;
+    const lruInfo = frames.map(f => `${f}(t=${lastUsed[f]})`).join(', ');
+    steps.push({ ref: p, frames: [...frames], fault: !hit, extra: `LRU: [${lruInfo}]` });
+  });
+  return { faults, hits: refs.length - faults, steps };
+}
+
+function runSecondChance(refs, numFrames) {
+  // Ring buffer with reference bits
+  let frames = [], refBits = [], pointer = 0, faults = 0, steps = [];
+  refs.forEach(p => {
+    const idx = frames.indexOf(p);
+    if (idx !== -1) {
+      refBits[idx] = 1; // give reference
+      steps.push({ ref: p, frames: [...frames], fault: false, extra: `Ref bit set for page ${p}` });
+    } else {
+      faults++;
+      if (frames.length < numFrames) {
+        frames.push(p); refBits.push(1);
+      } else {
+        let scanned = 0;
+        while (refBits[pointer] === 1 && scanned <= numFrames) {
+          refBits[pointer] = 0; pointer = (pointer + 1) % numFrames; scanned++;
+        }
+        const victim = frames[pointer];
+        frames[pointer] = p; refBits[pointer] = 1;
+        pointer = (pointer + 1) % numFrames;
+        steps.push({ ref: p, frames: [...frames], fault: true, extra: `Replaced ${victim} at pos ${pointer}; bits=[${refBits.join(',')}]` });
+        return;
+      }
+      steps.push({ ref: p, frames: [...frames], fault: true, extra: `Bits: [${refBits.join(',')}]` });
+    }
+  });
+  return { faults, hits: refs.length - faults, steps };
+}
+
+function runLFU(refs, numFrames) {
+  let frames = [], freq = {}, entryTime = {}, faults = 0, steps = [], timer = 0;
+  refs.forEach(p => {
+    const hit = frames.includes(p);
+    if (!hit) {
+      faults++;
+      if (frames.length < numFrames) { frames.push(p); entryTime[p] = timer; }
+      else {
+        let minFreq = Infinity, victim = frames[0], victimEntry = entryTime[frames[0]];
+        frames.forEach(f => {
+          const fc = freq[f] || 0;
+          if (fc < minFreq || (fc === minFreq && entryTime[f] < victimEntry)) {
+            minFreq = fc; victim = f; victimEntry = entryTime[f];
+          }
+        });
+        frames[frames.indexOf(victim)] = p;
+        entryTime[p] = timer;
+        delete freq[victim];
+      }
+    }
+    freq[p] = (freq[p] || 0) + 1;
+    timer++;
+    const freqInfo = frames.map(f => `${f}(${freq[f]||0})`).join(', ');
+    steps.push({ ref: p, frames: [...frames], fault: !hit, extra: `Freq: [${freqInfo}]` });
+  });
+  return { faults, hits: refs.length - faults, steps };
+}
+
+function runMFU(refs, numFrames) {
+  let frames = [], freq = {}, entryTime = {}, faults = 0, steps = [], timer = 0;
+  refs.forEach(p => {
+    const hit = frames.includes(p);
+    if (!hit) {
+      faults++;
+      if (frames.length < numFrames) { frames.push(p); entryTime[p] = timer; }
+      else {
+        let maxFreq = -1, victim = frames[0], victimEntry = entryTime[frames[0]];
+        frames.forEach(f => {
+          const fc = freq[f] || 0;
+          if (fc > maxFreq || (fc === maxFreq && entryTime[f] < victimEntry)) {
+            maxFreq = fc; victim = f; victimEntry = entryTime[f];
+          }
+        });
+        frames[frames.indexOf(victim)] = p;
+        entryTime[p] = timer;
+        delete freq[victim];
+      }
+    }
+    freq[p] = (freq[p] || 0) + 1;
+    timer++;
+    const freqInfo = frames.map(f => `${f}(${freq[f]||0})`).join(', ');
+    steps.push({ ref: p, frames: [...frames], fault: !hit, extra: `Freq: [${freqInfo}]` });
+  });
+  return { faults, hits: refs.length - faults, steps };
+}
+
+function buildSimTable(refs, numFrames, result, algoName) {
+  const { faults, hits, steps } = result;
+  const hitRate = ((hits / refs.length) * 100).toFixed(1);
+  const faultRate = ((faults / refs.length) * 100).toFixed(1);
+
+  // Header row (reference string)
+  let headerCells = refs.map((r, i) => `<th style="min-width:36px;text-align:center;">${r}</th>`).join('');
+
+  // Frame rows
+  let frameRows = '';
+  for (let f = 0; f < numFrames; f++) {
+    let cells = steps.map(s => {
+      const pg = s.frames[f];
+      const color = s.fault ? 'var(--accent)' : 'var(--accent2)';
+      return `<td style="text-align:center;font-weight:700;color:${pg !== undefined ? color : 'var(--muted)'}">${pg !== undefined ? pg : '-'}</td>`;
+    }).join('');
+    frameRows += `<tr><td style="font-weight:700;white-space:nowrap;padding-right:12px;">Frame ${f+1}</td>${cells}</tr>`;
+  }
+
+  // Fault row
+  let faultRow = steps.map(s =>
+    `<td style="text-align:center;font-weight:700;color:${s.fault ? 'var(--red)' : 'var(--accent2)'};">${s.fault ? '✗' : '✓'}</td>`
+  ).join('');
+
+  return `
+    <div style="margin-bottom:12px;">
+      <div class="flex gap-3 flex-wrap mb-3" style="align-items:center;">
+        <b style="color:var(--accent);font-size:14px;">${algoName}</b>
+        <span class="tag tag-red">Page Faults: ${faults}</span>
+        <span class="tag tag-green">Hits: ${hits}</span>
+        <span class="tag">Hit Rate: ${hitRate}%</span>
+        <span class="tag tag-red">Fault Rate: ${faultRate}%</span>
+      </div>
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;">
+        <table style="min-width:${Math.max(500, refs.length * 38)}px;font-size:11px;border-collapse:collapse;">
+          <tr>
+            <th style="text-align:right;padding-right:12px;white-space:nowrap;">Reference</th>
+            ${headerCells}
+          </tr>
+          ${frameRows}
+          <tr>
+            <td style="font-weight:700;white-space:nowrap;padding-right:12px;">Fault?</td>
+            ${faultRow}
+          </tr>
+        </table>
+      </div>
+    </div>`;
+}
+
+function runAdvancedPageReplacement() {
+  const str = document.getElementById('adv-pr-string').value.trim();
+  const numFrames = parseInt(document.getElementById('adv-pr-frames').value) || 3;
+  const algo = document.getElementById('adv-pr-algo').value;
+  const refs = parseRefString(str);
+  const res = document.getElementById('adv-pr-result');
+
+  if (refs.length === 0) {
+    res.innerHTML = '<div class="concept concept-red">⚠️ أدخل reference string صحيح (أرقام مفصولة بفواصل)</div>';
+    return;
+  }
+
+  let result;
+  let algoName;
+  if (algo === 'FIFO') { result = runFIFO(refs, numFrames); algoName = '📥 FIFO — First In First Out'; }
+  else if (algo === 'OPT') { result = runOPT(refs, numFrames); algoName = '⭐ OPT — Optimal'; }
+  else if (algo === 'LRU') { result = runLRU(refs, numFrames); algoName = '⏰ LRU — Least Recently Used'; }
+  else if (algo === 'SECOND_CHANCE') { result = runSecondChance(refs, numFrames); algoName = '🕐 Second Chance / Clock'; }
+  else if (algo === 'LFU') { result = runLFU(refs, numFrames); algoName = '📊 LFU — Least Frequently Used'; }
+  else if (algo === 'MFU') { result = runMFU(refs, numFrames); algoName = '📈 MFU — Most Frequently Used'; }
+
+  res.innerHTML = buildSimTable(refs, numFrames, result, algoName);
+}
+
+function runAllAlgorithms() {
+  const str = document.getElementById('adv-pr-string').value.trim();
+  const numFrames = parseInt(document.getElementById('adv-pr-frames').value) || 3;
+  const refs = parseRefString(str);
+  const res = document.getElementById('adv-pr-result');
+
+  if (refs.length === 0) {
+    res.innerHTML = '<div class="concept concept-red">⚠️ أدخل reference string صحيح</div>';
+    return;
+  }
+
+  const algorithms = [
+    { fn: runFIFO, name: '📥 FIFO', key: 'FIFO' },
+    { fn: runOPT, name: '⭐ OPT', key: 'OPT' },
+    { fn: runLRU, name: '⏰ LRU', key: 'LRU' },
+    { fn: runSecondChance, name: '🕐 Second Chance', key: 'SC' },
+    { fn: runLFU, name: '📊 LFU', key: 'LFU' },
+    { fn: runMFU, name: '📈 MFU', key: 'MFU' },
+  ];
+
+  const results = algorithms.map(a => ({ ...a, result: a.fn(refs, numFrames) }));
+  const minFaults = Math.min(...results.map(r => r.result.faults));
+
+  // Summary comparison table
+  let summaryRows = results.map(r => {
+    const isBest = r.result.faults === minFaults;
+    return `<tr${isBest ? ' style="background:rgba(0,212,170,0.08)"' : ''}>
+      <td><b style="color:${isBest?'var(--accent2)':'var(--text)'}">${r.name}</b></td>
+      <td style="text-align:center;font-weight:700;color:${isBest?'var(--accent2)':'var(--red)'}">${r.result.faults}${isBest?' 🏆':''}</td>
+      <td style="text-align:center;color:var(--accent2)">${r.result.hits}</td>
+      <td style="text-align:center">${((r.result.hits/refs.length)*100).toFixed(1)}%</td>
+    </tr>`;
+  }).join('');
+
+  let html = `
+    <div class="card mb-3" style="background:var(--card2);padding:16px;">
+      <h4 style="color:var(--accent);font-weight:900;margin-bottom:12px;">📊 مقارنة شاملة — ${numFrames} Frames | ${refs.length} References</h4>
+      <div style="overflow-x:auto;border-radius:8px;">
+        <table style="min-width:360px;font-size:12px;">
+          <tr><th>الخوارزمية</th><th>Page Faults</th><th>Hits</th><th>Hit Rate</th></tr>
+          ${summaryRows}
+        </table>
+      </div>
+    </div>`;
+
+  // Full step-by-step tables for each algo
+  results.forEach(r => {
+    html += `<div class="card mb-3" style="background:var(--card2);padding:14px;">`;
+    html += buildSimTable(refs, numFrames, r.result, r.name);
+    html += `</div>`;
+  });
+
+  res.innerHTML = html;
+}
+
+function clearPRResult() {
+  document.getElementById('adv-pr-result').innerHTML = '<div class="concept" style="font-size:13px;text-align:center;color:var(--muted);">اكتب الـ Reference String واختار الخوارزمية واضغط Run</div>';
 }
 
 // ============================================================
